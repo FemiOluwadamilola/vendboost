@@ -1,7 +1,8 @@
-const router = require("express").Router();
+const express = require('express');
+const router = express.Router();
 
-router.get("/", (req, res) => {
-  return res.status(200).json("vendor route running...");
+router.get('/', (req, res) => {
+  res.send('Vendor route working');
 });
 
-module.exports = router();
+module.exports = router;
