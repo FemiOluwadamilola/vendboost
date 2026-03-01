@@ -15,15 +15,15 @@ router.get("/", async (req,res) => {
 })
 
 router.get('/signup', (req, res) => {
-    res.render('under-construction',{
-    	title:"VendBoost – Coming Soon"
+    res.render('signup',{
+    	title:"Create Account – VendBoost"
     });
 });
 
 // Optional: disable POST signups until launch
 router.get('/signin', (req, res) => {
-     res.render('under-construction',{
-    	title:"VendBoost – Coming Soon"
+     res.render('signin',{
+    	title:"Sign In – VendBoost"
     });
 });
 

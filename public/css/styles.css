@@ -1,3 +1,12 @@
+/* =========================================================
+   VENDBOOST MAIN STYLESHEET
+   Organized & Clean Structure
+========================================================= */
+
+/* =========================
+   1. GLOBAL SETTINGS
+========================= */
+
 html {
     scroll-behavior: smooth;
 }
@@ -14,7 +23,15 @@ body.dark {
     color: #f1f5f9;
 }
 
-/* GLASS EFFECT */
+
+/* =========================
+   2. UTILITIES
+========================= */
+
+.full-width {
+    width: 100%;
+}
+
 .glass {
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(15px);
@@ -26,7 +43,11 @@ body.dark .glass {
     background: rgba(30, 41, 59, 0.5);
 }
 
-/* NAVBAR */
+
+/* =========================
+   3. NAVIGATION
+========================= */
+
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -51,23 +72,45 @@ body.dark .glass {
 .nav-links a {
     text-decoration: none;
     font-weight: 500;
+    color: inherit;
 }
 
-/* BUTTONS */
-.btn-primary {
+/* Hamburger */
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.hamburger span {
+    height: 3px;
+    width: 25px;
+    background: currentColor;
+    margin: 4px 0;
+    transition: 0.3s;
+}
+
+
+/* =========================
+   4. BUTTONS
+========================= */
+
+.btn-primary,
+.btn-primary-lg {
     background: #2563eb;
     color: white;
+    text-decoration: none;
+}
+
+.btn-primary {
     padding: 8px 18px;
     border-radius: 8px;
-    text-decoration: none;
 }
 
 .btn-primary-lg {
-    background: #2563eb;
     padding: 12px 25px;
     border-radius: 10px;
-    color: white;
-    text-decoration: none;
 }
 
 .btn-secondary-lg {
@@ -85,7 +128,11 @@ body.dark .glass {
     font-size: 1.2rem;
 }
 
-/* HERO */
+
+/* =========================
+   5. HERO SECTION
+========================= */
+
 .hero {
     height: 90vh;
     display: flex;
@@ -105,8 +152,13 @@ body.dark .glass {
     margin: 20px 0;
 }
 
-/* FEATURES */
-.features, .pricing {
+
+/* =========================
+   6. FEATURES & PRICING
+========================= */
+
+.features,
+.pricing {
     padding: 80px 8%;
     text-align: center;
 }
@@ -139,27 +191,12 @@ body.dark .glass {
     font-size: 1rem;
 }
 
-/* HAMBURGER */
-.hamburger {
-    display: none;
-    flex-direction: column;
-    cursor: pointer;
-}
 
-.hamburger span {
-    height: 3px;
-    width: 25px;
-    background: black;
-    margin: 4px 0;
-    transition: 0.3s;
-}
+/* =========================
+   7. SCROLL ANIMATION
+========================= */
 
-body.dark .hamburger span {
-    background: white;
-}
-
-/* REVEAL ANIMATION */
-.reveal {
+/*.reveal {
     opacity: 0;
     transform: translateY(40px);
     transition: 0.6s ease;
@@ -170,8 +207,244 @@ body.dark .hamburger span {
     transform: translateY(0);
 }
 
-/* MOBILE */
-@media(max-width:768px) {
+*/
+/* =========================================================
+   AUTH PAGES
+========================================================= */
+
+/* =========================
+   8. AUTH LAYOUT
+========================= */
+
+.auth-body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #2563eb, #1e3a8a);
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 35px 30px;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.auth-container h2 {
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.auth-switch {
+    margin-top: 25px;
+    font-size: 0.95rem;
+}
+
+.auth-switch a {
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+
+/* =========================
+   9. FORM ELEMENTS
+========================= */
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.form-group input {
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    font-size: 1rem;
+    transition: 0.3s ease;
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
+}
+
+/* Floating Inputs */
+
+.floating-group {
+    position: relative;
+    margin-bottom: 22px;
+}
+
+.floating-group input {
+    width: 100%;
+    padding: 16px 14px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    font-size: 1rem;
+    outline: none;
+    background: white;
+}
+
+body.dark .floating-group input {
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: white;
+}
+
+.floating-group label {
+    position: absolute;
+    left: 14px;
+    top: 16px;
+    color: #6b7280;
+    font-size: 0.95rem;
+    transition: 0.3s ease;
+    pointer-events: none;
+}
+
+.floating-group input:focus + label,
+.floating-group input:valid + label {
+    top: -8px;
+    left: 10px;
+    background: white;
+    padding: 0 6px;
+    font-size: 0.75rem;
+    color: #2563eb;
+}
+
+body.dark .floating-group input:focus + label,
+body.dark .floating-group input:valid + label {
+    background: #1e293b;
+}
+
+
+/* =========================
+   10. PASSWORD + SPINNER
+========================= */
+
+.password-group {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid transparent;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    display: none;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+button.loading .btn-text {
+    display: none;
+}
+
+button.loading .spinner {
+    display: inline-block;
+}
+
+
+/* =========================
+   11. ALERT + OAUTH
+========================= */
+
+.error-alert {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: none;
+    font-size: 0.9rem;
+}
+
+.error-alert.show {
+    display: block;
+}
+
+.oauth-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.3s ease;
+}
+
+.oauth-btn img {
+    width: 20px;
+}
+
+.oauth-btn:hover {
+    background: #f3f4f6;
+}
+
+
+/* =========================
+   12. ANIMATED BACKGROUND
+========================= */
+
+.animated-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(-45deg, #2563eb, #1e3a8a, #3b82f6, #1d4ed8);
+    background-size: 400% 400%;
+    animation: gradientMove 12s ease infinite;
+}
+
+body.dark .animated-bg {
+    background: linear-gradient(-45deg, #0f172a, #1e293b, #111827, #1e40af);
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+
+/* =========================
+   13. RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
 
     .hamburger {
         display: flex;
@@ -194,5 +467,31 @@ body.dark .hamburger span {
 
     .hero h1 {
         font-size: 2rem;
+    }
+
+    .auth-container {
+        padding: 28px 22px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .auth-container {
+        padding: 24px 18px;
+        border-radius: 16px;
+    }
+
+    .auth-container h2 {
+        font-size: 1.4rem;
+    }
+
+    .form-group input {
+        padding: 16px;
+        font-size: 1rem;
+    }
+
+    .btn-primary-lg {
+        padding: 16px;
+        font-size: 1rem;
     }
 }

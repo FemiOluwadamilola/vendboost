@@ -29,5 +29,27 @@ function revealOnScroll() {
     });
 }
 
+function togglePassword() {
+    const password = document.getElementById("password");
+    password.type = password.type === "password" ? "text" : "password";
+}
+
+const form = document.getElementById("authForm");
+const btn = document.getElementById("submitBtn");
+const errorAlert = document.getElementById("errorAlert");
+
+form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    btn.classList.add("loading");
+
+    setTimeout(() => {
+        btn.classList.remove("loading");
+
+        // Simulate error
+        errorAlert.classList.add("show");
+    }, 2000);
+});
+
 window.addEventListener('scroll', revealOnScroll);
 revealOnScroll();
