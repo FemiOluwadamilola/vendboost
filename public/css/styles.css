@@ -495,3 +495,143 @@ body.dark .animated-bg {
         font-size: 1rem;
     }
 }
+
+/* Dash board styling */
+.dashboard {
+    display: flex;
+    min-height: 100vh;
+    background: #0f172a;
+    color: white;
+    font-family: 'Inter', sans-serif;
+}
+
+.sidebar {
+    width: 250px;
+    padding: 2rem;
+    backdrop-filter: blur(20px);
+    background: rgba(255,255,255,0.05);
+}
+
+.sidebar .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+}
+
+.menu {
+    list-style: none;
+    padding: 0;
+}
+
+.menu li {
+    padding: 1rem;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.menu li:hover,
+.menu li.active {
+    background: rgba(255,255,255,0.1);
+}
+
+.logout {
+    margin-top: 2rem;
+    color: #f87171;
+}
+
+.dashboard {
+    display: flex;
+    min-height: 100vh;
+    background: #0f172a;
+    color: white;
+    font-family: 'Inter', sans-serif;
+}
+
+.sidebar {
+    width: 250px;
+    padding: 2rem;
+    backdrop-filter: blur(20px);
+    background: rgba(255,255,255,0.05);
+}
+
+.sidebar .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+}
+
+.menu {
+    list-style: none;
+    padding: 0;
+}
+
+.menu li {
+    padding: 1rem;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.menu li:hover,
+.menu li.active {
+    background: rgba(255,255,255,0.1);
+}
+
+.logout {
+    margin-top: 2rem;
+    color: #f87171;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.kpi-card {
+    padding: 1.5rem;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    transition: 0.3s;
+}
+
+.kpi-card:hover {
+    transform: translateY(-5px);
+}
+
+.kpi-card h3 {
+    font-size: 1.8rem;
+}
+
+
+.conversation-card {
+    padding: 1.5rem;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.05);
+}
+
+.conversation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+}
+
+.tag {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+
+.tag.pending {
+    background: #f59e0b;
+}
+
+.tag.closed {
+    background: #22c55e;
+}

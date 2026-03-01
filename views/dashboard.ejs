@@ -1,0 +1,87 @@
+<div class="dashboard">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar glass">
+        <div class="logo">VendBoost</div>
+
+        <ul class="menu">
+            <li class="active">📊 Overview</li>
+            <li>💬 Conversations</li>
+            <li>🔁 Follow-ups</li>
+            <li>🛒 Orders</li>
+            <li>👥 Customers</li>
+            <li>📈 Analytics</li>
+            <li>⚙ Settings</li>
+            <li class="logout">🚪 Logout</li>
+        </ul>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <div class="topbar glass">
+            <input type="text" placeholder="Search customers...">
+            <div class="top-actions">
+                <span class="status connected">🟢 WhatsApp Connected</span>
+                <span class="notification">🔔</span>
+                <div class="avatar">OF</div>
+            </div>
+        </div>
+
+        <!-- KPI CARDS -->
+        <div class="kpi-grid">
+
+            <div class="kpi-card glass">
+                <h3>₦245,000</h3>
+                <p>Total Sales</p>
+            </div>
+
+            <div class="kpi-card glass">
+                <h3>32</h3>
+                <p>New Customers</p>
+            </div>
+
+            <div class="kpi-card glass">
+                <h3>12</h3>
+                <p>Pending Follow-ups</p>
+            </div>
+
+            <div class="kpi-card glass">
+                <h3>89%</h3>
+                <p>AI Reply Rate</p>
+            </div>
+
+        </div>
+
+        <!-- SALES CHART -->
+        <div class="chart-card glass">
+            <h3>Sales Overview</h3>
+            <canvas id="salesChart"></canvas>
+        </div>
+
+        <!-- RECENT CONVERSATIONS -->
+        <div class="conversation-card glass">
+            <h3>Recent Conversations</h3>
+
+            <div class="conversation">
+                <div>
+                    <strong>Sarah Wigs</strong>
+                    <p>“I want to pay tomorrow…”</p>
+                </div>
+                <span class="tag pending">Pending</span>
+            </div>
+
+            <div class="conversation">
+                <div>
+                    <strong>John Sneakers</strong>
+                    <p>“Is size 42 available?”</p>
+                </div>
+                <span class="tag closed">Closed</span>
+            </div>
+
+        </div>
+
+    </main>
+
+</div>

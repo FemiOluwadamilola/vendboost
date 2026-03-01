@@ -10,5 +10,24 @@
 <body>
 	<%-body%>
 	<script type="text/javascript" src="js/script.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('salesChart');
+
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        datasets: [{
+            label: 'Sales',
+            data: [12000,19000,15000,22000,30000,25000,40000],
+            borderColor: '#6366f1',
+            backgroundColor: 'rgba(99,102,241,0.2)',
+            tension: 0.4,
+            fill: true
+        }]
+    }
+});
+</script>
 </body>
 </html>
