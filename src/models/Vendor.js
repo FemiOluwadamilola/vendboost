@@ -12,6 +12,7 @@ const VendorSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+  businessName: String,
   whatsappId: String, // QR session identifier
   followUpTimes: { type: [Number], default: [6, 24, 72] }, // hours
 });

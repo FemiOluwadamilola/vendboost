@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Connect WhatsApp - VendBoost</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      width: 400px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    .status {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+
+    .success {
+      color: green;
+    }
+
+    .error {
+      color: red;
+    }
+
+    .loading {
+      color: #555;
+    }
+
+    .spinner {
+      margin: 20px auto;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #ccc;
+      border-top: 4px solid #25D366;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .btn {
+      margin-top: 20px;
+      padding: 10px 15px;
+      border: none;
+      background: #25D366;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: #1da851;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Connect WhatsApp</h2>
+    <p>Vendor ID: <%= vendorId %></p>
+
+    <% if (status === "initializing") { %>
+      <div class="spinner"></div>
+      <p class="status loading">Initializing WhatsApp session...</p>
+      <p>Waiting for QR code...</p>
+
+    <% } else if (status === "already_connected") { %>
+      <p class="status success">✅ WhatsApp already connected</p>
+      <a href="/dashboard">
+        <button class="btn">Go to Dashboard</button>
+      </a>
+
+    <% } else if (status === "error") { %>
+      <p class="status error">❌ Failed to connect WhatsApp</p>
+      <a href="/connect-whatsapp">
+        <button class="btn">Try Again</button>
+      </a>
+
+    <% } %>
+
+  </div>
+<script>
+  const vendorId = "<%= vendorId %>";
+
+  setInterval(async () => {
+    try {
+      const res = await fetch(`/whatsapp/status/${vendorId}`);
+      const data = await res.json();
+
+      if (data.status === "connected") {
+        window.location.href = "/dashboard";
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, 3000);
+</script>
+</body>
+</html>

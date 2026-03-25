@@ -9,12 +9,20 @@ const indexRoute = require('./src/routers/index');
 const authRoute = require("./src/routers/authRouter");
 const vendorRoute = require("./src/routers/vendorRouter");
 // const { runFollowUpScheduler } = require("./cron/followUpScheduler");
+const sessionMiddleware = require("./src/config/session");
 require("dotenv").config({ quiet: true });
 
 const app = express();
 DBConnection();
 
-// app.use(cors("*"));
+app.use(sessionMiddleware);
+
+app.use((req, res, next) => {
+  res.locals.user = req.session.userId || null;
+  next();
+});
+
+app.set("trust proxy", 1);
 
 // ejs setup middleware
 app.use(expressLayouts);
@@ -34,11 +42,13 @@ app.use(express.json());
 //   runFollowUpScheduler();
 // });
 
+
+
 // Routes placeholder
 app.use('/', indexRoute);
 app.use("/auth", authRoute);
 app.use("/vendor", vendorRoute);
 
 // Start server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5100;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

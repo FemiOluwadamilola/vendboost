@@ -3,7 +3,17 @@
 <div class="auth-container glass">
     <h2>Create Your Vendor Account</h2>
 
-    <form action="/api/auth/signup" method="POST" class="auth-form">
+    <form action="/auth/signup" method="POST" class="auth-form">
+     <div class="form-group">
+            <label>Username</label>
+            <input type="text" name="name" required>
+        </div>
+
+         <div class="form-group">
+            <label>Business Type</label>
+            <input type="text" name="business_type" required>
+        </div>
+
         <div class="form-group">
             <label>Email</label>
             <input type="email" name="email" required>
