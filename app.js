@@ -8,8 +8,10 @@ const DBConnection = require('./src/config/DBconfig');
 const indexRoute = require('./src/routers/index');
 const authRoute = require("./src/routers/authRouter");
 const vendorRoute = require("./src/routers/vendorRouter");
+// const whatsappRoute = require("./src/routers/whatsappRouter");
 // const { runFollowUpScheduler } = require("./cron/followUpScheduler");
 const sessionMiddleware = require("./src/config/session");
+const { recoverSessions } = require("./src/whatsapp/session");
 require("dotenv").config({ quiet: true });
 
 const app = express();
@@ -35,6 +37,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "./public")));
 app.use(express.json());
 
+// Recover WhatsApp sessions on server start
+(async () => {
+  await recoverSessions();
+})();
+
 
 // Every 5 minutes
 // cron.schedule("*/5 * * * *", () => {
@@ -48,6 +55,7 @@ app.use(express.json());
 app.use('/', indexRoute);
 app.use("/auth", authRoute);
 app.use("/vendor", vendorRoute);
+// app.use("/whatsapp", whatsappRoute);
 
 // Start server
 const PORT = process.env.PORT || 5100;

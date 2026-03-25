@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Connect WhatsApp - VendBoost</title>
+  <title><%= title %> - VendBoost</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -33,17 +33,9 @@
       font-size: 16px;
     }
 
-    .success {
-      color: green;
-    }
-
-    .error {
-      color: red;
-    }
-
-    .loading {
-      color: #555;
-    }
+    .success { color: green; }
+    .error { color: red; }
+    .loading { color: #555; }
 
     .spinner {
       margin: 20px auto;
@@ -55,9 +47,7 @@
       animation: spin 1s linear infinite;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     .btn {
       margin-top: 20px;
@@ -69,9 +59,9 @@
       cursor: pointer;
     }
 
-    .btn:hover {
-      background: #1da851;
-    }
+    .btn:hover { background: #1da851; }
+
+    img.qr { margin-top: 15px; width: 200px; }
   </style>
 </head>
 <body>
@@ -80,41 +70,78 @@
     <h2>Connect WhatsApp</h2>
     <p>Vendor ID: <%= vendorId %></p>
 
-    <% if (status === "initializing") { %>
-      <div class="spinner"></div>
-      <p class="status loading">Initializing WhatsApp session...</p>
-      <p>Waiting for QR code...</p>
-
-    <% } else if (status === "already_connected") { %>
-      <p class="status success">✅ WhatsApp already connected</p>
-      <a href="/dashboard">
-        <button class="btn">Go to Dashboard</button>
-      </a>
-
-    <% } else if (status === "error") { %>
-      <p class="status error">❌ Failed to connect WhatsApp</p>
-      <a href="/connect-whatsapp">
-        <button class="btn">Try Again</button>
-      </a>
-
-    <% } %>
+    <div id="status-container">
+      <!-- Status & QR will appear here -->
+    </div>
 
   </div>
+
 <script>
   const vendorId = "<%= vendorId %>";
 
-  setInterval(async () => {
+  async function fetchStatus() {
     try {
-      const res = await fetch(`/whatsapp/status/${vendorId}`);
+      const res = await fetch(`/vendor/whatsapp-status`, {
+        credentials: 'include'
+      });
       const data = await res.json();
 
+      const container = document.getElementById("status-container");
+
+      // 🔹 CONNECTED → redirect
       if (data.status === "connected") {
-        window.location.href = "/dashboard";
+        container.innerHTML = `<p class="status success">✅ WhatsApp connected! Redirecting...</p>`;
+        setTimeout(() => { window.location.href = "/dashboard"; }, 1000);
+        return;
       }
+
+      // 🔹 SHOW QR
+      if (data.status === "qr" && data.qr) {
+        container.innerHTML = `
+          <p class="status">📱 Scan this QR Code with WhatsApp</p>
+          <img src="${data.qr}" class="qr" />
+        `;
+        return;
+      }
+
+      // 🔹 INITIALIZING
+      if (data.status === "initializing") {
+        container.innerHTML = `
+          <div class="spinner"></div>
+          <p class="status loading">Initializing WhatsApp session...</p>
+        `;
+        return;
+      }
+
+      // 🔹 ERROR / AUTH FAILURE
+      if (data.status === "error" || data.status === "auth_failed") {
+        container.innerHTML = `
+          <p class="status error">❌ Connection failed. Please try again.</p>
+          <button class="btn" onclick="window.location.reload()">Retry</button>
+        `;
+        return;
+      }
+
+      // 🔹 DISCONNECTED / NOT INITIALIZED
+      if (data.status === "disconnected" || data.status === "not_initialized") {
+        container.innerHTML = `
+          <p class="status">⚠️ WhatsApp session not connected.</p>
+          <button class="btn" onclick="window.location.reload()">Reconnect</button>
+        `;
+        return;
+      }
+
     } catch (err) {
-      console.error(err);
+      console.error("Fetch status error:", err);
     }
-  }, 3000);
+  }
+
+  // Poll every 2 seconds
+  setInterval(fetchStatus, 2000);
+
+  // Initial fetch
+  fetchStatus();
 </script>
+
 </body>
 </html>
