@@ -14,7 +14,12 @@ const VendorSchema = new mongoose.Schema({
     },
   businessName: String,
   whatsappId: String, // QR session identifier
-  followUpTimes: { type: [Number], default: [6, 24, 72] }, // hours
+  followUpTimes: { type: [Number], default: [6, 24, 72] },
+  accountDetails: {
+    bankName: String,
+    accountNumber: String,
+    accountName: String
+  }
 });
 
 module.exports = mongoose.model("Vendor", VendorSchema);

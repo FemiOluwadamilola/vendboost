@@ -36,9 +36,7 @@ router.post('/signup', async (req, res) => {
     });
 
     await newVendor.save();
-    res.status(201).json({
-      message: 'Vendor registered successfully',
-    });
+    return res.redirect('/signin');
   } catch (err) {
     console.error(err);
     res.status(500).json({

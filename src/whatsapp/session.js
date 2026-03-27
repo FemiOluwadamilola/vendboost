@@ -1,6 +1,8 @@
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const QRCode = require("qrcode");
 const WhatsAppSession = require("../models/WhatsappSession");
+const Template = require("../models/Template");
+const getDefaultTemplate = require("../utils/defaultTemplate");
 const messageHandler = require("./messageHandler");
 
 const clients = {}; // in-memory store for active clients
@@ -54,11 +56,32 @@ async function createSession(vendorId) {
   // 🔹 READY
   client.on("ready", async () => {
     console.log(`WhatsApp client ready for ${vendorId}`);
-
     await WhatsAppSession.findOneAndUpdate(
       { vendorId },
       { status: "connected", qr: null, lastSeen: new Date() }
     );
+
+    // create default templates if not exist
+     try {
+      if (!vendorId) return;
+
+    // Check if template already exists
+    const existingTemplate = await Template.findOne({ vendor: vendorId });
+
+    if (!existingTemplate) {
+      await Template.create({
+        vendor: vendorId,
+        templates: getDefaultTemplate({ vendorBusinessName: vendorId.businessName })
+      });
+
+      console.log("✅ Default templates created");
+    } else {
+      console.log("⚡ Template already exists");
+    }
+
+  } catch (err) {
+    console.error("Template init error:", err.message);
+  }
   });
 
   // 🔹 MESSAGE HANDLER
