@@ -27,10 +27,4 @@ router.get("/signin", (req, res) => {
   });
 });
 
-router.get("/dashboard", (req, res) => {
-  res.render("dashboard", {
-    title: "Dashboard – VendBoost",
-  });
-});
-
 module.exports = router;

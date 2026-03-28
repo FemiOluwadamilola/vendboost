@@ -1,4 +1,4 @@
-function renderTemplate(template, data = {}) {
+function renderMessageTemplate(template, data = {}) {
   let output = template;
 
   for (const key in data) {
@@ -9,4 +9,4 @@ function renderTemplate(template, data = {}) {
   return output;
 }
 
-module.exports = renderTemplate;
+module.exports = renderMessageTemplate;

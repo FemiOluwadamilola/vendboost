@@ -2,134 +2,123 @@ const Lead = require("../models/Lead");
 const Vendor = require("../models/Vendor");
 const Product = require("../models/Product");
 const Template = require("../models/Template");
-const renderTemplate = require("../utils/templateRenderer");
+const renderMessageTemplate = require("../utils/messageTemplateRenderer");
 
 const intentDetector = require("../utils/intentDetector");
 const paymentDetector = require("../utils/paymentDetector");
 
+// ============================
+// 1️⃣ Define business intents
+// ============================
+const BUSINESS_INTENTS = ["price", "negotiation", "ready-to-pay", "order", "inquiry"];
+
+function isBusinessIntent(intent) {
+  return BUSINESS_INTENTS.includes(intent);
+}
+
+function getLeadScore(intent) {
+  switch(intent) {
+    case "ready-to-pay": return 100;
+    case "negotiation": return 80;
+    case "price": return 60;
+    case "inquiry": return 40;
+    default: return 0;
+  }
+}
+
+// ============================
+// 2️⃣ Handle incoming message
+// ============================
 async function handleIncomingMessage(vendorId, client, msg) {
   const vendor = await Vendor.findById(vendorId);
   const templateData = await Template.findOne({ vendor: vendorId });
-
   if (!vendor) return;
 
   const customerNumber = msg.from.replace("@c.us", "");
   const customerName = msg._data.notifyName || "Customer";
-  const text = msg.body ? msg.body.trim().toLowerCase() : "";
-
-  // let contextInfo = "";
-
-  //  if (msg.hasQuotedMsg) {
-  //   try {
-  //     const quoted = await msg.getQuotedMessage();
-  //     contextInfo = ` (quoting: "${quoted.body.substring(0, 30)}...")`;
-  //   } catch (err) {
-  //     console.error("Quoted message error:", err.message);
-  //   }
-  // }
+  const text = msg.body?.trim() || "";
 
   const intent = intentDetector(text);
   const isPayment = paymentDetector(text);
 
-  /* =========================
-     1. DETECT STATUS REPLY
-  ========================= */
+  // ============================
+  // 3️⃣ Status reply detection
+  // ============================
   let isStatusReply = false;
   let matchedProduct = null;
 
   if (msg.hasQuotedMsg) {
     try {
       const quoted = await msg.getQuotedMessage();
-
       if (quoted.from === "status@broadcast") {
         isStatusReply = true;
-
-        // Try to match product from status caption
         const caption = quoted.body || "";
-
         matchedProduct = await Product.findOne({
           vendor: vendorId,
           name: { $regex: caption, $options: "i" },
         });
-
-       const checkIntent = intentDetector(caption);
-        if (checkIntent === "price" && matchedProduct) {
-          await client.sendMessage(msg.from, renderTemplate(templateData.templates.price, {
-            productName: matchedProduct.name,
-            productPrice: matchedProduct.price
-          }));
-
-          return;
-        }
-
-        if (checkIntent === "negotiation" && matchedProduct) {
-
-          // simple smart discount (optional logic)
-          const discountPrice = Math.round(matchedProduct.price * matchedProduct.discount);
-
-          await client.sendMessage(msg.from, renderTemplate(templateData.templates.negotiation, {
-            discountPrice
-          }));
-
-          return;
-        }
-        console.log("🔥 Status reply detected");
       }
-
     } catch (err) {
-      console.error("Status detection error:", err.message);
+      console.error("Quoted message error:", err.message);
     }
   }
 
+  // ============================
+  // 4️⃣ Product extraction for normal chat
+  // ============================
+  if (!matchedProduct) {
+    matchedProduct = await Product.findOne({
+      vendor: vendorId,
+      name: { $regex: text, $options: "i" },
+    });
+  }
 
+  // ============================
+  // 5️⃣ Skip non-business messages
+  // ============================
+  if (!isBusinessIntent(intent) && !isStatusReply) {
+    console.log("❌ Ignored casual chat:", text);
+    return;
+  }
 
-
-if (intent === "ready-to-pay") {
-  const accountDetails = vendor.bankDetails || "Please contact us for payment details.";
-
-  await client.sendMessage(msg.from, `
+  // ============================
+  // 6️⃣ Auto-reply for ready-to-pay
+  // ============================
+  if (intent === "ready-to-pay") {
+    const accountDetails = vendor.bankDetails || "Please contact us for payment details.";
+    await client.sendMessage(msg.from, `
 Great choice 🙌
-
 You can make payment using:
 ${accountDetails}
-
 Send your delivery details after payment ✅
-  `);
+    `);
+    return;
+  }
 
-  return; // STOP further processing
-}
+  // ============================
+  // 7️⃣ Price & negotiation replies
+  // ============================
+  if (intent === "price" && matchedProduct) {
+    await client.sendMessage(msg.from, renderMessageTemplate(templateData.templates.price, {
+      productName: matchedProduct.name,
+      productPrice: matchedProduct.price
+    }));
+  } else if (intent === "price") {
+    await client.sendMessage(msg.from, "Which product are you asking about? 😊");
+  }
 
-if (intent === "price" && matchedProduct) {
-  await client.sendMessage(msg.from, renderTemplate(templateData.templates.price, {
-            productName: matchedProduct.name,
-            productPrice: matchedProduct.price
-          }));
-  return;
-}
+  if (intent === "negotiation" && matchedProduct) {
+    const discountPrice = Math.round(matchedProduct.price * matchedProduct.discount);
+    await client.sendMessage(msg.from, renderMessageTemplate(templateData.templates.negotiation, {
+      discountPrice
+    }));
+  }
 
-if (intent === "price" && !matchedProduct) {
-  await client.sendMessage(msg.from, 
-    "Which product are you asking about? 😊"
-  );
-  return;
-}
-
-if (intent === "negotiation" && matchedProduct) {
-
-  // simple smart discount (optional logic)
-  const discountPrice = Math.round(matchedProduct.price * matchedProduct.discount);
-
-  await client.sendMessage(msg.from, renderTemplate(templateData.templates.negotiation, {
-    discountPrice
-  }));
-
-  return;
-}
-
-  /* =========================
-     3. FIND / CREATE LEAD
-  ========================= */
+  // ============================
+  // 8️⃣ Create or update lead
+  // ============================
   let lead = await Lead.findOne({ vendor: vendorId, customerNumber });
+  const newScore = getLeadScore(intent);
 
   if (!lead) {
     lead = new Lead({
@@ -140,59 +129,57 @@ if (intent === "negotiation" && matchedProduct) {
       intentType: intent,
       source: isStatusReply ? "status" : "chat",
       product: matchedProduct?._id || null,
+      score: newScore,
+      followUpsSent: 0
     });
-
     await lead.save();
-
   } else {
-    lead.lastMessage = text;
-    lead.intentType = intent;
-    lead.status = "responded";
-    lead.followUpsSent = 0;
+    // Only update if new score >= existing
+    if (newScore >= getLeadScore(lead.intentType)) {
+      lead.intentType = intent;
+      lead.score = newScore;
+    }
 
-    // Update source if status
+    lead.lastMessage = text;
+    lead.status = "responded";
+
     if (isStatusReply) {
       lead.source = "status";
-      if (matchedProduct) {
-        lead.product = matchedProduct._id;
-      }
+      if (matchedProduct) lead.product = matchedProduct._id;
     }
 
     await lead.save();
   }
 
-  /* =========================
-     4. REAL-TIME DASHBOARD PUSH
-  ========================= */
+  // ============================
+  // 9️⃣ Push to real-time dashboard
+  // ============================
   if (global.io) {
     global.io.to(vendorId.toString()).emit("new-lead", {
       phone: customerNumber,
       message: text,
       source: isStatusReply ? "status" : "chat",
       product: matchedProduct?.name || null,
+      intent: intent,
+      score: newScore
     });
   }
 
-  /* =========================
-     5. OPTIONAL AUTO-REPLY (SMART)
-  ========================= */
+  // ============================
+  // 🔁 Optional auto-reply for status
+  // ============================
   if (isStatusReply && matchedProduct) {
     const reply = `Hi 👋 ${customerName},
-
 Yes, ${matchedProduct.name} is available for ₦${matchedProduct.price}.
-
 Would you like to place an order?`;
-
     await client.sendMessage(msg.from, reply);
   }
 
-  /* =========================
-     6. LOGGING
-  ========================= */
+  // ============================
+  // 10️⃣ Logging
+  // ============================
   console.log(
-    `Message from ${customerNumber} | intent: ${intent} ${
-      isPayment ? "💰 payment" : ""
-    } ${isStatusReply ? "🔥 STATUS LEAD" : ""}`
+    `Message from ${customerNumber} | intent: ${intent} ${isPayment ? "💰 payment" : ""} ${isStatusReply ? "🔥 STATUS LEAD" : ""}`
   );
 }
 

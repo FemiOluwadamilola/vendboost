@@ -1,87 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>VendBoost Smart Brain Dashboard</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body class="dark">
+
 <div class="dashboard">
+  
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">VendBoost</div>
+    <ul class="menu">
+      <li class="active">Dashboard</li>
+      <li>Leads</li>
+      <li>Products</li>
+      <li>Settings</li>
+      <li class="logout">Logout</li>
+    </ul>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar glass">
-        <div class="logo">VendBoost</div>
+    <!-- WhatsApp Connect Button -->
+    <button id="connect-whatsapp" class="btn-primary-lg" style="margin-top:2rem;">
+      Connect WhatsApp
+    </button>
+  </aside>
 
-        <ul class="menu">
-            <li class="active">📊 Overview</li>
-            <li>💬 Conversations</li>
-            <li>🔁 Follow-ups</li>
-            <li>🛒 Orders</li>
-            <li>👥 Customers</li>
-            <li>📈 Analytics</li>
-            <li>⚙ Settings</li>
-            <li class="logout">🚪 Logout</li>
-        </ul>
-    </aside>
+  <!-- Main Content -->
+ <main class="main-content" style="flex:1; padding:2rem; overflow-y:auto;">
 
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <h3 id="total-leads"><%= leads.length %></h3>
+      <p>Total Leads</p>
+    </div>
+    <div class="kpi-card">
+      <h3 id="hot-leads">0</h3>
+      <p>Hot Leads</p>
+    </div>
+    <div class="kpi-card">
+      <h3 id="status-ready">0</h3>
+      <p>Ready to Pay</p>
+    </div>
+    <div class="kpi-card">
+      <h3 id="status-negotiation">0</h3>
+      <p>Negotiation</p>
+    </div>
+  </div>
 
-        <!-- TOPBAR -->
-        <div class="topbar glass">
-            <input type="text" placeholder="Search customers...">
-            <div class="top-actions">
-                <span class="status connected">🟢 WhatsApp Connected</span>
-                <span class="notification">🔔</span>
-                <div class="avatar">OF</div>
+  <!-- Filters -->
+  <div class="conversation-card" style="margin-bottom:1.5rem;">
+    <h3>Filters</h3>
+    <select id="filter-intent">
+      <option value="all">All Intents</option>
+      <option value="ready-to-pay">Ready to Pay</option>
+      <option value="negotiation">Negotiation</option>
+      <option value="price">Price Inquiry</option>
+    </select>
+    <select id="filter-source">
+      <option value="all">All Sources</option>
+      <option value="chat">Chat</option>
+      <option value="status">Status</option>
+    </select>
+  </div>
+
+  <!-- Lead Feed -->
+  <div class="conversation-card">
+    <h3>Real-Time Leads</h3>
+    <div id="leads-container">
+      <% leads.forEach(lead => { %>
+        <div class="conversation" data-intent="<%= lead.intentType %>" data-source="<%= lead.source %>" data-score="<%= lead.score || 0 %>">
+          <div>
+            <strong><%= lead.customerName %></strong> (<%= lead.customerNumber %>)<br>
+            <small>Product: <%= lead.product ? lead.product.name : "N/A" %></small>
+            <div class="lead-score" style="margin-top:5px;">
+              Score: <span><%= lead.score || 0 %></span>/100
             </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
+            <span class="tag <%= lead.intentType === 'ready-to-pay' ? 'closed' : 'pending' %>">
+              <%= lead.intentType %>
+            </span>
+            <button class="btn-primary btn-follow-up" data-lead-id="<%= lead._id %>">Follow Up</button>
+          </div>
         </div>
+      <% }) %>
+    </div>
+  </div>
 
-        <!-- KPI CARDS -->
-        <div class="kpi-grid">
+  <!-- Optional Graph Section -->
+  <div class="conversation-card" style="margin-top:2rem;">
+    <h3>Lead Status Overview</h3>
+    <canvas id="lead-chart" height="150"></canvas>
+  </div>
 
-            <div class="kpi-card glass">
-                <h3>₦245,000</h3>
-                <p>Total Sales</p>
-            </div>
+</main>
 
-            <div class="kpi-card glass">
-                <h3>32</h3>
-                <p>New Customers</p>
-            </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const socket = io();
+  socket.emit("joinRoom", "<%= vendorId %>");
 
-            <div class="kpi-card glass">
-                <h3>12</h3>
-                <p>Pending Follow-ups</p>
-            </div>
+  // WhatsApp Connect Button
+  document.getElementById("connect-whatsapp").addEventListener("click", async () => {
+    window.location.href = '/vendor/connect-whatsapp';
+  });
 
-            <div class="kpi-card glass">
-                <h3>89%</h3>
-                <p>AI Reply Rate</p>
-            </div>
+  // Update KPIs & Scores
+  function updateKPIs() {
+    const conversations = document.querySelectorAll("#leads-container .conversation");
+    document.getElementById("total-leads").textContent = conversations.length;
 
-        </div>
+    let ready = 0, negotiation = 0;
+    let hot = 0;
 
-        <!-- SALES CHART -->
-        <div class="chart-card glass">
-            <h3>Sales Overview</h3>
-            <canvas id="salesChart"></canvas>
-        </div>
+    conversations.forEach(conv => {
+      const intent = conv.dataset.intent;
+      const score = parseInt(conv.dataset.score || 0);
+      if (intent === "ready-to-pay") ready++;
+      if (intent === "negotiation") negotiation++;
+      if (score >= 70) hot++;
+    });
 
-        <!-- RECENT CONVERSATIONS -->
-        <div class="conversation-card glass">
-            <h3>Recent Conversations</h3>
+    document.getElementById("status-ready").textContent = ready;
+    document.getElementById("status-negotiation").textContent = negotiation;
+    document.getElementById("hot-leads").textContent = hot;
+  }
 
-            <div class="conversation">
-                <div>
-                    <strong>Sarah Wigs</strong>
-                    <p>“I want to pay tomorrow…”</p>
-                </div>
-                <span class="tag pending">Pending</span>
-            </div>
+  // Filter Leads
+  function filterLeads() {
+    const intentFilter = document.getElementById("filter-intent").value;
+    const sourceFilter = document.getElementById("filter-source").value;
 
-            <div class="conversation">
-                <div>
-                    <strong>John Sneakers</strong>
-                    <p>“Is size 42 available?”</p>
-                </div>
-                <span class="tag closed">Closed</span>
-            </div>
+    const conversations = document.querySelectorAll("#leads-container .conversation");
+    conversations.forEach(conv => {
+      const intent = conv.dataset.intent;
+      const source = conv.dataset.source;
 
-        </div>
+      const showIntent = intentFilter === "all" || intentFilter === intent;
+      const showSource = sourceFilter === "all" || sourceFilter === source;
 
-    </main>
+      conv.style.display = showIntent && showSource ? "flex" : "none";
+    });
+  }
 
-</div>
+  document.getElementById("filter-intent").addEventListener("change", filterLeads);
+  document.getElementById("filter-source").addEventListener("change", filterLeads);
+
+  // Follow-Up Buttons
+  document.querySelectorAll(".btn-follow-up").forEach(btn => {
+    btn.addEventListener("click", async e => {
+      const leadId = e.target.dataset.leadId;
+      const res = await fetch(`/vendor/follow-up/${leadId}`, { method: "POST", credentials: 'include' });
+      const data = await res.json();
+      alert(`Follow-up sent to lead: ${data.customerName}`);
+    });
+  });
+
+  // Real-time Socket.IO
+  socket.on("new-lead", lead => {
+    const container = document.getElementById("leads-container");
+
+    const card = document.createElement("div");
+    card.classList.add("conversation");
+    card.dataset.intent = lead.intent;
+    card.dataset.source = lead.source;
+    card.dataset.score = lead.score || 0;
+
+    card.innerHTML = `
+      <div>
+        <strong>${lead.customerName || lead.phone}</strong> (${lead.phone})<br>
+        <small>Product: ${lead.product || "N/A"}</small>
+        <div class="lead-score" style="margin-top:5px;">Score: <span>${lead.score || 0}</span>/100</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;">
+        <span class="tag ${lead.intent === 'ready-to-pay' ? 'closed' : 'pending'}">${lead.intent}</span>
+        <button class="btn-primary btn-follow-up" data-lead-id="${lead._id}">Follow Up</button>
+      </div>
+    `;
+    container.prepend(card);
+    updateKPIs();
+    filterLeads();
+
+    // Add event listener to new follow-up button
+    card.querySelector(".btn-follow-up").addEventListener("click", async e => {
+      const res = await fetch(`/vendor/follow-up/${lead._id}`, { method: "POST", credentials: 'include' });
+      const data = await res.json();
+      alert(`Follow-up sent to lead: ${data.customerName}`);
+    });
+  });
+
+  updateKPIs();
+
+  // Chart.js for Lead Status Overview
+  const ctx = document.getElementById('lead-chart').getContext('2d');
+  const chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Ready to Pay', 'Negotiation', 'Hot Leads'],
+      datasets: [{
+        label: 'Leads',
+        data: [
+          document.getElementById("status-ready").textContent,
+          document.getElementById("status-negotiation").textContent,
+          document.getElementById("hot-leads").textContent
+        ],
+        backgroundColor: ['#22c55e', '#f59e0b', '#2563eb']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, precision:0 } }
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -8,6 +8,7 @@ const DBConnection = require('./src/config/DBconfig');
 const indexRoute = require('./src/routers/index');
 const authRoute = require("./src/routers/authRouter");
 const vendorRoute = require("./src/routers/vendorRouter");
+const dashboardRoute = require("./src/routers/dashboard");
 // const whatsappRoute = require("./src/routers/whatsappRouter");
 // const { runFollowUpScheduler } = require("./cron/followUpScheduler");
 const sessionMiddleware = require("./src/config/session");
@@ -55,6 +56,7 @@ app.use(express.json());
 app.use('/', indexRoute);
 app.use("/auth", authRoute);
 app.use("/vendor", vendorRoute);
+app.use("/dashboard", dashboardRoute);
 // app.use("/whatsapp", whatsappRoute);
 
 // Start server
