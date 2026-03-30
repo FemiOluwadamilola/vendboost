@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>index TemplateMo - Free HTML CSS Website Templates</title>
+    <meta name="description" content="TemplateMo provides 600+ free HTML CSS website templates for everyone since 2008.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="templatemo-glass-admin-style.css">
+    <style>
+        /* index Page Specific Styles */
+        .index-page {
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .index-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .index-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .index-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--emerald), var(--gold));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .index-nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .index-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 30px;
+        }
+
+        /* Hero Section */
+        .index-hero {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .index-hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--emerald-light), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .index-hero p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* Stats Grid */
+        .index-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .index-stat {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all var(--transition-normal);
+        }
+
+        .index-stat:hover {
+            background: var(--glass-hover);
+            transform: translateY(-5px);
+        }
+
+        .index-stat-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--emerald-light);
+            margin-bottom: 8px;
+        }
+
+        .index-stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Features Grid */
+        .section-title {
+            font-size: 32px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--text-primary);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .feature-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all var(--transition-normal);
+        }
+
+        .feature-card:hover {
+            background: var(--glass-hover);
+            transform: translateY(-5px);
+            border-color: var(--emerald-light);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.2), rgba(212, 165, 116, 0.1));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .feature-icon svg {
+            width: 28px;
+            height: 28px;
+            color: var(--emerald-light);
+        }
+
+        .feature-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+       /* Pricing Grid */
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 60px;
+}
+
+/* Pricing Card */
+.pricing-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center;
+    transition: all var(--transition-normal);
+    position: relative;
+}
+
+.pricing-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--emerald-light);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+/* Featured Plan */
+.pricing-card.featured {
+    border: 2px solid var(--emerald-light);
+    transform: scale(1.05);
+}
+
+.badge {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: var(--emerald);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+/* Price */
+.price {
+    font-size: 36px;
+    font-weight: 700;
+    margin: 20px 0;
+    color: var(--emerald-light);
+}
+
+.price span {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+/* Features */
+.features {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.features li {
+    padding: 8px 0;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+
+/* Responsive */
+@media (max-width: 992px) {
+    .pricing-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .pricing-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pricing-card.featured {
+        transform: none;
+    }
+}
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.15), rgba(212, 165, 116, 0.15));
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .cta-section h2 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+
+        .cta-section p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-buttons .btn {
+            padding: 14px 28px;
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--glass-hover);
+            border-color: var(--emerald-light);
+        }
+
+        /* index Footer */
+        .index-footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+            font-size: 14px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .index-footer a {
+            color: var(--emerald-light);
+        }
+
+        .index-footer a:hover {
+            color: var(--gold);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .index-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .templates-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .index-hero h1 {
+                font-size: 36px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .index-header {
+                padding: 15px 20px;
+            }
+            .index-container {
+                padding: 40px 20px;
+            }
+            .index-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .templates-grid {
+                grid-template-columns: 1fr;
+            }
+            .index-hero h1 {
+                font-size: 28px;
+            }
+            .index-hero p {
+                font-size: 16px;
+            }
+            .cta-section {
+                padding: 30px 20px;
+            }
+            .cta-buttons {
+                flex-direction: column;
+            }
+            .cta-buttons .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .index-stats {
+                grid-template-columns: 1fr;
+            }
+            .index-stat-value {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="background"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+   <%-body%>
+
+    <script src="templatemo-glass-admin-script.js"></script>
+</body>
+</html>

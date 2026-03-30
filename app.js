@@ -7,7 +7,6 @@ const DBConnection = require('./src/config/DBconfig');
 // const mongoose = require("mongoose");
 const indexRoute = require('./src/routers/index');
 const authRoute = require("./src/routers/authRouter");
-const vendorRoute = require("./src/routers/vendorRouter");
 const dashboardRoute = require("./src/routers/dashboard");
 // const whatsappRoute = require("./src/routers/whatsappRouter");
 // const { runFollowUpScheduler } = require("./cron/followUpScheduler");
@@ -29,8 +28,7 @@ app.set("trust proxy", 1);
 
 // ejs setup middleware
 app.use(expressLayouts);
-// app.set("layout", "./layouts/layout");
-app.set('layout');
+app.set("layout", "./layouts/layout");
 app.set("view engine", "ejs");
 
 // express connection middlewares
@@ -55,7 +53,6 @@ app.use(express.json());
 // Routes placeholder
 app.use('/', indexRoute);
 app.use("/auth", authRoute);
-app.use("/vendor", vendorRoute);
 app.use("/dashboard", dashboardRoute);
 // app.use("/whatsapp", whatsappRoute);
 

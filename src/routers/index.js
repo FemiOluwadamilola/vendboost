@@ -15,14 +15,14 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/signup", (req, res) => {
-  res.render("signup", {
+  res.render("./dashboard/register", {
     title: "Create Account – VendBoost",
   });
 });
 
 // Optional: disable POST signups until launch
 router.get("/signin", (req, res) => {
-  res.render("signin", {
+  res.render("./dashboard/login", {
     title: "Sign In – VendBoost",
   });
 });
