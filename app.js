@@ -3,13 +3,14 @@ const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
 const path = require('path');
 const DBConnection = require('./src/config/DBconfig');
-// const cron = require("node-cron");
+const cron = require("node-cron");
 // const mongoose = require("mongoose");
 const indexRoute = require('./src/routers/index');
 const authRoute = require("./src/routers/authRouter");
-const dashboardRoute = require("./src/routers/dashboard");
+const dashboardRoute = require("./src/routers/dashboardRouter");
+const productRoute = require("./src/routers/productRouter");
 // const whatsappRoute = require("./src/routers/whatsappRouter");
-// const { runFollowUpScheduler } = require("./cron/followUpScheduler");
+const { runFollowUpScheduler } = require("./src/crons/followUpScheduler");
 const sessionMiddleware = require("./src/config/session");
 const { recoverSessions } = require("./src/whatsapp/session");
 require("dotenv").config({ quiet: true });
@@ -43,10 +44,10 @@ app.use(express.json());
 
 
 // Every 5 minutes
-// cron.schedule("*/5 * * * *", () => {
-//   console.log("Running follow-up scheduler...");
-//   runFollowUpScheduler();
-// });
+cron.schedule("*/5 * * * *", () => {
+  console.log("Running follow-up scheduler...");
+  runFollowUpScheduler();
+});
 
 
 
@@ -54,6 +55,7 @@ app.use(express.json());
 app.use('/', indexRoute);
 app.use("/auth", authRoute);
 app.use("/dashboard", dashboardRoute);
+app.use('/products', productRoute);
 // app.use("/whatsapp", whatsappRoute);
 
 // Start server
