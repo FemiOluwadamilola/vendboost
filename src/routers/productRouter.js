@@ -1,42 +1,69 @@
 const express = require('express');
 const router = express.Router();
 const { MessageMedia } = require('whatsapp-web.js');
+const multer = require('multer');
 const verifyAuth = require('../middlewares/verifyAuth');
 const Product = require('../models/Product');
 const Vendor = require('../models/Vendor');
 const Lead = require('../models/Lead');
-const WhatsAppSession = require("../models/WhatsappSession");
+// const WhatsAppSession = require("../models/WhatsappSession");
 const { createSession, getSession } = require('../whatsapp/session');
 
 
 // Create a product route
 router.post('/', verifyAuth.requireAuth, async (req, res) => {
   const vendorId = req.user.id;
-
+  const vendor = Vendor.findOne({_id:vendorId});
   try {
-    const { name, price, description, discount } = req.body;
+    const storage = multer.diskStorage({
+      destination:`./vendor-product-imgs/${vendor.businessName}`,
+      filename:(req,file,cb) => {
+        cb(
+          null,
+          file.fieldname + "_" + Date.now() + path.extname(file.originalname)
+        );
+      },
+    })
 
-    if (!name || !price) {
-      return res.status(400).json({
-        message: "Product name and price are required"
-      });
-    }
+    const product = multer({
+       storage,
+       fileFilter: (req,file,cb) => {
+         const extname = path.extname(file.originalname);
+         if (extname !== ".jpg") {
+            res
+              .status(403)
+              .json({ error_msg: "Only .jpg or .png files allowed..." });
+          } else {
+            cb(null, true);
+          }
+       }
+    }).single('image');
 
-    const product = new Product({
-      vendor: vendorId,
-      name,
-      price,
-      description,
-      discount: discount || 1
-    });
-
-    await product.save();
-
-    res.status(201).json({
-      message: "Product created successfully",
-      product
-    });
-
+    product(req,res, async () => {
+      if(err){
+        console.error(err.message);
+      }else{
+        const { name, price, description, discount } = req.body;
+        if (!name || !price) {
+          return res.status(400).json({
+            message: "Product name and price are required"
+          });
+        }
+        const newProduct = new Product({
+          vendor: vendorId,
+          image: req.file.filename,
+          name,
+          price,
+          description,
+          discount: discount || 1
+        });
+        await newProduct.save();
+        res.status(201).json({
+          message: "Product created successfully",
+          product
+        });
+      }
+    })
   } catch (err) {
     console.error("Create product error:", err);
     res.status(500).json({ message: "Server error" });
