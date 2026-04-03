@@ -113,4 +113,16 @@ const vendorId = req.user.id;
   }
 })
 
+router.get('/upload', verifyAuth.requireAuth, async (req,res) => {
+  try{
+    res.render('./dashboard/productUpload',{
+      layout:'layouts/dashboard',
+      title:"upload product",
+    });
+  }catch(err){
+    console.error("Upload product error:", err);
+  }
+});
+
+
 module.exports = router;

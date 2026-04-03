@@ -58,7 +58,7 @@ router.post('/signin', async (req, res) => {
     const vendor = await Vendor.findOne({ email });
 
     if (!vendor) {
-      return res.render('login', {
+      return res.render('./dashboard/register', {
         error: 'Invalid email or password'
       });
     }
@@ -66,7 +66,7 @@ router.post('/signin', async (req, res) => {
     const isMatch = await bcrypt.compare(password, vendor.password);
 
     if (!isMatch) {
-      return res.render('login', {
+      return res.render('./dashboard/login', {
         error: 'Invalid email or password'
       });
     }
@@ -82,7 +82,7 @@ router.post('/signin', async (req, res) => {
     req.session.regenerate((err) => {
       if (err) {
         console.error("Session error:", err);
-        return res.render('/signin', {
+        return res.render('./dashboard/login', {
           error: 'Something went wrong. Try again.'
         });
       }
@@ -101,7 +101,7 @@ router.post('/signin', async (req, res) => {
   } catch (err) {
     console.error(err);
 
-    return res.render('login', {
+    return res.render('./dashboard/login', {
       error: 'Server error. Please try again later.'
     });
   }
@@ -116,7 +116,7 @@ router.get('/logout', (req, res) => {
       });
     }
     res.clearCookie('vendboost.sid');
-    res.redirect('/signin');
+    res.redirect('./dashboard/login');
   })
 });
 

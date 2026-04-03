@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { MessageMedia } = require('whatsapp-web.js');
+const fs = require('fs');
 const multer = require('multer');
+const path = require('path');
+const { MessageMedia } = require('whatsapp-web.js');
 const verifyAuth = require('../middlewares/verifyAuth');
 const Product = require('../models/Product');
 const Vendor = require('../models/Vendor');
 const Lead = require('../models/Lead');
+const { optimizeImage } = require('../utils/imageOpt');
 // const WhatsAppSession = require("../models/WhatsappSession");
 const { createSession, getSession } = require('../whatsapp/session');
 
@@ -264,7 +267,17 @@ router.post('/post-status', verifyAuth.requireAuth, async (req, res) => {
   const { productId } = req.query;
 
   try {
-    const product = await Product.findOne({ _id: productId, vendor: vendorId });
+    // 🔥 Get vendor safely
+    const vendor = await Vendor.findById(vendorId);
+    if (!vendor) {
+      return res.status(404).json({ message: "Vendor not found" });
+    }
+
+    // 🔥 Get product
+    const product = await Product.findOne({
+      _id: productId,
+      vendor: vendorId
+    });
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
@@ -272,10 +285,11 @@ router.post('/post-status', verifyAuth.requireAuth, async (req, res) => {
 
     if (!product.image) {
       return res.status(400).json({
-        message: "Product image is required for status post"
+        message: "Product image is required"
       });
     }
 
+    // 🔥 WhatsApp session
     const client = getSession(vendorId);
 
     if (!client) {
@@ -285,8 +299,27 @@ router.post('/post-status', verifyAuth.requireAuth, async (req, res) => {
       });
     }
 
-    // 🔥 Convert image to WhatsApp media
-    const media = await MessageMedia.fromUrl(product.image);
+    const productImagePath = path.join(
+      __dirname,
+      `../vendor-product-imgs/${vendor.businessName}/${product.image}`
+    );
+
+    if (!fs.existsSync(productImagePath)) {
+      return res.status(400).json({
+        message: "Product image file not found on server"
+      });
+    }
+
+    const optimizedPath = path.join(
+  __dirname,
+  `../temp/optimized-${product.image}`
+);
+
+    // 🔥 Resize & compress
+    await optimizeImage(productImagePath, optimizedPath);
+
+    // 🔥 Send optimized image
+    const media = MessageMedia.fromFilePath(optimizedPath);
 
     const caption = `
 🛍️ *${product.name}*
@@ -303,11 +336,18 @@ Reply *buy* to order 🚀
       caption
     });
 
-    res.json({ message: "Product posted to WhatsApp status with image" });
+    // 🔥 Clean up temp file (important)
+fs.unlinkSync(optimizedPath);
+
+    return res.json({
+      message: "Product posted to WhatsApp status with image"
+    });
 
   } catch (err) {
     console.error("Status post error:", err);
-    res.status(500).json({ message: "Failed to post status" });
+    return res.status(500).json({
+      message: "Failed to post status"
+    });
   }
 });
 
