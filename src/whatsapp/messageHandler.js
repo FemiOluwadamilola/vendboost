@@ -145,6 +145,17 @@ Send your delivery details after payment ✅
   let lead = await Lead.findOne({ vendor: vendorId, customerNumber });
   const newScore = getLeadScore(intent);
 
+  const leadCount = await Lead.countDocuments({ vendor: vendorId });
+
+  if (leadCount >= req.plan.limits.leads) {
+    console.log("🚫 Lead limit reached");
+
+    // Option 1: silently ignore
+    return;
+
+    // Option 2: notify vendor
+  }
+
   if (!lead) {
     lead = new Lead({
       vendor: vendorId,

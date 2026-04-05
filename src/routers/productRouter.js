@@ -10,6 +10,8 @@ const Vendor = require("../models/Vendor");
 const Lead = require("../models/Lead");
 const log = require("../utils/logger");
 const { optimizeImage } = require("../utils/imageOpt");
+const limitGuard = require("../middlewares/limitGuard");
+const checkSubscription = require("../middlewares/checkSubscription");
 // const WhatsAppSession = require("../models/WhatsappSession");
 const { createSession, getSession } = require("../whatsapp/session");
 
@@ -156,44 +158,52 @@ router.delete("/delete", verifyAuth.requireAuth, async (req, res) => {
 });
 
 // New Product Upload Broadcast route
-router.post("/broadcast", verifyAuth.requireAuth, async (req, res) => {
-  const vendorId = req.user.id;
-  const { productId } = req.query;
+router.post(
+  "/broadcast",
+  verifyAuth.requireAuth,
+  checkSubscription,
+  limitGuard("broadcast"),
+  async (req, res) => {
+    const vendorId = req.user.id;
+    const { productId } = req.query;
 
-  try {
-    const product = await Product.findOne({ _id: productId, vendor: vendorId });
-
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-
-    if (!product.image) {
-      return res.status(400).json({
-        message: "Product image is required for broadcast",
+    try {
+      const product = await Product.findOne({
+        _id: productId,
+        vendor: vendorId,
       });
-    }
 
-    const leads = await Lead.find({ vendor: vendorId });
+      if (!product) {
+        return res.status(404).json({ message: "Product not found" });
+      }
 
-    if (!leads.length) {
-      return res.status(400).json({
-        message: "No customers available for broadcast",
-      });
-    }
+      if (!product.image) {
+        return res.status(400).json({
+          message: "Product image is required for broadcast",
+        });
+      }
 
-    const client = getSession(vendorId);
+      const leads = await Lead.find({ vendor: vendorId });
 
-    if (!client) {
-      createSession(vendorId);
-      return res.status(400).json({
-        message: "WhatsApp initializing...",
-      });
-    }
+      if (!leads.length) {
+        return res.status(400).json({
+          message: "No customers available for broadcast",
+        });
+      }
 
-    // 🔥 Load image
-    const media = await MessageMedia.fromUrl(product.image);
+      const client = getSession(vendorId);
 
-    const caption = `
+      if (!client) {
+        createSession(vendorId);
+        return res.status(400).json({
+          message: "WhatsApp initializing...",
+        });
+      }
+
+      // 🔥 Load image
+      const media = await MessageMedia.fromUrl(product.image);
+
+      const caption = `
 🔥 *NEW PRODUCT ALERT*
 
 🛍️ ${product.name}
@@ -204,101 +214,108 @@ ${product.description || ""}
 Reply *buy* to order now 🚀
     `;
 
-    let success = 0;
-    let failed = 0;
+      let success = 0;
+      let failed = 0;
 
-    for (const lead of leads) {
-      try {
-        await client.sendMessage(`${lead.customerNumber}@c.us`, media, {
-          caption,
-        });
+      for (const lead of leads) {
+        try {
+          await client.sendMessage(`${lead.customerNumber}@c.us`, media, {
+            caption,
+          });
 
-        success++;
+          success++;
 
-        // ⚠️ Anti-ban delay (VERY IMPORTANT)
-        await new Promise((r) => setTimeout(r, Math.random() * 2000 + 1000));
-      } catch (err) {
-        log.error(
-          `Failed for ${lead.customerNumber} for ${vendorId}:`,
-          err.message,
-        );
-        failed++;
+          // ⚠️ Anti-ban delay (VERY IMPORTANT)
+          await new Promise((r) => setTimeout(r, Math.random() * 2000 + 1000));
+        } catch (err) {
+          log.error(
+            `Failed for ${lead.customerNumber} for ${vendorId}:`,
+            err.message,
+          );
+          failed++;
+        }
       }
-    }
 
-    res.json({
-      message: "Broadcast completed",
-      total: leads.length,
-      success,
-      failed,
-    });
-  } catch (err) {
-    log.error(`Broadcast error for ${vendorId}:`, err.message);
-    res.status(500).json({ message: "Server error" });
-  }
-});
+      // await incrementBroadcast(vendorId);
+
+      res.json({
+        message: "Broadcast completed",
+        total: leads.length,
+        success,
+        failed,
+      });
+    } catch (err) {
+      log.error(`Broadcast error for ${vendorId}:`, err.message);
+      res.status(500).json({ message: "Server error" });
+    }
+  },
+);
 
 // upload product to status route;
-router.post("/post-status", verifyAuth.requireAuth, async (req, res) => {
-  const vendorId = req.user.id;
-  const { productId } = req.query;
+router.post(
+  "/post-status",
+  verifyAuth.requireAuth,
+  checkSubscription,
+  async (req, res) => {
+    const vendorId = req.user.id;
+    const { productId } = req.query;
 
-  try {
-    // 🔥 Get vendor safely
-    const vendor = await Vendor.findById(vendorId);
-    if (!vendor) {
-      return res.status(404).json({ message: "Vendor not found" });
-    }
+    try {
+      // 🔥 Get vendor safely
+      const vendor = await Vendor.findById(vendorId);
+      if (!vendor) {
+        return res.status(404).json({ message: "Vendor not found" });
+      }
 
-    // 🔥 Get product
-    const product = await Product.findOne({
-      _id: productId,
-      vendor: vendorId,
-    });
-
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-
-    if (!product.image) {
-      return res.status(400).json({
-        message: "Product image is required",
+      // 🔥 Get product
+      const product = await Product.findOne({
+        _id: productId,
+        vendor: vendorId,
       });
-    }
 
-    // 🔥 WhatsApp session
-    const client = getSession(vendorId);
+      if (!product) {
+        return res.status(404).json({ message: "Product not found" });
+      }
 
-    if (!client) {
-      createSession(vendorId);
-      return res.status(400).json({
-        message: "WhatsApp initializing...",
-      });
-    }
+      if (!product.image) {
+        return res.status(400).json({
+          message: "Product image is required",
+        });
+      }
 
-    const productImagePath = path.join(
-      __dirname,
-      `../vendor-product-imgs/${vendor.businessName}/${product.image}`,
-    );
+      // 🔥 WhatsApp session
+      const client = getSession(vendorId);
 
-    if (!fs.existsSync(productImagePath)) {
-      return res.status(400).json({
-        message: "Product image file not found on server",
-      });
-    }
+      if (!client) {
+        createSession(vendorId);
+        return res.status(400).json({
+          message: "WhatsApp initializing...",
+        });
+      }
 
-    const optimizedPath = path.join(
-      __dirname,
-      `../temp/optimized-${product.image}`,
-    );
+      const productImagePath = path.join(
+        __dirname,
+        `../vendor-product-imgs/${vendor.businessName}/${product.image}`,
+      );
 
-    // 🔥 Resize & compress
-    await optimizeImage(productImagePath, optimizedPath);
+      if (!fs.existsSync(productImagePath)) {
+        return res.status(400).json({
+          message: "Product image file not found on server",
+        });
+      }
 
-    // 🔥 Send optimized image
-    const media = MessageMedia.fromFilePath(optimizedPath);
+      const optimizedPath = path.join(
+        __dirname,
+        `../temp/optimized-${product.image}`,
+      );
 
-    const caption = `
+      // 🔥 Resize & compress
+      await optimizeImage(productImagePath, optimizedPath);
+
+      // 🔥 Send optimized image
+      const media = MessageMedia.fromFilePath(optimizedPath);
+
+      const caption = `
 🛍️ *${product.name}*
 
 💰 ₦${product.price}
@@ -308,23 +325,24 @@ ${product.description || ""}
 Reply *buy* to order 🚀
     `;
 
-    // 🔥 Send to status
-    await client.sendMessage("status@broadcast", media, {
-      caption,
-    });
+      // 🔥 Send to status
+      await client.sendMessage("status@broadcast", media, {
+        caption,
+      });
 
-    // 🔥 Clean up temp file (important)
-    fs.unlinkSync(optimizedPath);
+      // 🔥 Clean up temp file (important)
+      fs.unlinkSync(optimizedPath);
 
-    return res.json({
-      message: "Product posted to WhatsApp status with image",
-    });
-  } catch (err) {
-    log.error(`Status Post failed for ${vendorId}:`, err.message);
-    return res.status(500).json({
-      message: "Failed to post status",
-    });
-  }
-});
+      return res.json({
+        message: "Product posted to WhatsApp status with image",
+      });
+    } catch (err) {
+      log.error(`Status Post failed for ${vendorId}:`, err.message);
+      return res.status(500).json({
+        message: "Failed to post status",
+      });
+    }
+  },
+);
 
 module.exports = router;

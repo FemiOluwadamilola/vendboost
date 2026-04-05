@@ -10,6 +10,7 @@ const authRoute = require("./src/routers/authRouter");
 const dashboardRoute = require("./src/routers/dashboardRouter");
 const productRoute = require("./src/routers/productRouter");
 const whatsappRoute = require("./src/routers/whatsappRouter");
+const webhookRoute = require("./src/routers/webhook");
 const { runFollowUpScheduler } = require("./src/crons/followUpScheduler");
 const sessionMiddleware = require("./src/config/session");
 const { recoverSessions } = require("./src/whatsapp/session");
@@ -45,7 +46,7 @@ app.use(express.json());
 
 // Every 5 minutes
 cron.schedule("*/5 * * * *", () => {
-  console.log("Running follow-up scheduler...");
+  log.info("Running follow-up scheduler...");
   runFollowUpScheduler();
 });
 
@@ -55,6 +56,7 @@ app.use("/auth", authRoute);
 app.use("/dashboard", dashboardRoute);
 app.use("/products", productRoute);
 app.use("/whatsapp", whatsappRoute);
+app.use("/webhook", webhookRoute);
 
 // Start server
 const PORT = process.env.PORT || 5100;

@@ -3,6 +3,7 @@ const QRCode = require("qrcode");
 const WhatsAppSession = require("../models/WhatsappSession");
 const Template = require("../models/Template");
 const getDefaultTemplate = require("../utils/defaultTemplate");
+const checkSubscription = require("../middlewares/checkSubscription");
 const messageHandler = require("./messageHandler");
 const log = require("../utils/logger");
 const clients = {}; // in-memory store for active clients
@@ -40,7 +41,7 @@ async function createSession(vendorId) {
   });
 
   // 🔹 QR EVENT
-  client.on("qr", async (qr) => {
+  client.on("qr", checkSubscription, async (qr) => {
     log.info(`QR generated for ${vendorId}`);
 
     // Convert to Data URI for frontend
@@ -82,7 +83,7 @@ async function createSession(vendorId) {
   });
 
   // 🔹 MESSAGE HANDLER
-  client.on("message", async (msg) => {
+  client.on("message", checkSubscription, async (msg) => {
     await messageHandler.handleIncomingMessage(vendorId, client, msg);
   });
 
