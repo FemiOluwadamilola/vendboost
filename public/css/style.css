@@ -1069,6 +1069,12 @@ a {
     color: var(--text-primary);
 }
 
+.table-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
 /* ============================================
    PROGRESS BARS
 ============================================ */

@@ -1,128 +1,141 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const verifyAuth = require('../middlewares/verifyAuth');
-const Lead = require('../models/Lead');
-// const Product = require('../models/Product');
-const WhatsAppSession = require("../models/WhatsappSession");
-const { createSession } = require('../whatsapp/session');
-const Vendor = require('../models/Vendor');
+const verifyAuth = require("../middlewares/verifyAuth");
+const Lead = require("../models/Lead");
+const Product = require("../models/Product");
+const Vendor = require("../models/Vendor");
+const log = require("../utils/logger");
 
-router.get('/', verifyAuth.requireAuth, async (req, res) => {
+router.get("/", verifyAuth.requireAuth, async (req, res) => {
   const vendorId = req.user.id;
-  
+  const products = await Product.find({ vendor: vendorId })
+    .sort({ createdAt: -1 })
+    .limit(10);
+  // const totalProducts = await Product.countDocuments({ vendor: vendorId });
+
+  const stats = {
+    totalProducts: 34,
+    statusPosts: 12,
+    broadcasts: 8,
+    leads: 25,
+  };
   try {
     const leads = await Lead.find({ vendor: vendorId })
       .sort({ score: -1, lastMessage: -1 })
       .limit(50); // recent 50 leads
 
-    res.render('./dashboard/index', {
-      layout:'layouts/dashboard',
+    return res.render("./dashboard/index", {
+      layout: "layouts/dashboard",
       title: "VendBoost Dashboard",
       vendorId,
-      leads
+      leads,
+      stats,
+      products,
     });
-
   } catch (err) {
-    console.error("Dashboard error:", err);
-    res.render('dashboard', {
+    log.error(`Dashboard error for ${vendorId}:`, err.message);
+    res.render("dashboard", {
+      layout: "layouts/dashboard",
       title: "VendBoost Dashboard",
       vendorId,
       leads: [],
-      error: "Failed to load leads"
+      error: "Failed to load leads",
     });
   }
 });
 
-// 🔹 Connect WhatsApp page
-router.get('/connect-whatsapp', verifyAuth.requireAuth, async (req, res) => {
+router.get("/analytics", verifyAuth.requireAuth, async (req, res) => {
   const vendorId = req.user.id;
 
-  try {
-    // Ensure a session record exists in MongoDB
-    await WhatsAppSession.findOneAndUpdate(
-      { vendorId },
-      { status: "initializing", qr: null, lastSeen: new Date() },
-      { upsert: true }
-    );
-
-    // Start WhatsApp client if not already running
-    await createSession(vendorId);
-
-    return res.render('connect-whatsapp', {
-      title: "WhatsApp Connection",
-      vendorId,
-      status: "initializing"
-    });
-
-  } catch (err) {
-    console.error("WhatsApp connection error:", err);
-
-    return res.render('connect', {
-      title: "WhatsApp Connection",
-      vendorId,
-      status: "error"
-    });
-  }
-});
-
-// 🔹 Endpoint for frontend polling
-router.get('/whatsapp-status', verifyAuth.requireAuth, async (req, res) => {
-  const vendorId = req.user.id;
-
-  try {
-    const session = await WhatsAppSession.findOne({ vendorId });
-
-    if (!session) {
-      return res.json({ status: "not_initialized", qr: null });
-    }
-
-    return res.json({
-      status: session.status, // qr | initializing | connected | error | disconnected
-      qr: session.qr
-    });
-
-  } catch (err) {
-    console.error("Status fetch error:", err);
-    res.status(500).json({ status: "error" });
-  }
-});
-
-router.get("/analytics", verifyAuth.requireAuth, async (req,res) => {
-const vendorId = req.user.id;
-  
   try {
     const leads = await Lead.find({ vendor: vendorId })
       .sort({ score: -1, lastMessage: -1 })
       .limit(50); // recent 50 leads
 
-    res.render('./dashboard/analytics', {
-      layout:'layouts/dashboard',
+    return res.render("./dashboard/analytics", {
+      layout: "./layouts/dashboard",
       title: "VendBoost Analytics",
       vendorId,
-      leads
+      leads,
     });
-
   } catch (err) {
-    console.error("Dashboard error:", err);
-    res.render('dashboard', {
+    log.error(`Analytics error for ${vendorId}:`, err.message);
+    res.render("./dashboard/index", {
+      layout: "layouts/dashboard",
       title: "VendBoost Dashboard",
       vendorId,
       leads: [],
-      error: "Failed to load leads"
+      error: "Failed to load leads",
     });
-  }
-})
-
-router.get('/upload', verifyAuth.requireAuth, async (req,res) => {
-  try{
-    res.render('./dashboard/productUpload',{
-      layout:'layouts/dashboard',
-      title:"upload product",
-    });
-  }catch(err){
-    console.error("Upload product error:", err);
   }
 });
 
+router.get("/new-product", verifyAuth.requireAuth, async (req, res) => {
+  try {
+    res.render("./dashboard/productUpload", {
+      layout: "layouts/dashboard",
+      title: "upload product",
+    });
+    s;
+  } catch (err) {
+    log.error(`Upload product error for ${vendorId}:`, err.message);
+  }
+});
+
+router.get("/products", verifyAuth.requireAuth, async (req, res) => {
+  const vendorId = req.user.id;
+  const vendor = await Vendor.findById(vendorId);
+  try {
+    const products = await Product.find({ vendor: vendorId }).sort({
+      createdAt: -1,
+    });
+    res.render("./dashboard/products", {
+      layout: "layouts/dashboard",
+      title: "Settings",
+      products,
+      vendor,
+    });
+  } catch (err) {
+    log.error(`Fetch products error for ${vendorId}:`, err.message);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.get("/leads", verifyAuth.requireAuth, async (req, res) => {
+  const vendorId = req.user.id;
+  const leads = await Lead.find({ vendor: vendorId }).sort({
+    score: -1,
+    lastMessage: -1,
+  });
+
+  const stats = {
+    totalLeads: 34,
+    newLeads: 12,
+    hotLeads: 8,
+    converted: 25,
+  };
+
+  try {
+    res.render("./dashboard/leads", {
+      layout: "layouts/dashboard",
+      title: "Settings",
+      leads,
+      stats,
+    });
+  } catch (err) {
+    log.error(`Fetch leads error for ${vendorId}:`, err.message);
+  }
+});
+
+router.get("/settings", verifyAuth.requireAuth, async (req, res) => {
+  try {
+    res.render("./dashboard/settings", {
+      layout: "layouts/dashboard",
+      title: "Settings",
+    });
+  } catch (err) {
+    log.error(`Fetch settings error for ${vendorId}:`, err.message);
+  }
+});
 
 module.exports = router;

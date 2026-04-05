@@ -1,16 +1,23 @@
 const Lead = require("../models/Lead");
 const Vendor = require("../models/Vendor");
 const { getClient } = require("../whatsapp/session");
+const log = require("../utils/logger");
 
 async function runFollowUpScheduler() {
   const leads = await Lead.find({ status: "pending" });
 
   for (let lead of leads) {
     const vendor = await Vendor.findById(lead.vendor);
-    if (!vendor) continue;
+    if (!vendor) {
+      log.error(`Vendor not found for lead ${lead._id}`);
+      continue;
+    }
 
     const client = getClient(vendor._id);
-    if (!client) continue;
+    if (!client) {
+      log.error(`WhatsApp client not found for vendor ${vendor._id}`);
+      continue;
+    }
 
     const now = new Date();
     const hoursSinceLast = lead.lastFollowUpAt
@@ -45,7 +52,7 @@ async function runFollowUpScheduler() {
       lead.lastFollowUpAt = new Date();
       await lead.save();
 
-      console.log(
+      log.info(
         `Sent follow-up #${lead.followUpsSent} to ${lead.customerNumber}`,
       );
     }

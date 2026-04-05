@@ -1,0 +1,189 @@
+<main class="main-content">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="page-header">
+            <h1 class="page-title">Leads & Conversations 💬</h1>
+            <div class="page-breadcrumb">
+                <a href="/dashboard">Dashboard</a>
+                <span>/</span>
+                <span>Leads</span>
+            </div>
+        </div>
+
+        <div class="navbar-right">
+            <a href="/products" class="card-btn">
+                📢 Broadcast Product
+            </a>
+        </div>
+    </nav>
+
+    <!-- VENDBOOST METRICS -->
+    <section class="stats-grid">
+
+        <div class="glass-card stat-card">
+            <div class="stat-card-inner">
+                <div class="stat-info">
+                    <h3>Total Leads</h3>
+                    <div class="stat-value"><%= stats.totalLeads || 0 %></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card stat-card">
+            <div class="stat-card-inner">
+                <div class="stat-info">
+                    <h3>New Today</h3>
+                    <div class="stat-value"><%= stats.newLeads || 0 %></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card stat-card">
+            <div class="stat-card-inner">
+                <div class="stat-info">
+                    <h3>Hot Leads 🔥</h3>
+                    <div class="stat-value"><%= stats.hotLeads || 0 %></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card stat-card">
+            <div class="stat-card-inner">
+                <div class="stat-info">
+                    <h3>Converted</h3>
+                    <div class="stat-value"><%= stats.converted || 0 %></div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- LEADS TABLE -->
+    <section class="content-grid" style="grid-template-columns: 1fr;">
+        <div class="glass-card table-card">
+
+            <div class="card-header">
+                <div>
+                    <h2 class="card-title">Incoming Leads</h2>
+                    <p class="card-subtitle">People interacting with your products</p>
+                </div>
+
+                <div class="card-actions">
+                    <button class="card-btn">Export</button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Product</th>
+                            <th>Source</th>
+                            <th>Intent</th>
+                            <th>Status</th>
+                            <th>Time</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <% if (leads && leads.length > 0) { %>
+                            <% leads.forEach(lead => { %>
+
+                                <tr>
+
+                                    <!-- CUSTOMER -->
+                                    <td>
+                                        <div class="table-user">
+                                            <div class="table-avatar">
+                                                <%= lead.name ? lead.name[0] : "U" %>
+                                            </div>
+                                            <div class="table-user-info">
+                                                <span class="table-user-name">
+                                                    <%= lead.name || "Unknown" %>
+                                                </span>
+                                                <span class="table-user-email">
+                                                    <%= lead.phone %>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- PRODUCT -->
+                                    <td>
+                                        <%= lead.productName || "N/A" %>
+                                    </td>
+
+                                    <!-- SOURCE -->
+                                    <td>
+                                        <span class="status-badge">
+                                            <%= lead.source || "WhatsApp" %>
+                                        </span>
+                                    </td>
+
+                                    <!-- INTENT -->
+                                    <td>
+                                        <% if (lead.intent === "ready-to-pay") { %>
+                                            <span class="status-badge completed">💰 Ready</span>
+                                        <% } else if (lead.intent === "price") { %>
+                                            <span class="status-badge processing">💲 Price</span>
+                                        <% } else { %>
+                                            <span class="status-badge pending">💬 Inquiry</span>
+                                        <% } %>
+                                    </td>
+
+                                    <!-- STATUS -->
+                                    <td>
+                                        <span class="status-badge <%= lead.status === 'closed' ? 'completed' : 'processing' %>">
+                                            <%= lead.status || "Open" %>
+                                        </span>
+                                    </td>
+
+                                    <!-- TIME -->
+                                    <td>
+                                        <%= new Date(lead.createdAt).toLocaleString() %>
+                                    </td>
+
+                                    <!-- ACTIONS -->
+                                    <td class="table-actions">
+
+                                        <!-- Open Chat -->
+                                        <a 
+                                            href="/chat/<%= lead.phone %>" 
+                                            class="card-btn success">
+                                            💬 Chat
+                                        </a>
+
+                                        <!-- Mark as Closed -->
+                                        <button 
+                                            class="card-btn"
+                                            onclick="closeLead('<%= lead._id %>')">
+                                            ✅ Close
+                                        </button>
+
+                                    </td>
+
+                                </tr>
+
+                            <% }) %>
+                        <% } else { %>
+
+                            <tr>
+                                <td colspan="7" style="text-align:center;">
+                                    No leads yet. Start posting products 🚀
+                                </td>
+                            </tr>
+
+                        <% } %>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </section>
+
+</main>

@@ -1,55 +1,55 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const fs = require('fs');
-const multer = require('multer');
-const path = require('path');
-const { MessageMedia } = require('whatsapp-web.js');
-const verifyAuth = require('../middlewares/verifyAuth');
-const Product = require('../models/Product');
-const Vendor = require('../models/Vendor');
-const Lead = require('../models/Lead');
-const { optimizeImage } = require('../utils/imageOpt');
+const fs = require("fs");
+const multer = require("multer");
+const path = require("path");
+const { MessageMedia } = require("whatsapp-web.js");
+const verifyAuth = require("../middlewares/verifyAuth");
+const Product = require("../models/Product");
+const Vendor = require("../models/Vendor");
+const Lead = require("../models/Lead");
+const log = require("../utils/logger");
+const { optimizeImage } = require("../utils/imageOpt");
 // const WhatsAppSession = require("../models/WhatsappSession");
-const { createSession, getSession } = require('../whatsapp/session');
-
+const { createSession, getSession } = require("../whatsapp/session");
 
 // Create a product route
-router.post('/', verifyAuth.requireAuth, async (req, res) => {
+router.post("/new", verifyAuth.requireAuth, async (req, res) => {
   const vendorId = req.user.id;
-  const vendor = Vendor.findOne({_id:vendorId});
+  const vendor = Vendor.findOne({ _id: vendorId });
   try {
     const storage = multer.diskStorage({
-      destination:`./vendor-product-imgs/${vendor.businessName}`,
-      filename:(req,file,cb) => {
+      destination: `./vendor-product-imgs/${vendor.businessName}`,
+      filename: (req, file, cb) => {
         cb(
           null,
-          file.fieldname + "_" + Date.now() + path.extname(file.originalname)
+          file.fieldname + "_" + Date.now() + path.extname(file.originalname),
         );
       },
-    })
+    });
 
     const product = multer({
-       storage,
-       fileFilter: (req,file,cb) => {
-         const extname = path.extname(file.originalname);
-         if (extname !== ".jpg") {
-            res
-              .status(403)
-              .json({ error_msg: "Only .jpg or .png files allowed..." });
-          } else {
-            cb(null, true);
-          }
-       }
-    }).single('image');
+      storage,
+      fileFilter: (req, file, cb) => {
+        const extname = path.extname(file.originalname);
+        if (extname !== ".jpg") {
+          res
+            .status(403)
+            .json({ error_msg: "Only .jpg or .png files allowed..." });
+        } else {
+          cb(null, true);
+        }
+      },
+    }).single("image");
 
-    product(req,res, async () => {
-      if(err){
-        console.error(err.message);
-      }else{
+    product(req, res, async (err) => {
+      if (err) {
+        log.error(`Product upload error for ${vendorId}:`, err.message);
+      } else {
         const { name, price, description, discount } = req.body;
         if (!name || !price) {
           return res.status(400).json({
-            message: "Product name and price are required"
+            message: "Product name and price are required",
           });
         }
         const newProduct = new Product({
@@ -58,39 +58,23 @@ router.post('/', verifyAuth.requireAuth, async (req, res) => {
           name,
           price,
           description,
-          discount: discount || 1
+          discount: discount || 1,
         });
         await newProduct.save();
         res.status(201).json({
           message: "Product created successfully",
-          product
+          product,
         });
       }
-    })
+    });
   } catch (err) {
-    console.error("Create product error:", err);
+    log.error(`Create product error for ${vendorId}:`, err.message);
     res.status(500).json({ message: "Server error" });
   }
 });
-
-
-// Get all products routes
-router.get('/', verifyAuth.requireAuth, async (req, res) => {
-  const vendorId = req.user.id;
-
-  try {
-    const products = await Product.find({ vendor: vendorId }).sort({ createdAt: -1 });
-    res.json(products);
-
-  } catch (err) {
-    console.error("Fetch products error:", err);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
 
 // get a single product route
-router.get('/single', verifyAuth.requireAuth, async (req, res) => {
+router.get("/single", verifyAuth.requireAuth, async (req, res) => {
   const vendorId = req.user.id;
   const { productId } = req.query;
 
@@ -101,7 +85,7 @@ router.get('/single', verifyAuth.requireAuth, async (req, res) => {
   try {
     const product = await Product.findOne({
       _id: productId,
-      vendor: vendorId
+      vendor: vendorId,
     });
 
     if (!product) {
@@ -109,16 +93,14 @@ router.get('/single', verifyAuth.requireAuth, async (req, res) => {
     }
 
     res.json(product);
-
   } catch (err) {
-    console.error("Get product error:", err);
+    log.error(`Get product error for ${vendorId}:`, err.message);
     res.status(500).json({ message: "Server error" });
   }
 });
 
-
 // Product modification route
-router.put('/update', verifyAuth.requireAuth, async (req, res) => {
+router.put("/update", verifyAuth.requireAuth, async (req, res) => {
   const vendorId = req.user.id;
   const { productId } = req.query;
 
@@ -130,7 +112,7 @@ router.put('/update', verifyAuth.requireAuth, async (req, res) => {
     const updated = await Product.findOneAndUpdate(
       { _id: productId, vendor: vendorId },
       req.body,
-      { new: true }
+      { new: true },
     );
 
     if (!updated) {
@@ -139,18 +121,16 @@ router.put('/update', verifyAuth.requireAuth, async (req, res) => {
 
     res.json({
       message: "Product updated",
-      product: updated
+      product: updated,
     });
-
   } catch (err) {
-    console.error("Update product error:", err);
+    log.error(`Update product error for ${vendorId}:`, err.message);
     res.status(500).json({ message: "Server error" });
   }
 });
 
-
 // Product delete route
-router.delete('/delete', verifyAuth.requireAuth, async (req, res) => {
+router.delete("/delete", verifyAuth.requireAuth, async (req, res) => {
   const vendorId = req.user.id;
   const { productId } = req.query;
 
@@ -161,7 +141,7 @@ router.delete('/delete', verifyAuth.requireAuth, async (req, res) => {
   try {
     const deleted = await Product.findOneAndDelete({
       _id: productId,
-      vendor: vendorId
+      vendor: vendorId,
     });
 
     if (!deleted) {
@@ -169,15 +149,14 @@ router.delete('/delete', verifyAuth.requireAuth, async (req, res) => {
     }
 
     res.json({ message: "Product deleted" });
-
   } catch (err) {
-    console.error("Delete product error:", err);
+    log.error(`Delete product error for ${vendorId}:`, err.message);
     res.status(500).json({ message: "Server error" });
   }
 });
 
 // New Product Upload Broadcast route
-router.post('/broadcast', verifyAuth.requireAuth, async (req, res) => {
+router.post("/broadcast", verifyAuth.requireAuth, async (req, res) => {
   const vendorId = req.user.id;
   const { productId } = req.query;
 
@@ -190,7 +169,7 @@ router.post('/broadcast', verifyAuth.requireAuth, async (req, res) => {
 
     if (!product.image) {
       return res.status(400).json({
-        message: "Product image is required for broadcast"
+        message: "Product image is required for broadcast",
       });
     }
 
@@ -198,7 +177,7 @@ router.post('/broadcast', verifyAuth.requireAuth, async (req, res) => {
 
     if (!leads.length) {
       return res.status(400).json({
-        message: "No customers available for broadcast"
+        message: "No customers available for broadcast",
       });
     }
 
@@ -207,7 +186,7 @@ router.post('/broadcast', verifyAuth.requireAuth, async (req, res) => {
     if (!client) {
       createSession(vendorId);
       return res.status(400).json({
-        message: "WhatsApp initializing..."
+        message: "WhatsApp initializing...",
       });
     }
 
@@ -230,19 +209,19 @@ Reply *buy* to order now 🚀
 
     for (const lead of leads) {
       try {
-        await client.sendMessage(
-          `${lead.customerNumber}@c.us`,
-          media,
-          { caption }
-        );
+        await client.sendMessage(`${lead.customerNumber}@c.us`, media, {
+          caption,
+        });
 
         success++;
 
         // ⚠️ Anti-ban delay (VERY IMPORTANT)
-        await new Promise(r => setTimeout(r, Math.random() * 2000 + 1000));
-
+        await new Promise((r) => setTimeout(r, Math.random() * 2000 + 1000));
       } catch (err) {
-        console.error(`Failed for ${lead.customerNumber}`, err.message);
+        log.error(
+          `Failed for ${lead.customerNumber} for ${vendorId}:`,
+          err.message,
+        );
         failed++;
       }
     }
@@ -251,18 +230,16 @@ Reply *buy* to order now 🚀
       message: "Broadcast completed",
       total: leads.length,
       success,
-      failed
+      failed,
     });
-
   } catch (err) {
-    console.error("Broadcast error:", err);
+    log.error(`Broadcast error for ${vendorId}:`, err.message);
     res.status(500).json({ message: "Server error" });
   }
 });
 
-
 // upload product to status route;
-router.post('/post-status', verifyAuth.requireAuth, async (req, res) => {
+router.post("/post-status", verifyAuth.requireAuth, async (req, res) => {
   const vendorId = req.user.id;
   const { productId } = req.query;
 
@@ -276,7 +253,7 @@ router.post('/post-status', verifyAuth.requireAuth, async (req, res) => {
     // 🔥 Get product
     const product = await Product.findOne({
       _id: productId,
-      vendor: vendorId
+      vendor: vendorId,
     });
 
     if (!product) {
@@ -285,7 +262,7 @@ router.post('/post-status', verifyAuth.requireAuth, async (req, res) => {
 
     if (!product.image) {
       return res.status(400).json({
-        message: "Product image is required"
+        message: "Product image is required",
       });
     }
 
@@ -295,25 +272,25 @@ router.post('/post-status', verifyAuth.requireAuth, async (req, res) => {
     if (!client) {
       createSession(vendorId);
       return res.status(400).json({
-        message: "WhatsApp initializing..."
+        message: "WhatsApp initializing...",
       });
     }
 
     const productImagePath = path.join(
       __dirname,
-      `../vendor-product-imgs/${vendor.businessName}/${product.image}`
+      `../vendor-product-imgs/${vendor.businessName}/${product.image}`,
     );
 
     if (!fs.existsSync(productImagePath)) {
       return res.status(400).json({
-        message: "Product image file not found on server"
+        message: "Product image file not found on server",
       });
     }
 
     const optimizedPath = path.join(
-  __dirname,
-  `../temp/optimized-${product.image}`
-);
+      __dirname,
+      `../temp/optimized-${product.image}`,
+    );
 
     // 🔥 Resize & compress
     await optimizeImage(productImagePath, optimizedPath);
@@ -333,20 +310,19 @@ Reply *buy* to order 🚀
 
     // 🔥 Send to status
     await client.sendMessage("status@broadcast", media, {
-      caption
+      caption,
     });
 
     // 🔥 Clean up temp file (important)
-fs.unlinkSync(optimizedPath);
+    fs.unlinkSync(optimizedPath);
 
     return res.json({
-      message: "Product posted to WhatsApp status with image"
+      message: "Product posted to WhatsApp status with image",
     });
-
   } catch (err) {
-    console.error("Status post error:", err);
+    log.error(`Status Post failed for ${vendorId}:`, err.message);
     return res.status(500).json({
-      message: "Failed to post status"
+      message: "Failed to post status",
     });
   }
 });

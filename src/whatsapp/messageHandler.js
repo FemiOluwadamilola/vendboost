@@ -3,26 +3,37 @@ const Vendor = require("../models/Vendor");
 const Product = require("../models/Product");
 const Template = require("../models/Template");
 const renderMessageTemplate = require("../utils/messageTemplateRenderer");
-
+const log = require("../utils/logger");
 const intentDetector = require("../utils/intentDetector");
 const paymentDetector = require("../utils/paymentDetector");
 
 // ============================
 // 1️⃣ Define business intents
 // ============================
-const BUSINESS_INTENTS = ["price", "negotiation", "ready-to-pay", "order", "inquiry"];
+const BUSINESS_INTENTS = [
+  "price",
+  "negotiation",
+  "ready-to-pay",
+  "order",
+  "inquiry",
+];
 
 function isBusinessIntent(intent) {
   return BUSINESS_INTENTS.includes(intent);
 }
 
 function getLeadScore(intent) {
-  switch(intent) {
-    case "ready-to-pay": return 100;
-    case "negotiation": return 80;
-    case "price": return 60;
-    case "inquiry": return 40;
-    default: return 0;
+  switch (intent) {
+    case "ready-to-pay":
+      return 100;
+    case "negotiation":
+      return 80;
+    case "price":
+      return 60;
+    case "inquiry":
+      return 40;
+    default:
+      return 0;
   }
 }
 
@@ -59,7 +70,7 @@ async function handleIncomingMessage(vendorId, client, msg) {
         });
       }
     } catch (err) {
-      console.error("Quoted message error:", err.message);
+      log.error("Quoted message error:", err.message);
     }
   }
 
@@ -77,7 +88,6 @@ async function handleIncomingMessage(vendorId, client, msg) {
   // 5️⃣ Skip non-business messages
   // ============================
   if (!isBusinessIntent(intent) && !isStatusReply) {
-    console.log("❌ Ignored casual chat:", text);
     return;
   }
 
@@ -85,13 +95,17 @@ async function handleIncomingMessage(vendorId, client, msg) {
   // 6️⃣ Auto-reply for ready-to-pay
   // ============================
   if (intent === "ready-to-pay") {
-    const accountDetails = vendor.bankDetails || "Please contact us for payment details.";
-    await client.sendMessage(msg.from, `
+    const accountDetails =
+      vendor.bankDetails || "Please contact us for payment details.";
+    await client.sendMessage(
+      msg.from,
+      `
 Great choice 🙌
 You can make payment using:
 ${accountDetails}
 Send your delivery details after payment ✅
-    `);
+    `,
+    );
     return;
   }
 
@@ -99,19 +113,30 @@ Send your delivery details after payment ✅
   // 7️⃣ Price & negotiation replies
   // ============================
   if (intent === "price" && matchedProduct) {
-    await client.sendMessage(msg.from, renderMessageTemplate(templateData.templates.price, {
-      productName: matchedProduct.name,
-      productPrice: matchedProduct.price
-    }));
+    await client.sendMessage(
+      msg.from,
+      renderMessageTemplate(templateData.templates.price, {
+        productName: matchedProduct.name,
+        productPrice: matchedProduct.price,
+      }),
+    );
   } else if (intent === "price") {
-    await client.sendMessage(msg.from, "Which product are you asking about? 😊");
+    await client.sendMessage(
+      msg.from,
+      "Which product are you asking about? 😊",
+    );
   }
 
   if (intent === "negotiation" && matchedProduct) {
-    const discountPrice = Math.round(matchedProduct.price * matchedProduct.discount);
-    await client.sendMessage(msg.from, renderMessageTemplate(templateData.templates.negotiation, {
-      discountPrice
-    }));
+    const discountPrice = Math.round(
+      matchedProduct.price * matchedProduct.discount,
+    );
+    await client.sendMessage(
+      msg.from,
+      renderMessageTemplate(templateData.templates.negotiation, {
+        discountPrice,
+      }),
+    );
   }
 
   // ============================
@@ -130,7 +155,7 @@ Send your delivery details after payment ✅
       source: isStatusReply ? "status" : "chat",
       product: matchedProduct?._id || null,
       score: newScore,
-      followUpsSent: 0
+      followUpsSent: 0,
     });
     await lead.save();
   } else {
@@ -161,7 +186,7 @@ Send your delivery details after payment ✅
       source: isStatusReply ? "status" : "chat",
       product: matchedProduct?.name || null,
       intent: intent,
-      score: newScore
+      score: newScore,
     });
   }
 
@@ -178,8 +203,8 @@ Would you like to place an order?`;
   // ============================
   // 10️⃣ Logging
   // ============================
-  console.log(
-    `Message from ${customerNumber} | intent: ${intent} ${isPayment ? "💰 payment" : ""} ${isStatusReply ? "🔥 STATUS LEAD" : ""}`
+  log.info(
+    `Message from ${customerNumber} | intent: ${intent} ${isPayment ? "💰 payment" : ""} ${isStatusReply ? "🔥 STATUS LEAD" : ""}`,
   );
 }
 

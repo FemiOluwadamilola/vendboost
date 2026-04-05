@@ -4,14 +4,14 @@ const WhatsAppSession = require("../models/WhatsappSession");
 const Template = require("../models/Template");
 const getDefaultTemplate = require("../utils/defaultTemplate");
 const messageHandler = require("./messageHandler");
-
+const log = require("../utils/logger");
 const clients = {}; // in-memory store for active clients
 
 // 🔹 Create or recover session
 async function createSession(vendorId) {
   // Prevent duplicate client in memory
   if (clients[vendorId]) {
-    console.log(`Session already exists for ${vendorId}`);
+    log.info(`Session already exists for ${vendorId}`);
     return clients[vendorId];
   }
 
@@ -19,7 +19,7 @@ async function createSession(vendorId) {
   await WhatsAppSession.findOneAndUpdate(
     { vendorId },
     { status: "initializing", qr: null, lastSeen: new Date() },
-    { upsert: true }
+    { upsert: true },
   );
 
   const client = new Client({
@@ -34,14 +34,14 @@ async function createSession(vendorId) {
         "--no-first-run",
         "--no-zygote",
         "--single-process",
-        "--disable-gpu"
-      ]
-    }
+        "--disable-gpu",
+      ],
+    },
   });
 
   // 🔹 QR EVENT
   client.on("qr", async (qr) => {
-    console.log(`QR generated for ${vendorId}`);
+    log.info(`QR generated for ${vendorId}`);
 
     // Convert to Data URI for frontend
     const qrImage = await QRCode.toDataURL(qr);
@@ -49,39 +49,36 @@ async function createSession(vendorId) {
     await WhatsAppSession.findOneAndUpdate(
       { vendorId },
       { qr: qrImage, status: "qr", lastSeen: new Date() },
-      { upsert: true }
+      { upsert: true },
     );
   });
 
   // 🔹 READY
   client.on("ready", async () => {
-    console.log(`WhatsApp client ready for ${vendorId}`);
+    log.info(`WhatsApp client ready for ${vendorId}`);
     await WhatsAppSession.findOneAndUpdate(
       { vendorId },
-      { status: "connected", qr: null, lastSeen: new Date() }
+      { status: "connected", qr: null, lastSeen: new Date() },
     );
 
     // create default templates if not exist
-     try {
+    try {
       if (!vendorId) return;
 
-    // Check if template already exists
-    const existingTemplate = await Template.findOne({ vendor: vendorId });
+      // Check if template already exists
+      const existingTemplate = await Template.findOne({ vendor: vendorId });
 
-    if (!existingTemplate) {
-      await Template.create({
-        vendor: vendorId,
-        templates: getDefaultTemplate({ vendorBusinessName: vendorId.businessName })
-      });
-
-      console.log("✅ Default templates created");
-    } else {
-      console.log("⚡ Template already exists");
+      if (!existingTemplate) {
+        await Template.create({
+          vendor: vendorId,
+          templates: getDefaultTemplate({
+            vendorBusinessName: vendorId.businessName,
+          }),
+        });
+      }
+    } catch (err) {
+      log.error(`Template init error (${vendorId}):`, err.message);
     }
-
-  } catch (err) {
-    console.error("Template init error:", err.message);
-  }
   });
 
   // 🔹 MESSAGE HANDLER
@@ -91,20 +88,20 @@ async function createSession(vendorId) {
 
   // 🔹 ERROR
   client.on("error", async (err) => {
-    console.error(`WhatsApp client error (${vendorId}):`, err.message);
+    log.error(`WhatsApp client error (${vendorId}):`, err.message);
     await WhatsAppSession.findOneAndUpdate(
       { vendorId },
-      { status: "error", lastSeen: new Date() }
+      { status: "error", lastSeen: new Date() },
     );
   });
 
   // 🔹 DISCONNECTED
   client.on("disconnected", async (reason) => {
-    console.log(`WhatsApp client disconnected (${vendorId}):`, reason);
+    log.info(`WhatsApp client disconnected (${vendorId}):`, reason);
 
     await WhatsAppSession.findOneAndUpdate(
       { vendorId },
-      { status: "disconnected", lastSeen: new Date() }
+      { status: "disconnected", lastSeen: new Date() },
     );
 
     delete clients[vendorId];
@@ -112,11 +109,11 @@ async function createSession(vendorId) {
 
   // 🔹 AUTH FAILURE
   client.on("auth_failure", async (msg) => {
-    console.error(`Auth failure (${vendorId}):`, msg);
+    log.error(`Auth failure (${vendorId}):`, msg);
 
     await WhatsAppSession.findOneAndUpdate(
       { vendorId },
-      { status: "auth_failed", lastSeen: new Date() }
+      { status: "auth_failed", lastSeen: new Date() },
     );
   });
 
@@ -134,17 +131,19 @@ async function safeInitialize(client, vendorId) {
   try {
     await client.initialize();
   } catch (err) {
-    console.error(`Initialization failed for ${vendorId}, retrying...`);
+    log.error(`Initialization failed for ${vendorId}, retrying...`);
     setTimeout(() => safeInitialize(client, vendorId), 5000);
   }
 }
 
 // 🔹 Recover session on server restart
 async function recoverSessions() {
-  const sessions = await WhatsAppSession.find({ status: { $in: ["initializing", "qr"] } });
+  const sessions = await WhatsAppSession.find({
+    status: { $in: ["initializing", "qr"] },
+  });
 
   for (const session of sessions) {
-    console.log(`Recovering session for vendor ${session.vendorId}`);
+    log.info(`Recovering session for vendor ${session.vendorId}`);
     await createSession(session.vendorId);
   }
 }
