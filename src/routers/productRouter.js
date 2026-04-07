@@ -11,69 +11,72 @@ const Lead = require("../models/Lead");
 const log = require("../utils/logger");
 const { optimizeImage } = require("../utils/imageOpt");
 const limitGuard = require("../middlewares/limitGuard");
-const checkSubscription = require("../middlewares/checkSubscription");
+const { checkSubscription } = require("../middlewares/checkSubscription");
 // const WhatsAppSession = require("../models/WhatsappSession");
 const { createSession, getSession } = require("../whatsapp/session");
 
 // Create a product route
-router.post("/new", verifyAuth.requireAuth, async (req, res) => {
-  const vendorId = req.user.id;
-  const vendor = Vendor.findOne({ _id: vendorId });
-  try {
-    const storage = multer.diskStorage({
-      destination: `./vendor-product-imgs/${vendor.businessName}`,
-      filename: (req, file, cb) => {
-        cb(
-          null,
-          file.fieldname + "_" + Date.now() + path.extname(file.originalname),
-        );
-      },
-    });
+router.post(
+  "/new",
+  verifyAuth.requireAuth,
+  checkSubscription,
+  async (req, res) => {
+    const vendorId = req.user.id;
+    const vendor = Vendor.findOne({ _id: vendorId });
+    try {
+      const storage = multer.diskStorage({
+        destination: `./vendor-product-imgs/${vendor.businessName}`,
+        filename: (req, file, cb) => {
+          cb(
+            null,
+            file.fieldname + "_" + Date.now() + path.extname(file.originalname),
+          );
+        },
+      });
 
-    const product = multer({
-      storage,
-      fileFilter: (req, file, cb) => {
-        const extname = path.extname(file.originalname);
-        if (extname !== ".jpg") {
-          res
-            .status(403)
-            .json({ error_msg: "Only .jpg or .png files allowed..." });
+      const product = multer({
+        storage,
+        fileFilter: (req, file, cb) => {
+          const extname = path.extname(file.originalname);
+          if (extname !== ".jpg" && extname !== ".png") {
+            req.flash("error", "Only .jpg or .png files allowed");
+          } else {
+            cb(null, true);
+          }
+        },
+      }).single("image");
+
+      product(req, res, async (err) => {
+        if (err) {
+          log.error(`Product upload error for ${vendorId}:`, err.message);
+          req.flash("error", "Failed to upload product image");
+          return res.redirect("/dashboard");
         } else {
-          cb(null, true);
-        }
-      },
-    }).single("image");
-
-    product(req, res, async (err) => {
-      if (err) {
-        log.error(`Product upload error for ${vendorId}:`, err.message);
-      } else {
-        const { name, price, description, discount } = req.body;
-        if (!name || !price) {
-          return res.status(400).json({
-            message: "Product name and price are required",
+          const { name, price, description, discount } = req.body;
+          if (!name || !price) {
+            req.flash("error", "Product name and price are required");
+            return res.redirect("/dashboard/new-product");
+          }
+          const newProduct = new Product({
+            vendor: vendorId,
+            image: req.file.filename,
+            name,
+            price,
+            description,
+            discount: discount || 1,
           });
+          await newProduct.save();
+          req.flash("success", "Product created successfully");
+          return res.redirect("/dashboard/products");
         }
-        const newProduct = new Product({
-          vendor: vendorId,
-          image: req.file.filename,
-          name,
-          price,
-          description,
-          discount: discount || 1,
-        });
-        await newProduct.save();
-        res.status(201).json({
-          message: "Product created successfully",
-          product,
-        });
-      }
-    });
-  } catch (err) {
-    log.error(`Create product error for ${vendorId}:`, err.message);
-    res.status(500).json({ message: "Server error" });
-  }
-});
+      });
+    } catch (err) {
+      log.error(`Create product error for ${vendorId}:`, err.message);
+      req.flash("error", "Failed to create product");
+      return res.redirect("/dashboard/new-product");
+    }
+  },
+);
 
 // get a single product route
 router.get("/single", verifyAuth.requireAuth, async (req, res) => {
@@ -81,7 +84,9 @@ router.get("/single", verifyAuth.requireAuth, async (req, res) => {
   const { productId } = req.query;
 
   if (!productId) {
-    return res.status(400).json({ message: "productId is required" });
+    log.error(`Get product error for ${vendorId}: Missing productId`);
+    req.flash("error", "Product not found");
+    return res.redirect("/dashboard/products");
   }
 
   try {
@@ -91,14 +96,17 @@ router.get("/single", verifyAuth.requireAuth, async (req, res) => {
     });
 
     if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+      log.error(`Get product error for ${vendorId}: Product not found`);
+      req.flash("error", "Product not found");
+      return res.redirect("/dashboard/products");
     }
-
-    res.json(product);
   } catch (err) {
     log.error(`Get product error for ${vendorId}:`, err.message);
-    res.status(500).json({ message: "Server error" });
+    req.flash("error", "Failed to fetch product");
+    return res.redirect("/dashboard/products");
   }
+
+  res.json({ product });
 });
 
 // Product modification route
@@ -107,7 +115,9 @@ router.put("/update", verifyAuth.requireAuth, async (req, res) => {
   const { productId } = req.query;
 
   if (!productId) {
-    return res.status(400).json({ message: "productId is required" });
+    log.error(`Update product error for ${vendorId}: Missing productId`);
+    req.flash("error", "Product not found");
+    return res.redirect("/dashboard/products");
   }
 
   try {
@@ -118,16 +128,17 @@ router.put("/update", verifyAuth.requireAuth, async (req, res) => {
     );
 
     if (!updated) {
-      return res.status(404).json({ message: "Product not found" });
+      log.error(`Update product error for ${vendorId}: Product not found`);
+      req.flash("error", "Product not found");
+      return res.redirect("/dashboard/products");
     }
 
-    res.json({
-      message: "Product updated",
-      product: updated,
-    });
+    req.flash("success", "Product updated successfully");
+    return res.redirect("/dashboard/products");
   } catch (err) {
     log.error(`Update product error for ${vendorId}:`, err.message);
-    res.status(500).json({ message: "Server error" });
+    req.flash("error", "Failed to update product");
+    return res.redirect("/dashboard/products");
   }
 });
 
@@ -137,7 +148,9 @@ router.delete("/delete", verifyAuth.requireAuth, async (req, res) => {
   const { productId } = req.query;
 
   if (!productId) {
-    return res.status(400).json({ message: "productId is required" });
+    log.error(`Delete product error for ${vendorId}: Missing productId`);
+    req.flash("error", "Product not found");
+    return res.redirect("/dashboard/products");
   }
 
   try {
@@ -147,13 +160,15 @@ router.delete("/delete", verifyAuth.requireAuth, async (req, res) => {
     });
 
     if (!deleted) {
-      return res.status(404).json({ message: "Product not found" });
+      req.flash("error", "Product not found");
+      return res.redirect("/dashboard/products");
     }
-
-    res.json({ message: "Product deleted" });
+    req.flash("success", "Product deleted successfully");
+    return res.redirect("/dashboard/products");
   } catch (err) {
     log.error(`Delete product error for ${vendorId}:`, err.message);
-    res.status(500).json({ message: "Server error" });
+    req.flash("error", "Failed to delete product");
+    return res.redirect("/dashboard/products");
   }
 });
 
@@ -174,30 +189,30 @@ router.post(
       });
 
       if (!product) {
-        return res.status(404).json({ message: "Product not found" });
+        log.error(`Broadcast error for ${vendorId}: Product not found`);
+        req.flash("error", "Product not found");
+        return res.redirect("/dashboard/products");
       }
 
       if (!product.image) {
-        return res.status(400).json({
-          message: "Product image is required for broadcast",
-        });
+        log.error(`Broadcast error for ${vendorId}: Product image missing`);
+        req.flash("error", "Product image is required for broadcast");
+        return res.redirect("/dashboard/products");
       }
 
       const leads = await Lead.find({ vendor: vendorId });
 
       if (!leads.length) {
-        return res.status(400).json({
-          message: "No customers available for broadcast",
-        });
+        req.flash("error", "No customers available for broadcast");
+        return res.redirect("/dashboard/products");
       }
 
       const client = getSession(vendorId);
 
       if (!client) {
         createSession(vendorId);
-        return res.status(400).json({
-          message: "WhatsApp initializing...",
-        });
+        req.flash("error", "WhatsApp initializing...");
+        return res.redirect("/dashboard/products");
       }
 
       // 🔥 Load image
@@ -228,6 +243,7 @@ Reply *buy* to order now 🚀
           // ⚠️ Anti-ban delay (VERY IMPORTANT)
           await new Promise((r) => setTimeout(r, Math.random() * 2000 + 1000));
         } catch (err) {
+          req.flash("error", "Failed to send broadcast message");
           log.error(
             `Failed for ${lead.customerNumber} for ${vendorId}:`,
             err.message,
@@ -237,16 +253,15 @@ Reply *buy* to order now 🚀
       }
 
       // await incrementBroadcast(vendorId);
-
-      res.json({
-        message: "Broadcast completed",
-        total: leads.length,
-        success,
-        failed,
-      });
+      req.flash(
+        "success",
+        `Broadcast completed: ${success} sent, ${failed} failed`,
+      );
+      return res.redirect("/dashboard/products");
     } catch (err) {
       log.error(`Broadcast error for ${vendorId}:`, err.message);
-      res.status(500).json({ message: "Server error" });
+      req.flash("error", "Failed to broadcast product");
+      return res.redirect("/dashboard/products");
     }
   },
 );
@@ -264,7 +279,9 @@ router.post(
       // 🔥 Get vendor safely
       const vendor = await Vendor.findById(vendorId);
       if (!vendor) {
-        return res.status(404).json({ message: "Vendor not found" });
+        log.error(`Status Post error for ${vendorId}: Vendor not found`);
+        req.flash("error", "Vendor not found");
+        return res.redirect("/dashboard/products");
       }
 
       // 🔥 Get product
@@ -274,13 +291,15 @@ router.post(
       });
 
       if (!product) {
-        return res.status(404).json({ message: "Product not found" });
+        log.error(`Status Post error for ${vendorId}: Product not found`);
+        req.flash("error", "Product not found");
+        return res.redirect("/dashboard/products");
       }
 
       if (!product.image) {
-        return res.status(400).json({
-          message: "Product image is required",
-        });
+        log.error(`Status Post error for ${vendorId}: Product image missing`);
+        req.flash("error", "Product image is required to post status");
+        return res.redirect("/dashboard/products");
       }
 
       // 🔥 WhatsApp session
@@ -288,9 +307,8 @@ router.post(
 
       if (!client) {
         createSession(vendorId);
-        return res.status(400).json({
-          message: "WhatsApp initializing...",
-        });
+        req.flash("error", "WhatsApp initializing...");
+        return res.redirect("/dashboard/products");
       }
 
       const productImagePath = path.join(
@@ -299,9 +317,11 @@ router.post(
       );
 
       if (!fs.existsSync(productImagePath)) {
-        return res.status(400).json({
-          message: "Product image file not found on server",
-        });
+        log.error(
+          `Status Post error for ${vendorId}: Product image file not found`,
+        );
+        req.flash("error", "Product image file not found on server");
+        return res.redirect("/dashboard/products");
       }
 
       const optimizedPath = path.join(
@@ -332,15 +352,12 @@ Reply *buy* to order 🚀
 
       // 🔥 Clean up temp file (important)
       fs.unlinkSync(optimizedPath);
-
-      return res.json({
-        message: "Product posted to WhatsApp status with image",
-      });
+      req.flash("success", "Product posted to WhatsApp status with image");
+      return res.redirect("/dashboard/products");
     } catch (err) {
       log.error(`Status Post failed for ${vendorId}:`, err.message);
-      return res.status(500).json({
-        message: "Failed to post status",
-      });
+      req.flash("error", "Failed to post status");
+      return res.redirect("/dashboard/products");
     }
   },
 );

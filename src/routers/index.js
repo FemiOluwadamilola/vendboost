@@ -7,10 +7,8 @@ router.get("/", async (req, res) => {
       title: "welcome to Vendboost",
     });
   } catch (err) {
-    return res.status(500).json({
-      message: "Server error: something went wrong, please try again later",
-      error: err,
-    });
+    req.flash("error", "Failed to load homepage");
+    return res.redirect("/");
   }
 });
 

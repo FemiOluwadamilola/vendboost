@@ -34,13 +34,8 @@ router.get("/", verifyAuth.requireAuth, async (req, res) => {
     });
   } catch (err) {
     log.error(`Dashboard error for ${vendorId}:`, err.message);
-    res.render("dashboard", {
-      layout: "layouts/dashboard",
-      title: "VendBoost Dashboard",
-      vendorId,
-      leads: [],
-      error: "Failed to load leads",
-    });
+    req.flash("error", "Failed to load dashboard data");
+    return res.redirect("/dashboard");
   }
 });
 
@@ -60,13 +55,8 @@ router.get("/analytics", verifyAuth.requireAuth, async (req, res) => {
     });
   } catch (err) {
     log.error(`Analytics error for ${vendorId}:`, err.message);
-    res.render("./dashboard/index", {
-      layout: "layouts/dashboard",
-      title: "VendBoost Dashboard",
-      vendorId,
-      leads: [],
-      error: "Failed to load leads",
-    });
+    req.flash("error", "Failed to load analytics data");
+    return res.redirect("/dashboard");
   }
 });
 
@@ -76,9 +66,10 @@ router.get("/new-product", verifyAuth.requireAuth, async (req, res) => {
       layout: "layouts/dashboard",
       title: "upload product",
     });
-    s;
   } catch (err) {
     log.error(`Upload product error for ${vendorId}:`, err.message);
+    req.flash("error", "Failed to load product upload page");
+    res.redirect("/dashboard");
   }
 });
 
@@ -97,7 +88,8 @@ router.get("/products", verifyAuth.requireAuth, async (req, res) => {
     });
   } catch (err) {
     log.error(`Fetch products error for ${vendorId}:`, err.message);
-    res.status(500).json({ message: "Server error" });
+    req.flash("error", "Failed to load products");
+    return res.redirect("/dashboard");
   }
 });
 
@@ -124,6 +116,8 @@ router.get("/leads", verifyAuth.requireAuth, async (req, res) => {
     });
   } catch (err) {
     log.error(`Fetch leads error for ${vendorId}:`, err.message);
+    req.flash("error", "Failed to load leads");
+    return res.redirect("/dashboard");
   }
 });
 
@@ -135,6 +129,8 @@ router.get("/settings", verifyAuth.requireAuth, async (req, res) => {
     });
   } catch (err) {
     log.error(`Fetch settings error for ${vendorId}:`, err.message);
+    req.flash("error", "Failed to load settings");
+    return res.redirect("/dashboard");
   }
 });
 

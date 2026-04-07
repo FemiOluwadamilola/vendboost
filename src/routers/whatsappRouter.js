@@ -19,7 +19,7 @@ router.get("/connect-whatsapp", verifyAuth.requireAuth, async (req, res) => {
 
     // Start WhatsApp client if not already running
     await createSession(vendorId);
-
+    log.info(`WhatsApp session initialized for vendor ${vendorId}`);
     return res.render("connect-whatsapp", {
       title: "WhatsApp Connection",
       vendorId,
@@ -27,12 +27,8 @@ router.get("/connect-whatsapp", verifyAuth.requireAuth, async (req, res) => {
     });
   } catch (err) {
     log.error(`WhatsApp connection error for ${vendorId}:`, err.message);
-
-    return res.render("connect", {
-      title: "WhatsApp Connection",
-      vendorId,
-      status: "error",
-    });
+    req.flash("error", "Failed to connect WhatsApp, please try again");
+    return res.redirect("/dashboard");
   }
 });
 
@@ -44,6 +40,9 @@ router.get("/whatsapp-status", verifyAuth.requireAuth, async (req, res) => {
     const session = await WhatsAppSession.findOne({ vendorId });
 
     if (!session) {
+      log.warn(`No WhatsApp session found for vendor ${vendorId}`);
+      req.flash("error", "No WhatsApp session found");
+
       return res.json({ status: "not_initialized", qr: null });
     }
 
@@ -53,7 +52,8 @@ router.get("/whatsapp-status", verifyAuth.requireAuth, async (req, res) => {
     });
   } catch (err) {
     log.error(`Status fetch error for ${vendorId}:`, err.message);
-    res.status(500).json({ status: "error" });
+    req.flash("error", "Failed to fetch WhatsApp status");
+    return res.json({ status: "error", qr: null });
   }
 });
 

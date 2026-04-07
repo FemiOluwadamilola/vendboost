@@ -9,18 +9,16 @@ router.post("/signup", async (req, res) => {
 
     // Basic validation
     if (!email || !password) {
-      return res.status(400).json({
-        message: "Email and password are required",
-      });
+      req.flash("error", "Email and password are required.");
+      return res.redirect("/signup");
     }
 
     // Check if vendor already exists
     const existingVendor = await Vendor.findOne({ email });
 
     if (existingVendor) {
-      return res.status(409).json({
-        message: "Oops! This email is already in use.",
-      });
+      req.flash("error", "This email is already in use.");
+      return res.redirect("/signup");
     }
 
     // Hash password
@@ -37,12 +35,12 @@ router.post("/signup", async (req, res) => {
     });
 
     await newVendor.save();
+    req.flash("success", "Account created successfully. Please sign in.");
     return res.redirect("/signin");
   } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      message: "Server error. Please try again later.",
-    });
+    req.flash("error", "An error occurred. Please try again.");
+    log.error("Signup error:", err.message);
+    return res.redirect("/signup");
   }
 });
 
@@ -51,41 +49,36 @@ router.post("/signin", async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.render("login", {
-        error: "Email and password are required",
-      });
+      req.flash("error", "Email and password are required.");
+      return res.redirect("/signin");
     }
 
     const vendor = await Vendor.findOne({ email });
 
     if (!vendor) {
-      return res.render("./dashboard/register", {
-        error: "Invalid email or password",
-      });
+      req.flash("error", "Invalid email or password");
+      return res.redirect("/signin");
     }
 
     const isMatch = await bcrypt.compare(password, vendor.password);
 
     if (!isMatch) {
-      return res.render("./dashboard/login", {
-        error: "Invalid email or password",
-      });
+      req.flash("error", "Invalid email or password");
+      return res.redirect("/signin");
     }
 
     // Optional: account status check
     if (vendor.status && vendor.status !== "active") {
-      return res.render("login", {
-        error: "Account is not active",
-      });
+      req.flash("error", "Account is not active");
+      return res.redirect("/signin");
     }
 
     // 🔐 Secure session creation
     req.session.regenerate((err) => {
       if (err) {
         log.error("Session error:", err.message);
-        return res.render("./dashboard/login", {
-          error: "Something went wrong. Try again.",
-        });
+        req.flash("error", "An error occurred. Please try again.");
+        return res.redirect("/signin");
       }
 
       req.session.user = {
@@ -100,10 +93,8 @@ router.post("/signin", async (req, res) => {
     });
   } catch (err) {
     log.error("Signin error:", err.message);
-
-    return res.render("./dashboard/login", {
-      error: "Server error. Please try again later.",
-    });
+    req.flash("error", "An error occurred. Please try again.");
+    return res.redirect("/signin");
   }
 });
 
@@ -111,9 +102,8 @@ router.get("/logout", (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       log.error("Logout error:", err.message);
-      return res.status(500).json({
-        message: "Logout failed. Please try again.",
-      });
+      req.flash("error", "An error occurred. Please try again.");
+      return res.redirect("/dashboard");
     }
     res.clearCookie("vendboost.sid");
     res.redirect("./dashboard/login");

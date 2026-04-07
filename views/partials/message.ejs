@@ -1,0 +1,54 @@
+<% if (success.length > 0) { %>
+  <div class="alert success auto-dismiss">
+    <%= success %>
+  </div>
+<% } %>
+
+<% if (error.length > 0) { %>
+  <div class="alert error auto-dismiss">
+    <%= error %>
+  </div>
+<% } %>
+
+<style>
+.alert {
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.success {
+  background: #22c55e;
+  color: white;
+}
+
+.error {
+  background: #ef4444;
+  color: white;
+}
+
+/* Fade-out state */
+.fade-out {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+</style>
+
+<script>
+  // Wait until DOM loads
+  document.addEventListener("DOMContentLoaded", () => {
+    const alerts = document.querySelectorAll(".auto-dismiss");
+
+    alerts.forEach((alert) => {
+      setTimeout(() => {
+        alert.classList.add("fade-out");
+
+        // Remove from DOM after animation
+        setTimeout(() => {
+          alert.remove();
+        }, 500);
+      }, 5000); // 5 seconds
+    });
+  });
+</script>

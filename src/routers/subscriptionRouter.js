@@ -5,6 +5,7 @@ const axios = require("axios");
 const verifyAuth = require("../middlewares/verifyAuth");
 const Vendor = require("../models/Vendor");
 const plans = require("../config/plans");
+const log = require("../utils/logger");
 
 // router.post("/", () => {
 
@@ -17,9 +18,9 @@ router.post("/upgrade", verifyAuth.requireAuth, async (req, res) => {
   try {
     // 🔥 Validate plan
     if (!plans[plan]) {
-      return res.status(400).json({
-        message: "Invalid plan selected",
-      });
+      log.error(`Invalid plan selected for vendor ${vendorId}`);
+      req.flash("error", "Invalid subscription plan selected");
+      return res.redirect("/dashboard");
     }
 
     const selectedPlan = plans[plan];
@@ -27,9 +28,9 @@ router.post("/upgrade", verifyAuth.requireAuth, async (req, res) => {
     // 🔥 Get vendor
     const vendor = await Vendor.findById(vendorId);
     if (!vendor) {
-      return res.status(404).json({
-        message: "Vendor not found",
-      });
+      log.error(`Vendor not found for ID: ${vendorId}`);
+      req.flash("error", "Something went wrong, please try again");
+      return res.redirect("/dashboard");
     }
 
     // 🔥 Create Paystack transaction
@@ -55,17 +56,15 @@ router.post("/upgrade", verifyAuth.requireAuth, async (req, res) => {
     );
 
     const paymentLink = response.data.data.authorization_url;
-
-    return res.json({
-      message: "Payment link generated",
-      url: paymentLink,
-    });
+    req.flash("success", "Payment link generated");
+    return res.redirect(paymentLink);
   } catch (err) {
-    console.error("Upgrade error:", err.response?.data || err.message);
-
-    return res.status(500).json({
-      message: "Failed to initialize payment",
-    });
+    log.error(
+      `Upgrade error for ${vendorId}:`,
+      err.response?.data || err.message,
+    );
+    req.flash("error", "Failed to initialize payment");
+    return res.redirect("/dashboard");
   }
 });
 

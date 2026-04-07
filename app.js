@@ -5,6 +5,7 @@ const path = require("path");
 const DBConnection = require("./src/config/DBconfig");
 const cron = require("node-cron");
 // const mongoose = require("mongoose");
+const flash = require("connect-flash");
 const indexRoute = require("./src/routers/index");
 const authRoute = require("./src/routers/authRouter");
 const dashboardRoute = require("./src/routers/dashboardRouter");
@@ -22,7 +23,11 @@ DBConnection();
 
 app.use(sessionMiddleware);
 
+app.use(flash());
+
 app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
   res.locals.user = req.session.userId || null;
   next();
 });
