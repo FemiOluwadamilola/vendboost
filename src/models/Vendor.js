@@ -19,6 +19,12 @@ const VendorSchema = new mongoose.Schema({
     bankName: String,
     accountNumber: String,
     accountName: String
+  },
+  subscription: {
+    plan: { type: String, default: null },
+    status: { type: String, default: "inactive" },
+    startDate: Date,
+    endDate: Date
   }
 });
 

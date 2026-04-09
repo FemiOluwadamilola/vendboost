@@ -1,176 +1,533 @@
-<!-- Main Content for VendBoost Dashboard -->
+<!-- Main Content -->
 <main class="main-content">
     <%- include('../partials/message') %>
+    
     <!-- Top Navbar -->
     <nav class="navbar">
-        <div class="page-header">
-            <h1 class="page-title">VendBoost Analytics</h1>
-            <div class="page-breadcrumb">
-                <a href="index.html">Dashboard</a>
-                <span>/</span>
-                <span>Analytics</span>
-            </div>
+        <div class="navbar-left">
+            <h1 class="page-title">Analytics</h1>
+            <p class="page-subtitle">Track your store performance and customer insights</p>
         </div>
         <div class="navbar-right">
-            <div class="search-box">
-                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                </svg>
-                <input type="text" class="search-input" placeholder="Search vendors, products...">
+            <div class="date-range-picker">
+                <button class="date-btn active">7D</button>
+                <button class="date-btn">30D</button>
+                <button class="date-btn">90D</button>
             </div>
-            <button class="nav-btn" id="theme-toggle" title="Toggle Light/Dark Mode">
-                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/>
-                    <path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/>
-                    <path d="M2 12h2"/><path d="M20 12h2"/>
-                    <path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/>
-                </svg>
-                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            <button class="icon-btn" title="Export Report">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
                 </svg>
             </button>
         </div>
     </nav>
 
-    <!-- Stats Cards -->
+    <!-- Stats Grid -->
     <section class="stats-grid">
         <div class="glass-card stat-card">
-            <div class="stat-card-inner">
-                <div class="stat-info">
-                    <h3>WhatsApp Sessions</h3>
-                    <div class="stat-value">12</div>
-                    <span class="stat-change positive">+3 active</span>
-                </div>
-                <div class="stat-icon cyan">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--emerald-light)" stroke-width="2">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/>
-                    </svg>
-                </div>
+            <div class="stat-icon purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Total Leads</span>
+                <span class="stat-value"><%= stats && stats.totalLeads ? stats.totalLeads : 0 %></span>
+                <span class="stat-trend positive">+12% this month</span>
             </div>
         </div>
 
         <div class="glass-card stat-card">
-            <div class="stat-card-inner">
-                <div class="stat-info">
-                    <h3>Messages Sent</h3>
-                    <div class="stat-value">8,342</div>
-                    <span class="stat-change positive">+12% from last week</span>
-                </div>
-                <div class="stat-icon magenta">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2z"/>
-                    </svg>
-                </div>
+            <div class="stat-icon green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Converted</span>
+                <span class="stat-value"><%= stats && stats.converted ? stats.converted : 0 %></span>
+                <span class="stat-trend positive">+8% this month</span>
             </div>
         </div>
 
         <div class="glass-card stat-card">
-            <div class="stat-card-inner">
-                <div class="stat-info">
-                    <h3>Active Customers</h3>
-                    <div class="stat-value">1,024</div>
-                    <span class="stat-change positive">+8% growth</span>
-                </div>
-                <div class="stat-icon purple">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--coral)" stroke-width="2">
-                        <circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/>
-                    </svg>
-                </div>
+            <div class="stat-icon orange">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                    <line x1="9" y1="9" x2="9.01" y2="9"/>
+                    <line x1="15" y1="9" x2="15.01" y2="9"/>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Qualified</span>
+                <span class="stat-value"><%= stats && stats.qualified ? stats.qualified : 0 %></span>
+                <span class="stat-trend neutral">Steady</span>
             </div>
         </div>
 
         <div class="glass-card stat-card">
-            <div class="stat-card-inner">
-                <div class="stat-info">
-                    <h3>Conversions</h3>
-                    <div class="stat-value">312</div>
-                    <span class="stat-change positive">+15% this month</span>
-                </div>
-                <div class="stat-icon success">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2">
-                        <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                </div>
+            <div class="stat-icon blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="1" x2="12" y2="23"/>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Conversion Rate</span>
+                <span class="stat-value"><%= stats && stats.conversionRate ? stats.conversionRate : 0 %>%</span>
+                <span class="stat-trend positive">+5% this month</span>
             </div>
         </div>
     </section>
 
-    <!-- Main Charts -->
-    <section class="content-grid">
-        <!-- Messages Trend -->
+    <!-- Charts Section -->
+    <div class="analytics-grid">
+        <!-- Lead Sources -->
         <div class="glass-card chart-card">
             <div class="card-header">
                 <div>
-                    <h2 class="card-title">Messages Trend</h2>
-                    <p class="card-subtitle">Daily messages sent and received</p>
-                </div>
-                <div class="card-actions">
-                    <button class="card-btn">7 Days</button>
-                    <button class="card-btn active">30 Days</button>
-                    <button class="card-btn">90 Days</button>
-                </div>
-            </div>
-            <div class="chart-wrapper">
-                <canvas id="messagesTrendChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Top Products -->
-        <div class="glass-card activity-card">
-            <div class="card-header">
-                <div>
-                    <h2 class="card-title">Top Products</h2>
-                    <p class="card-subtitle">Most purchased via WhatsApp</p>
-                </div>
-            </div>
-            <div class="activity-list" id="topProductsList">
-                <!-- dynamically generated -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Bottom Grid -->
-    <section class="bottom-grid">
-        <!-- Follow-ups -->
-        <div class="glass-card">
-            <div class="card-header">
-                <div>
-                    <h2 class="card-title">Pending Follow-ups</h2>
-                    <p class="card-subtitle">Customers requiring attention</p>
-                </div>
-            </div>
-            <div class="activity-list" id="pendingFollowups">
-                <!-- dynamically generated follow-ups -->
-            </div>
-        </div>
-
-        <!-- Devices -->
-        <div class="glass-card">
-            <div class="card-header">
-                <div>
-                    <h2 class="card-title">Devices</h2>
-                    <p class="card-subtitle">Customer activity by device type</p>
+                    <h2 class="card-title">Lead Sources</h2>
+                    <p class="card-subtitle">Where your leads come from</p>
                 </div>
             </div>
             <div class="donut-container">
-                <div class="donut-chart">
-                    <svg width="140" height="140" viewBox="0 0 140 140">
-                        <circle class="donut-bg" cx="70" cy="70" r="54"/>
-                        <circle class="donut-segment" cx="70" cy="70" r="54" stroke="var(--emerald-light)" stroke-dasharray="186.6 339.3" stroke-dashoffset="0"/>
-                        <circle class="donut-segment" cx="70" cy="70" r="54" stroke="var(--gold)" stroke-dasharray="118.8 339.3" stroke-dashoffset="-186.6"/>
-                        <circle class="donut-segment" cx="70" cy="70" r="54" stroke="var(--coral)" stroke-dasharray="33.9 339.3" stroke-dashoffset="-305.4"/>
+                <div class="donut-chart large">
+                    <svg width="180" height="180" viewBox="0 0 180 180">
+                        <circle class="donut-bg" cx="90" cy="90" r="70" fill="none" stroke="var(--glass-border)" stroke-width="20"/>
+                        <circle class="donut-segment" cx="90" cy="90" r="70" stroke="var(--emerald-light)" stroke-width="20" stroke-dasharray="264 440" stroke-dashoffset="0" transform="rotate(-90 90 90)"/>
+                        <circle class="donut-segment" cx="90" cy="90" r="70" stroke="var(--gold)" stroke-width="20" stroke-dasharray="132 440" stroke-dashoffset="-264" transform="rotate(-90 90 90)"/>
+                        <circle class="donut-segment" cx="90" cy="90" r="70" stroke="var(--coral)" stroke-width="20" stroke-dasharray="44 440" stroke-dashoffset="-396" transform="rotate(-90 90 90)"/>
                     </svg>
                     <div class="donut-center">
-                        <div class="donut-value">100%</div>
+                        <div class="donut-value"><%= (leads && leads.length) || 0 %></div>
                         <div class="donut-label">Total</div>
                     </div>
                 </div>
                 <div class="donut-legend">
-                    <div class="legend-item"><span class="legend-color cyan"></span><span>Mobile (60%)</span></div>
-                    <div class="legend-item"><span class="legend-color magenta"></span><span>Desktop (30%)</span></div>
-                    <div class="legend-item"><span class="legend-color purple"></span><span>Tablet (10%)</span></div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: var(--emerald-light)"></span>
+                        <span>WhatsApp</span>
+                        <span class="legend-value">60%</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: var(--gold)"></span>
+                        <span>Status Reply</span>
+                        <span class="legend-value">30%</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: var(--coral)"></span>
+                        <span>Direct Message</span>
+                        <span class="legend-value">10%</span>
+                    </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Intent Distribution -->
+        <div class="glass-card chart-card">
+            <div class="card-header">
+                <div>
+                    <h2 class="card-title">Customer Intent</h2>
+                    <p class="card-subtitle">What customers are looking for</p>
+                </div>
+            </div>
+            <div class="intent-list">
+                <% const intentCounts = {}; %>
+                <% if (leads && leads.length > 0) { %>
+                    <% leads.forEach(lead => { %>
+                        <% intentCounts[lead.intentType] = (intentCounts[lead.intentType] || 0) + 1; %>
+                    <% }); %>
+                <% } %>
+                
+                <div class="intent-item">
+                    <div class="intent-info">
+                        <span class="intent-icon ready" style="background: rgba(16, 185, 129, 0.15); color: #10B981;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="1" x2="12" y2="23"/>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <span class="intent-name">Ready to Pay</span>
+                            <span class="intent-count"><%= intentCounts['ready-to-pay'] || 0 %> leads</span>
+                        </div>
+                    </div>
+                    <div class="intent-bar">
+                        <div class="intent-fill" style="width: <%= ((intentCounts['ready-to-pay'] || 0) / (leads ? leads.length : 1)) * 100 %>%; background: linear-gradient(90deg, #10B981, #059669);"></div>
+                    </div>
+                </div>
+
+                <div class="intent-item">
+                    <div class="intent-info">
+                        <span class="intent-icon price" style="background: rgba(245, 158, 11, 0.15); color: #F59E0B;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <span class="intent-name">Price Inquiry</span>
+                            <span class="intent-count"><%= intentCounts['price'] || 0 %> leads</span>
+                        </div>
+                    </div>
+                    <div class="intent-bar">
+                        <div class="intent-fill" style="width: <%= ((intentCounts['price'] || 0) / (leads ? leads.length : 1)) * 100 %>%; background: linear-gradient(90deg, #F59E0B, #D97706);"></div>
+                    </div>
+                </div>
+
+                <div class="intent-item">
+                    <div class="intent-info">
+                        <span class="intent-icon availability" style="background: rgba(59, 130, 246, 0.15); color: #3B82F6;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <span class="intent-name">Availability</span>
+                            <span class="intent-count"><%= intentCounts['availability'] || 0 %> leads</span>
+                        </div>
+                    </div>
+                    <div class="intent-bar">
+                        <div class="intent-fill" style="width: <%= ((intentCounts['availability'] || 0) / (leads ? leads.length : 1)) * 100 %>%; background: linear-gradient(90deg, #3B82F6, #2563EB);"></div>
+                    </div>
+                </div>
+
+                <div class="intent-item">
+                    <div class="intent-info">
+                        <span class="intent-icon inquiry" style="background: rgba(139, 92, 246, 0.15); color: #8B5CF6;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                                <line x1="12" y1="17" x2="12.01" y2="17"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <span class="intent-name">General Inquiry</span>
+                            <span class="intent-count"><%= intentCounts['inquiry'] || 0 %> leads</span>
+                        </div>
+                    </div>
+                    <div class="intent-bar">
+                        <div class="intent-fill" style="width: <%= ((intentCounts['inquiry'] || 0) / (leads ? leads.length : 1)) * 100 %>%; background: linear-gradient(90deg, #8B5CF6, #7C3AED);"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Leads Table -->
+    <section class="leads-table-section">
+        <div class="glass-card">
+            <div class="card-header">
+                <div>
+                    <h2 class="card-title">Recent Leads</h2>
+                    <p class="card-subtitle">Latest customer interactions</p>
+                </div>
+                <a href="/dashboard/leads" class="card-btn">View All</a>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Intent</th>
+                            <th>Status</th>
+                            <th>Score</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (leads && leads.length > 0) { %>
+                            <% leads.slice(0, 10).forEach(lead => { %>
+                                <tr>
+                                    <td>
+                                        <div class="customer-cell">
+                                            <div class="customer-avatar"><%= lead.customerName ? lead.customerName.charAt(0).toUpperCase() : 'U' %></div>
+                                            <div class="customer-info">
+                                                <span class="customer-name"><%= lead.customerName || 'Unknown' %></span>
+                                                <span class="customer-phone"><%= lead.customerNumber %></span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="intent-badge <%= lead.intentType || 'inquiry' %>"><%= lead.intentType || 'inquiry' %></span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge <%= lead.status === 'converted' ? 'completed' : lead.status === 'qualified' ? 'processing' : 'pending' %>"><%= lead.status || 'new' %></span>
+                                    </td>
+                                    <td>
+                                        <div class="score-bar">
+                                            <div class="score-fill" style="width: <%= lead.score || 0 %>%"></div>
+                                        </div>
+                                        <span class="score-value"><%= lead.score || 0 %></span>
+                                    </td>
+                                    <td><%= new Date(lead.createdAt).toLocaleDateString() %></td>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="5" class="empty-cell">No leads yet</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
             </div>
         </div>
     </section>
 </main>
+
+<style>
+.date-range-picker {
+    display: flex;
+    gap: 4px;
+    background: var(--glass-bg);
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
+}
+
+.date-btn {
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.date-btn.active {
+    background: var(--emerald);
+    color: white;
+}
+
+.date-btn:hover:not(.active) {
+    color: var(--text-primary);
+}
+
+/* Analytics Grid */
+.analytics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.donut-chart.large {
+    width: 180px;
+    height: 180px;
+    position: relative;
+}
+
+.donut-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.donut-center .donut-value {
+    font-size: 28px;
+    font-weight: 700;
+    font-family: 'Space Mono', monospace;
+}
+
+.donut-center .donut-label {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* Legend */
+.donut-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 4px;
+}
+
+.legend-value {
+    margin-left: auto;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* Intent List */
+.intent-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.intent-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.intent-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.intent-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.intent-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.intent-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.intent-count {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.intent-bar {
+    height: 8px;
+    background: var(--glass-border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.intent-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+/* Score Bar */
+.score-bar {
+    width: 60px;
+    height: 6px;
+    background: var(--glass-border);
+    border-radius: 3px;
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+.score-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--emerald-light), var(--gold));
+    border-radius: 3px;
+}
+
+.score-value {
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Space Mono', monospace;
+}
+
+/* Customer Cell */
+.customer-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.customer-avatar {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--emerald), var(--gold));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    color: white;
+}
+
+.customer-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.customer-name {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.customer-phone {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* Intent Badge */
+.intent-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.intent-badge.ready-to-pay, .intent-badge.order {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+}
+
+.intent-badge.price {
+    background: rgba(245, 158, 11, 0.15);
+    color: #F59E0B;
+}
+
+.intent-badge.availability {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3B82F6;
+}
+
+.intent-badge.inquiry, .intent-badge.negotiation {
+    background: rgba(139, 92, 246, 0.15);
+    color: #8B5CF6;
+}
+
+.empty-cell {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 32px !important;
+}
+
+@media (max-width: 1024px) {
+    .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .date-range-picker {
+        display: none;
+    }
+}
+</style>

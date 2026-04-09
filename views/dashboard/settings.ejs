@@ -421,80 +421,118 @@
                     <div class="billing-plan-card" style="background: linear-gradient(135deg, rgba(5, 150, 105, 0.15), rgba(212, 165, 116, 0.15)); padding: 24px; border-radius: 16px; margin-bottom: 20px; border: 1px solid var(--glass-border);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                             <div>
-                                <h4 style="font-size: 20px; font-weight: 600; margin-bottom: 4px;">Pro Plan</h4>
-                                <p style="color: var(--text-muted); font-size: 14px;">Billed monthly</p>
+                                <h4 style="font-size: 20px; font-weight: 600; margin-bottom: 4px;">
+                                    <%= (subscription && subscription.plan) ? subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1) : 'Free' %> Plan
+                                </h4>
+                                <p style="color: var(--text-muted); font-size: 14px;">
+                                    <%= subscription && subscription.isActive ? 'Active' : 'Inactive' %> 
+                                    <% if (subscription && subscription.endDate) { %>
+                                         • Renews <%= new Date(subscription.endDate).toLocaleDateString() %>
+                                    <% } %>
+                                </p>
                             </div>
                             <div style="text-align: right;">
-                                <span style="font-family: 'Space Mono', monospace; font-size: 32px; font-weight: 700;">$29</span>
+                                <span style="font-family: 'Space Mono', monospace; font-size: 32px; font-weight: 700;">
+                                    ₦<%= planDetails ? planDetails.price : 0 %>
+                                </span>
                                 <span style="color: var(--text-muted);">/month</span>
                             </div>
                         </div>
+
+                        <% if (planDetails && planDetails.limits) { %>
+                        <div style="margin-bottom: 16px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Your Plan Limits:</p>
+                            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                                <span style="font-size: 13px;">📊 Leads: <%= planDetails.limits.leads || 0 %></span>
+                                <span style="font-size: 13px;">📢 Broadcasts/Day: <%= planDetails.limits.broadcastsPerDay || 0 %></span>
+                                <span style="font-size: 13px;">💬 WhatsApp Sessions: <%= planDetails.limits.whatsappSessions || 1 %></span>
+                            </div>
+                        </div>
+                        <% } %>
+
                         <div style="display: flex; gap: 12px;">
-                            <button class="btn btn-primary" style="width: auto; padding: 10px 20px;">Upgrade Plan</button>
-                            <button class="btn btn-secondary" style="width: auto; padding: 10px 20px;">Cancel Subscription</button>
+                            <% if (subscription && subscription.plan !== 'pro') { %>
+                                <button class="btn btn-primary" style="width: auto; padding: 10px 20px;" onclick="upgradePlan()">Upgrade Plan</button>
+                            <% } %>
+                            <% if (subscription && subscription.plan !== 'free') { %>
+                                <button class="btn btn-secondary" style="width: auto; padding: 10px 20px;" onclick="cancelSubscription()">Cancel Subscription</button>
+                            <% } %>
                         </div>
                     </div>
                 </div>
 
+                <% if (subscription && subscription.plan !== 'pro') { %>
                 <div class="settings-section">
-                    <h3 class="settings-section-title">Payment Method</h3>
-                    <div class="settings-row">
-                        <div class="settings-label" style="display: flex; align-items: center; gap: 16px;">
-                            <div style="width: 48px; height: 32px; background: linear-gradient(135deg, #1a1f71, #00579f); border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                                <span style="color: white; font-size: 10px; font-weight: bold;">VISA</span>
-                            </div>
-                            <div>
-                                <span class="settings-label-title">Visa ending in 4242</span>
-                                <span class="settings-label-desc">Expires 12/2026</span>
-                            </div>
+                    <h3 class="settings-section-title">Available Plans</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                        <% if (subscription.plan !== 'starter') { %>
+                        <div class="glass-card" style="padding: 20px; border-radius: 12px;">
+                            <h4 style="margin-bottom: 8px;">Starter</h4>
+                            <p style="font-family: 'Space Mono', monospace; font-size: 24px; margin-bottom: 12px;">₦5,000<span style="font-size: 12px; color: var(--text-muted);">/mo</span></p>
+                            <ul style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
+                                <li>200 Leads</li>
+                                <li>50 Broadcasts/Day</li>
+                                <li>1 WhatsApp Session</li>
+                            </ul>
+                            <form action="/billing/upgrade" method="POST" style="display: inline;">
+                                <input type="hidden" name="plan" value="starter">
+                                <button type="submit" class="btn btn-primary" style="width: 100%;">Select Starter</button>
+                            </form>
                         </div>
-                        <button class="card-btn" style="padding: 6px 12px;">Edit</button>
-                    </div>
-                    <div style="margin-top: 16px;">
-                        <button class="btn btn-secondary" style="width: auto; padding: 10px 20px;">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
-                                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                            </svg>
-                            Add Payment Method
-                        </button>
+                        <% } %>
+                        <% if (subscription.plan !== 'pro') { %>
+                        <div class="glass-card" style="padding: 20px; border-radius: 12px; border: 1px solid var(--emerald-light);">
+                            <div style="background: var(--emerald); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; display: inline-block; margin-bottom: 8px;">RECOMMENDED</div>
+                            <h4 style="margin-bottom: 8px;">Pro</h4>
+                            <p style="font-family: 'Space Mono', monospace; font-size: 24px; margin-bottom: 12px;">₦15,000<span style="font-size: 12px; color: var(--text-muted);">/mo</span></p>
+                            <ul style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
+                                <li>1,000 Leads</li>
+                                <li>500 Broadcasts/Day</li>
+                                <li>3 WhatsApp Sessions</li>
+                            </ul>
+                            <form action="/billing/upgrade" method="POST" style="display: inline;">
+                                <input type="hidden" name="plan" value="pro">
+                                <button type="submit" class="btn btn-primary" style="width: 100%;">Select Pro</button>
+                            </form>
+                        </div>
+                        <% } %>
                     </div>
                 </div>
+                <% } %>
 
                 <div class="settings-section">
-                    <h3 class="settings-section-title">Billing History</h3>
+                    <h3 class="settings-section-title">Payment History</h3>
                     <div class="table-wrapper" style="margin: 0;">
                         <table class="data-table" style="min-width: 100%;">
                             <thead>
                                 <tr>
                                     <th>Date</th>
-                                    <th>Description</th>
+                                    <th>Plan</th>
                                     <th>Amount</th>
                                     <th>Status</th>
-                                    <th>Invoice</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Jan 1, 2025</td>
-                                    <td>Pro Plan - Monthly</td>
-                                    <td><span class="table-amount">$29.00</span></td>
-                                    <td><span class="status-badge completed">Paid</span></td>
-                                    <td><a href="#" style="color: var(--emerald-light);">Download</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Dec 1, 2024</td>
-                                    <td>Pro Plan - Monthly</td>
-                                    <td><span class="table-amount">$29.00</span></td>
-                                    <td><span class="status-badge completed">Paid</span></td>
-                                    <td><a href="#" style="color: var(--emerald-light);">Download</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Nov 1, 2024</td>
-                                    <td>Pro Plan - Monthly</td>
-                                    <td><span class="table-amount">$29.00</span></td>
-                                    <td><span class="status-badge completed">Paid</span></td>
-                                    <td><a href="#" style="color: var(--emerald-light);">Download</a></td>
-                                </tr>
+                                <% if (payments && payments.length > 0) { %>
+                                    <% payments.forEach(payment => { %>
+                                        <tr>
+                                            <td><%= new Date(payment.createdAt).toLocaleDateString() %></td>
+                                            <td><%= payment.plan %></td>
+                                            <td><span class="table-amount">₦<%= payment.amount %></span></td>
+                                            <td>
+                                                <span class="status-badge <%= payment.status === 'success' ? 'completed' : payment.status === 'pending' ? 'processing' : 'danger' %>">
+                                                    <%= payment.status %>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="4" style="text-align: center; color: var(--text-muted);">
+                                            No payment history yet
+                                        </td>
+                                    </tr>
+                                <% } %>
                             </tbody>
                         </table>
                     </div>

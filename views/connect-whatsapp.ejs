@@ -173,10 +173,16 @@
 
 <script>
   const vendorId = "<%= vendorId %>";
+  const status = "<%= status %>";
+
+  if (status === "connected") {
+    document.getElementById("status-container").innerHTML = `<p class="status success">✅ WhatsApp connected! Redirecting...</p>`;
+    setTimeout(() => { window.location.href = "/dashboard"; }, 1500);
+  }
 
   async function fetchStatus() {
     try {
-      const res = await fetch(`/dashboard/whatsapp-status`, {
+      const res = await fetch(`/whatsapp/whatsapp-status`, {
         credentials: 'include'
       });
       const data = await res.json();
@@ -185,7 +191,7 @@
 
       if (data.status === "connected") {
         container.innerHTML = `<p class="status success">✅ WhatsApp connected! Redirecting...</p>`;
-        setTimeout(() => { window.location.href = "/dashboard"; }, 1000);
+        setTimeout(() => { window.location.href = "/dashboard"; }, 1500);
         return;
       }
 
@@ -213,10 +219,10 @@
         return;
       }
 
-      if (data.status === "disconnected" || data.status === "not_initialized") {
+      if (data.status === "disconnected" || data.status === "not_initialized" || data.status === "destroyed") {
         container.innerHTML = `
           <p class="status">⚠️ WhatsApp session not connected.</p>
-          <button class="btn" onclick="window.location.reload()">Reconnect</button>
+          <button class="btn" onclick="window.location.reload()">Connect Now</button>
         `;
         return;
       }

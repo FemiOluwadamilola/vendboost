@@ -1,7 +1,7 @@
 <main class="main-content">
- <%- include('../partials/message') %>
-    <!-- Navbar -->
-    <nav class="navbar">
+    <%- include('../partials/message') %>
+     <!-- Navbar -->
+     <nav class="navbar">
         <div class="page-header">
             <h1 class="page-title">Leads & Conversations 💬</h1>
             <div class="page-breadcrumb">
@@ -12,6 +12,23 @@
         </div>
 
         <div class="navbar-right">
+            <div class="search-box">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" class="search-input" placeholder="Search leads..." id="leadSearch">
+            </div>
+            <div class="filter-group">
+                <select class="filter-select" id="leadStatusFilter">
+                    <option value="">All Status</option>
+                    <option value="new">New</option>
+                    <option value="pending">Pending</option>
+                    <option value="contacted">Contacted</option>
+                    <option value="qualified">Qualified</option>
+                    <option value="converted">Converted</option>
+                    <option value="failed">Failed</option>
+                </select>
+            </div>
             <a href="/products" class="card-btn">
                 📢 Broadcast Product
             </a>
@@ -99,14 +116,14 @@
                                     <td>
                                         <div class="table-user">
                                             <div class="table-avatar">
-                                                <%= lead.name ? lead.name[0] : "U" %>
+                                                <%= lead.customerName ? lead.customerName[0] : "U" %>
                                             </div>
                                             <div class="table-user-info">
                                                 <span class="table-user-name">
-                                                    <%= lead.name || "Unknown" %>
+                                                    <%= lead.customerName || "Unknown" %>
                                                 </span>
                                                 <span class="table-user-email">
-                                                    <%= lead.phone %>
+                                                    <%= lead.customerNumber %>
                                                 </span>
                                             </div>
                                         </div>
@@ -114,7 +131,7 @@
 
                                     <!-- PRODUCT -->
                                     <td>
-                                        <%= lead.productName || "N/A" %>
+                                        <%= lead.product ? lead.product.name : "N/A" %>
                                     </td>
 
                                     <!-- SOURCE -->
@@ -126,10 +143,14 @@
 
                                     <!-- INTENT -->
                                     <td>
-                                        <% if (lead.intent === "ready-to-pay") { %>
+                                        <% if (lead.intentType === "ready-to-pay") { %>
                                             <span class="status-badge completed">💰 Ready</span>
-                                        <% } else if (lead.intent === "price") { %>
+                                        <% } else if (lead.intentType === "price") { %>
                                             <span class="status-badge processing">💲 Price</span>
+                                        <% } else if (lead.intentType === "order") { %>
+                                            <span class="status-badge completed">🛒 Order</span>
+                                        <% } else if (lead.intentType === "negotiation") { %>
+                                            <span class="status-badge processing">💬 Negotiation</span>
                                         <% } else { %>
                                             <span class="status-badge pending">💬 Inquiry</span>
                                         <% } %>
@@ -137,8 +158,9 @@
 
                                     <!-- STATUS -->
                                     <td>
-                                        <span class="status-badge <%= lead.status === 'closed' ? 'completed' : 'processing' %>">
-                                            <%= lead.status || "Open" %>
+                                        <% const statusClass = lead.status === 'converted' ? 'completed' : lead.status === 'failed' ? 'danger' : 'processing'; %>
+                                        <span class="status-badge <%= statusClass %>">
+                                            <%= lead.status || "new" %>
                                         </span>
                                     </td>
 
@@ -152,16 +174,17 @@
 
                                         <!-- Open Chat -->
                                         <a 
-                                            href="/chat/<%= lead.phone %>" 
+                                            href="https://wa.me/<%= lead.customerNumber %>" 
+                                            target="_blank"
                                             class="card-btn success">
                                             💬 Chat
                                         </a>
 
-                                        <!-- Mark as Closed -->
+                                        <!-- Mark as Converted -->
                                         <button 
                                             class="card-btn"
-                                            onclick="closeLead('<%= lead._id %>')">
-                                            ✅ Close
+                                            onclick="updateLeadStatus('<%= lead._id %>', 'converted')">
+                                            ✅ Convert
                                         </button>
 
                                     </td>

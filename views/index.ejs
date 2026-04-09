@@ -1,147 +1,1450 @@
- <div class="index-page">
-        <!-- Header -->
-        <header class="index-header">
-          <a href="/" class="index-logo">
-            <img src="/assets/images/logo.png" alt="VendBoost Logo" class="logo-img">
-          </a>
-            <div class="index-nav">
-                <button class="nav-btn" id="theme-toggle" title="Toggle Light/Dark Mode">
-                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/>
-                        <path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/>
-                        <path d="M2 12h2"/><path d="M20 12h2"/>
-                        <path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/>
-                    </svg>
-                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                    </svg>
-                </button>
-                <a href="/signin"  rel="nofollow" class="btn btn-primary" style="padding: 10px 20px;"> Get Started!</a>
+<div class="index-page">
+    <!-- Animated Background -->
+    <div class="background"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- Header -->
+    <header class="index-header">
+        <a href="/" class="index-logo">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
+                </svg>
             </div>
-        </header>
-
-        <!-- Main Content -->
-        <div class="index-container">
-            <!-- Hero Section -->
-            <section class="index-hero">
-                <h1>Turn WhatsApp Into a 24/7 Sales Machine</h1>
-                <p>VendBoost automates replies, follow-ups and sales tracking — so you never miss a customer.</p>
-            </section>
-
-            <!-- Features -->
-            <h2 class="section-title">Why Choose VendBoost?</h2>
-          <section class="features-grid">
-
-    <div class="feature-card">
-        <div class="feature-icon">
+            <span class="logo-text">VendBoost</span>
+        </a>
+        <nav class="index-nav">
+            <div class="nav-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#pricing" class="nav-link">Pricing</a>
+                <a href="#testimonials" class="nav-link">Testimonials</a>
+            </div>
+            <button class="theme-toggle-btn" id="theme-toggle" title="Toggle Light/Dark Mode">
+                <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/>
+                    <path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/>
+                    <path d="M2 12h2"/><path d="M20 12h2"/>
+                    <path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/>
+                </svg>
+                <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+            </button>
+            <a href="/signin" rel="nofollow" class="btn btn-primary btn-sm">Get Started</a>
+        </nav>
+        <button class="mobile-nav-toggle" aria-label="Toggle navigation">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
+                <path d="M3 12h18M3 6h18M3 18h18"/>
             </svg>
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="index-container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    <span>AI-Powered Sales Automation</span>
+                </div>
+                <h1 class="hero-title">
+                    Turn WhatsApp Into a <span class="gradient-text">24/7 Sales Machine</span>
+                </h1>
+                <p class="hero-description">
+                    VendBoost automates replies, follow-ups and sales tracking — so you never miss a customer. 
+                    Generate more sales while you sleep.
+                </p>
+                <div class="hero-actions">
+                    <a href="/signin" class="btn btn-primary btn-lg">
+                        Start Free Trial
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                    <a href="#features" class="btn btn-outline btn-lg">
+                        See How It Works
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">10K+</span>
+                        <span class="stat-label">Active Users</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-number">50M+</span>
+                        <span class="stat-label">Messages Sent</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-number">99.9%</span>
+                        <span class="stat-label">Uptime</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="phone-mockup">
+                    <div class="phone-frame">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <div class="chat-bubble received">
+                                <p>Hi, is this product available?</p>
+                                <span class="message-time">2:30 PM</span>
+                            </div>
+                            <div class="chat-bubble sent">
+                                <p>Yes! It's ₦15,000. Would you like to order now?</p>
+                                <span class="message-time">2:31 PM</span>
+                            </div>
+                            <div class="chat-bubble received">
+                                <p>Yes, I'll take 2!</p>
+                                <span class="message-time">2:32 PM</span>
+                            </div>
+                            <div class="typing-indicator">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="floating-card sales-card">
+                    <div class="card-icon success">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                    </div>
+                    <div class="card-content">
+                        <span class="card-label">New Sale!</span>
+                        <span class="card-value">₦30,000</span>
+                    </div>
+                </div>
+                <div class="floating-card leads-card">
+                    <div class="card-icon info">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <div class="card-content">
+                        <span class="card-label">New Lead</span>
+                        <span class="card-value">12 Today</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features-section">
+            <div class="section-header">
+                <span class="section-tag">Features</span>
+                <h2 class="section-title">Why Choose VendBoost?</h2>
+                <p class="section-subtitle">Everything you need to automate your WhatsApp sales and grow your business.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon emerald">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
+                        </svg>
+                    </div>
+                    <h3>Instant Auto Replies</h3>
+                    <p>Automatically respond to customer messages on WhatsApp in seconds — even when you're offline.</p>
+                    <div class="feature-tag">AI-Powered</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon gold">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 20v-6M6 20v-4M18 20v-2M4 20h16"/>
+                        </svg>
+                    </div>
+                    <h3>Sales Tracking Dashboard</h3>
+                    <p>Monitor conversations, leads, and conversions in one powerful dashboard built for vendors.</p>
+                    <div class="feature-tag">Real-Time</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon coral">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 7h8M8 12h8M8 17h5"/>
+                        </svg>
+                    </div>
+                    <h3>Smart Follow-Ups</h3>
+                    <p>Automatically follow up with customers who didn't reply — turn more chats into paying customers.</p>
+                    <div class="feature-tag">Automated</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon purple">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 1v22M5 6h14M5 18h14"/>
+                        </svg>
+                    </div>
+                    <h3>Product & Price Automation</h3>
+                    <p>Instantly send product details, prices, and payment info when customers ask — no manual typing.</p>
+                    <div class="feature-tag">Instant</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon blue">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                    </div>
+                    <h3>24/7 Sales Assistant</h3>
+                    <p>Your AI assistant works round the clock, ensuring no customer message is ignored.</p>
+                    <div class="feature-tag">Always On</div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon teal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/>
+                        </svg>
+                    </div>
+                    <h3>Easy WhatsApp Integration</h3>
+                    <p>Connect your WhatsApp in minutes and start automating your business without technical stress.</p>
+                    <div class="feature-tag">Setup in 5 Min</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="how-it-works-section">
+            <div class="section-header">
+                <span class="section-tag">How It Works</span>
+                <h2 class="section-title">Get Started in 3 Simple Steps</h2>
+                <p class="section-subtitle">Start automating your WhatsApp sales in minutes, not days.</p>
+            </div>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">01</div>
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                        </svg>
+                    </div>
+                    <h3>Connect WhatsApp</h3>
+                    <p>Link your WhatsApp number with our secure integration. It takes just a few clicks.</p>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step-card">
+                    <div class="step-number">02</div>
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2a4 4 0 0 1 4 4c0 1.1-.45 2.1-1.17 2.83L12 12l2.83-2.17A4 4 0 0 1 18 8a4 4 0 0 0-8 0"/>
+                            <path d="M12 22a4 4 0 0 1-4-4c0-1.1.45-2.1 1.17-2.83L12 12l-2.83 2.17A4 4 0 0 1 6 18a4 4 0 0 0 8 0"/>
+                        </svg>
+                    </div>
+                    <h3>Set Up Automation</h3>
+                    <p>Configure auto-replies, product catalogs, and follow-up schedules with our easy builder.</p>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step-card">
+                    <div class="step-number">03</div>
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 20V10M18 20V4M6 20v-4"/>
+                        </svg>
+                    </div>
+                    <h3>Watch Sales Grow</h3>
+                    <p>Sit back and watch as your AI assistant converts leads into customers automatically.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section id="pricing" class="pricing-section">
+            <div class="section-header">
+                <span class="section-tag">Pricing</span>
+                <h2 class="section-title">Simple, Transparent Pricing</h2>
+                <p class="section-subtitle">Choose the plan that fits your business. No hidden fees.</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="popular-badge">Free Forever</div>
+                    <div class="pricing-header">
+                        <h3>Free</h3>
+                        <p>Perfect to get started</p>
+                    </div>
+                    <div class="pricing-amount">
+                        <span class="price">₦0</span>
+                        <span class="period">forever</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Auto-replies
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Basic follow-ups
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            1 WhatsApp number
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Community support
+                        </li>
+                    </ul>
+                    <a href="/signin?plan=free" class="btn btn-outline full-width">Get Started Free</a>
+                </div>
+
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Starter</h3>
+                        <p>For small businesses</p>
+                    </div>
+                    <div class="pricing-amount">
+                        <span class="currency">₦</span>
+                        <span class="price">5,000</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Everything in Free
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Smart follow-ups
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            2 WhatsApp numbers
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Email support
+                        </li>
+                    </ul>
+                    <a href="/signin?plan=starter" class="btn btn-outline full-width">Get Started</a>
+                </div>
+
+                <div class="pricing-card featured">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3>Pro</h3>
+                        <p>For growing businesses</p>
+                    </div>
+                    <div class="pricing-amount">
+                        <span class="currency">₦</span>
+                        <span class="price">15,000</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Everything in Starter
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Advanced AI replies
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Sales tracking dashboard
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            5 WhatsApp numbers
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Priority support
+                        </li>
+                    </ul>
+                    <a href="/signin?plan=pro" class="btn btn-primary full-width">Start Free Trial</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="cta-card">
+                <div class="cta-content">
+                    <h2>Ready to Automate Your Sales?</h2>
+                    <p>Join thousands of vendors who are already using VendBoost to grow their business.</p>
+                    <a href="/signin" class="btn btn-primary btn-lg">
+                        Start Free Trial Today
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+                <div class="cta-decoration">
+                    <div class="cta-circle circle-1"></div>
+                    <div class="cta-circle circle-2"></div>
+                    <div class="cta-circle circle-3"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="index-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
+                    </svg>
+                </div>
+                <p>Turn WhatsApp into your best sales tool.</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Product</h4>
+                    <a href="#features">Features</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#how-it-works">How It Works</a>
+                </div>
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <a href="#about">About</a>
+                    <a href="#contact">Contact</a>
+                    <a href="#careers">Careers</a>
+                </div>
+                <div class="footer-column">
+                    <h4>Legal</h4>
+                    <a href="/terms">Terms</a>
+                    <a href="#privacy">Privacy</a>
+                </div>
+            </div>
         </div>
-        <h3>Instant Auto Replies</h3>
-        <p>Automatically respond to customer messages on WhatsApp in seconds — even when you're offline.</p>
-    </div>
-
-    <div class="feature-card">
-        <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 20v-6M6 20v-4M18 20v-2M4 20h16"/>
-            </svg>
+        <div class="footer-bottom">
+            <p>Copyright &copy; <%= new Date().getFullYear() %> VendBoost. Built for serious vendors.</p>
         </div>
-        <h3>Sales Tracking Dashboard</h3>
-        <p>Monitor conversations, leads, and conversions in one powerful dashboard built for vendors.</p>
-    </div>
+    </footer>
+</div>
 
-    <div class="feature-card">
-        <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M8 7h8M8 12h8M8 17h5"/>
-            </svg>
-        </div>
-        <h3>Smart Follow-Ups</h3>
-        <p>Automatically follow up with customers who didn’t reply — turn more chats into paying customers.</p>
-    </div>
+<style>
+.index-page {
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
 
-    <div class="feature-card">
-        <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 1v22M5 6h14M5 18h14"/>
-            </svg>
-        </div>
-        <h3>Product & Price Automation</h3>
-        <p>Instantly send product details, prices, and payment info when customers ask — no manual typing.</p>
-    </div>
+/* Header Styles */
+.index-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--glass-border);
+}
 
-    <div class="feature-card">
-        <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M12 6v6l4 2"/>
-            </svg>
-        </div>
-        <h3>24/7 Sales Assistant</h3>
-        <p>Your AI assistant works round the clock, ensuring no customer message is ignored.</p>
-    </div>
+.index-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
 
-    <div class="feature-card">
-        <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/>
-            </svg>
-        </div>
-        <h3>Easy WhatsApp Integration</h3>
-        <p>Connect your WhatsApp in minutes and start automating your business without technical stress.</p>
-    </div>
+.index-logo .logo-icon {
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(135deg, var(--emerald), var(--gold));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-</section>
+.index-logo .logo-icon svg {
+    width: 22px;
+    height: 22px;
+    color: white;
+}
 
-            <!-- Latest Templates -->
-            <h2 class="section-title">We Have The Best Pre-Order <em>Prices</em> You Can Get</h2>
-           <section class="pricing-grid">
-    <!-- Starter Plan -->
-    <div class="pricing-card">
-        <h3>Starter</h3>
-        <div class="price">₦5,000<span>/month</span></div>
-        <ul class="features">
-            <li>Auto-replies</li>
-            <li>Basic follow-ups</li>
-            <li>1 WhatsApp number</li>
-            <li>Email support</li>
-        </ul>
-        <a href="#" class="btn btn-primary">Get Started</a>
-    </div>
+.index-logo .logo-text {
+    font-size: 20px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--emerald-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
-    <!-- Pro Plan -->
-    <div class="pricing-card featured">
-        <div class="badge">Most Popular</div>
-        <h3>Pro</h3>
-        <div class="price">₦15,000<span>/month</span></div>
-        <ul class="features">
-            <li>Advanced AI replies</li>
-            <li>Smart follow-ups</li>
-            <li>Sales tracking dashboard</li>
-            <li>3 WhatsApp numbers</li>
-        </ul>
-        <a href="#" class="btn btn-primary">Start Free Trial</a>
-    </div>
+.index-nav {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
 
-    <!-- Enterprise Plan -->
-    <div class="pricing-card">
-        <h3>Enterprise</h3>
-        <div class="price">Custom</div>
-        <ul class="features">
-            <li>Unlimited automation</li>
-            <li>Custom AI training</li>
-            <li>Team collaboration</li>
-            <li>Priority support</li>
-        </ul>
-        <a href="#" class="btn btn-secondary">Contact Sales</a>
-    </div>
-</section>
-        </div>
+.nav-links {
+    display: flex;
+    gap: 32px;
+}
 
-        <!-- Footer -->
-        <footer class="index-footer">
-            <p>Copyright  © <%= new Date().getFullYear() %> VendBoost. Built for serious vendors.</p>
-        </footer>
-    </div>
+.nav-link {
+    color: var(--text-secondary);
+    font-size: 15px;
+    font-weight: 500;
+    transition: color var(--transition-fast);
+}
+
+.nav-link:hover {
+    color: var(--text-primary);
+}
+
+.theme-toggle-btn {
+    width: 42px;
+    height: 42px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.theme-toggle-btn:hover {
+    background: var(--glass-hover);
+    border-color: var(--emerald-light);
+}
+
+.theme-toggle-btn svg {
+    width: 20px;
+    height: 20px;
+    color: var(--text-secondary);
+}
+
+.mobile-nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.mobile-nav-toggle svg {
+    width: 24px;
+    height: 24px;
+    color: var(--text-primary);
+}
+
+.btn-sm {
+    padding: 10px 20px;
+    font-size: 14px;
+}
+
+/* Container */
+.index-container {
+    padding-top: 100px;
+}
+
+/* Hero Section */
+.hero-section {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    padding: 80px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.hero-content {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 30px;
+    margin-bottom: 24px;
+}
+
+.badge-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--emerald-light);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+.hero-badge span {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--emerald-light);
+}
+
+.hero-title {
+    font-size: 56px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    color: var(--text-primary);
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--emerald-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-description {
+    font-size: 18px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-bottom: 36px;
+    max-width: 520px;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 48px;
+}
+
+.btn-lg {
+    padding: 16px 32px;
+    font-size: 16px;
+}
+
+.btn-outline {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+}
+
+.btn-outline:hover {
+    background: var(--glass-hover);
+    border-color: var(--emerald-light);
+}
+
+.hero-stats {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-number {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: 'Space Mono', monospace;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.stat-divider {
+    width: 1px;
+    height: 40px;
+    background: var(--glass-border);
+}
+
+/* Hero Visual */
+.hero-visual {
+    position: relative;
+    animation: fadeInUp 0.8s ease-out 0.2s backwards;
+}
+
+.phone-mockup {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.phone-frame {
+    width: 280px;
+    background: var(--bg-dark);
+    border: 3px solid var(--glass-border);
+    border-radius: 36px;
+    padding: 12px;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
+}
+
+.phone-notch {
+    width: 100px;
+    height: 24px;
+    background: var(--bg-dark);
+    border-radius: 20px;
+    margin: 0 auto 16px;
+}
+
+.phone-screen {
+    background: var(--bg-gradient-2);
+    border-radius: 24px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 400px;
+}
+
+.chat-bubble {
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.5;
+    animation: fadeInUp 0.4s ease-out;
+}
+
+.chat-bubble p {
+    margin-bottom: 4px;
+}
+
+.message-time {
+    font-size: 10px;
+    opacity: 0.6;
+    display: block;
+    text-align: right;
+}
+
+.chat-bubble.received {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+}
+
+.chat-bubble.sent {
+    background: linear-gradient(135deg, var(--emerald), var(--emerald-light));
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+
+.typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 12px 16px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    width: fit-content;
+    border-bottom-left-radius: 4px;
+}
+
+.typing-indicator span {
+    width: 8px;
+    height: 8px;
+    background: var(--text-muted);
+    border-radius: 50%;
+    animation: typing 1.4s ease-in-out infinite;
+}
+
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing {
+    0%, 100% { transform: translateY(0); opacity: 0.4; }
+    50% { transform: translateY(-4px); opacity: 1; }
+}
+
+/* Floating Cards */
+.floating-card {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    animation: floatCard 4s ease-in-out infinite;
+}
+
+.sales-card {
+    top: 20%;
+    right: -20px;
+    animation-delay: 0s;
+}
+
+.leads-card {
+    bottom: 20%;
+    left: -20px;
+    animation-delay: 2s;
+}
+
+@keyframes floatCard {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-icon svg {
+    width: 22px;
+    height: 22px;
+    color: white;
+}
+
+.card-icon.success {
+    background: linear-gradient(135deg, var(--success), var(--emerald));
+}
+
+.card-icon.info {
+    background: linear-gradient(135deg, var(--info), #6366F1);
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.card-label {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.card-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Section Styles */
+.features-section,
+.how-it-works-section,
+.pricing-section {
+    padding: 100px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-tag {
+    display: inline-block;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, rgba(52, 211, 153, 0.15), rgba(212, 165, 116, 0.15));
+    border: 1px solid rgba(52, 211, 153, 0.3);
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--emerald-light);
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.section-subtitle {
+    font-size: 18px;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Features Grid */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.feature-card {
+    padding: 32px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    transition: all var(--transition-normal);
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--emerald-light);
+    box-shadow: 0 20px 40px rgba(52, 211, 153, 0.15);
+}
+
+.feature-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.feature-icon svg {
+    width: 28px;
+    height: 28px;
+    color: white;
+}
+
+.feature-icon.emerald {
+    background: linear-gradient(135deg, var(--emerald), var(--emerald-light));
+}
+
+.feature-icon.gold {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+}
+
+.feature-icon.coral {
+    background: linear-gradient(135deg, var(--coral), var(--amber));
+}
+
+.feature-icon.purple {
+    background: linear-gradient(135deg, #8B5CF6, #6366F1);
+}
+
+.feature-icon.blue {
+    background: linear-gradient(135deg, #3B82F6, #2563EB);
+}
+
+.feature-icon.teal {
+    background: linear-gradient(135deg, #14B8A6, #0D9488);
+}
+
+.feature-card h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.feature-card p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+}
+
+.feature-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--emerald-light);
+}
+
+/* Steps Grid */
+.steps-grid {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+}
+
+.step-card {
+    flex: 1;
+    max-width: 320px;
+    padding: 32px;
+    text-align: center;
+}
+
+.step-number {
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--glass-border);
+    line-height: 1;
+    margin-bottom: 16px;
+}
+
+.step-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, var(--emerald), var(--gold));
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.step-icon svg {
+    width: 32px;
+    height: 32px;
+    color: white;
+}
+
+.step-card h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.step-card p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+}
+
+.step-connector {
+    flex: 0.5;
+    height: 2px;
+    background: linear-gradient(90deg, var(--emerald), var(--gold));
+    margin: 0 -20px;
+    margin-top: -60px;
+}
+
+/* Pricing Grid */
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.pricing-card {
+    padding: 40px 32px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    transition: all var(--transition-normal);
+    position: relative;
+}
+
+.pricing-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.pricing-card.featured {
+    background: linear-gradient(135deg, rgba(52, 211, 153, 0.1), rgba(212, 165, 116, 0.1));
+    border-color: var(--emerald-light);
+    transform: scale(1.05);
+}
+
+.pricing-card.featured:hover {
+    transform: scale(1.05) translateY(-4px);
+}
+
+.popular-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 16px;
+    background: linear-gradient(135deg, var(--emerald), var(--gold));
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+}
+
+.pricing-header {
+    margin-bottom: 24px;
+}
+
+.pricing-header h3 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.pricing-header p {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.pricing-amount {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-bottom: 32px;
+}
+
+.pricing-amount .currency {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.pricing-amount .price {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: 'Space Mono', monospace;
+}
+
+.pricing-amount .period {
+    font-size: 16px;
+    color: var(--text-muted);
+}
+
+.pricing-amount.custom {
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pricing-amount.custom .price {
+    font-size: 36px;
+}
+
+.pricing-amount.custom .period {
+    font-size: 14px;
+}
+
+.pricing-features {
+    list-style: none;
+    margin-bottom: 32px;
+}
+
+.pricing-features li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--glass-border);
+    font-size: 15px;
+    color: var(--text-secondary);
+}
+
+.pricing-features li:last-child {
+    border-bottom: none;
+}
+
+.pricing-features svg {
+    width: 20px;
+    height: 20px;
+    color: var(--emerald-light);
+    flex-shrink: 0;
+}
+
+.full-width {
+    width: 100%;
+}
+
+/* CTA Section */
+.cta-section {
+    padding: 80px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.cta-card {
+    position: relative;
+    padding: 60px 80px;
+    background: linear-gradient(135deg, rgba(52, 211, 153, 0.15), rgba(212, 165, 116, 0.15));
+    border: 1px solid var(--emerald-light);
+    border-radius: 24px;
+    overflow: hidden;
+}
+
+.cta-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.cta-content h2 {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.cta-content p {
+    font-size: 18px;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cta-decoration {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.cta-circle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.3;
+}
+
+.circle-1 {
+    width: 300px;
+    height: 300px;
+    background: var(--emerald);
+    top: -100px;
+    left: -100px;
+}
+
+.circle-2 {
+    width: 250px;
+    height: 250px;
+    background: var(--gold);
+    bottom: -80px;
+    right: -80px;
+}
+
+.circle-3 {
+    width: 200px;
+    height: 200px;
+    background: var(--coral);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Footer */
+.index-footer {
+    border-top: 1px solid var(--glass-border);
+    padding: 60px 40px 30px;
+    margin-top: 40px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1400px;
+    margin: 0 auto 40px;
+}
+
+.footer-brand {
+    max-width: 280px;
+}
+
+.footer-brand p {
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.footer-links {
+    display: flex;
+    gap: 80px;
+}
+
+.footer-column h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.footer-column a {
+    display: block;
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    transition: color var(--transition-fast);
+}
+
+.footer-column a:hover {
+    color: var(--emerald-light);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 30px;
+    border-top: 1px solid var(--glass-border);
+}
+
+.footer-bottom p {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .hero-section {
+        grid-template-columns: 1fr;
+        gap: 60px;
+        text-align: center;
+    }
+
+    .hero-description {
+        max-width: 100%;
+    }
+
+    .hero-actions {
+        justify-content: center;
+    }
+
+    .hero-stats {
+        justify-content: center;
+    }
+
+    .hero-visual {
+        display: flex;
+        justify-content: center;
+    }
+
+    .floating-card {
+        display: none;
+    }
+
+    .features-grid,
+    .pricing-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .pricing-card.featured {
+        transform: none;
+        grid-column: span 2;
+    }
+
+    .pricing-card.featured:hover {
+        transform: translateY(-4px);
+    }
+}
+
+@media (max-width: 992px) {
+    .index-header {
+        padding: 16px 24px;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .mobile-nav-toggle {
+        display: block;
+    }
+
+    .hero-title {
+        font-size: 42px;
+    }
+
+    .section-title {
+        font-size: 32px;
+    }
+
+    .features-section,
+    .how-it-works-section,
+    .pricing-section {
+        padding: 60px 24px;
+    }
+
+    .features-grid,
+    .pricing-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pricing-card.featured {
+        grid-column: span 1;
+    }
+
+    .steps-grid {
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .step-connector {
+        display: none;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .footer-links {
+        gap: 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 32px;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+    }
+
+    .hero-stats {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .stat-divider {
+        display: none;
+    }
+
+    .cta-card {
+        padding: 40px 24px;
+    }
+
+    .cta-content h2 {
+        font-size: 28px;
+    }
+}
+</style>

@@ -145,7 +145,7 @@
 
     forms.forEach((form) => {
       form.addEventListener("submit", (e) => {
-        e.preventDefault();
+        // e.preventDefault();
 
         let isValid = true;
         const inputs = form.querySelectorAll(".form-input[required]");
@@ -169,13 +169,8 @@
           }
         }
 
-        if (isValid) {
-          // Form is valid - you can add your submission logic here
-          console.log("Form is valid");
-          // For demo purposes, redirect to dashboard
-          if (form.dataset.redirect) {
-            window.location.href = form.dataset.redirect;
-          }
+        if (!isValid) {
+          e.preventDefault();
         }
       });
     });
@@ -310,6 +305,314 @@
   }
 
   // ============================================
+  // Product Search
+  // ============================================
+  function initProductSearch() {
+    const searchInput = document.getElementById("productSearch");
+    if (!searchInput) return;
+
+    searchInput.addEventListener(
+      "input",
+      debounce((e) => {
+        const query = e.target.value.toLowerCase();
+        const productCards = document.querySelectorAll(".product-card");
+
+        productCards.forEach((card) => {
+          const title = card.querySelector(".product-card-title");
+          const category = card.querySelector(".product-card-category");
+          const text =
+            (title?.textContent || "") + (category?.textContent || "");
+
+          if (text.toLowerCase().includes(query)) {
+            card.style.display = "";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      }, 300),
+    );
+  }
+
+  // ============================================
+  // Category Filter
+  // ============================================
+  function initCategoryFilter() {
+    const categoryFilter = document.getElementById("categoryFilter");
+    if (!categoryFilter) return;
+
+    categoryFilter.addEventListener("change", (e) => {
+      const filter = e.target.value;
+      const productCards = document.querySelectorAll(".product-card");
+
+      productCards.forEach((card) => {
+        const badge = card.querySelector(".product-badge");
+        const isAvailable = badge?.classList.contains("available");
+
+        if (filter === "available" && isAvailable) {
+          card.style.display = "";
+        } else if (filter === "outOfStock" && !isAvailable) {
+          card.style.display = "";
+        } else if (filter === "") {
+          card.style.display = "";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    });
+  }
+
+  // ============================================
+  // View Toggle (Grid/List)
+  // ============================================
+  function initViewToggle() {
+    const viewBtns = document.querySelectorAll(".view-btn");
+    const gridView = document.getElementById("productsGrid");
+
+    if (viewBtns.length === 0 || !gridView) return;
+
+    viewBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const view = btn.dataset.view;
+
+        viewBtns.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        if (view === "list") {
+          gridView.classList.add("list-view");
+        } else {
+          gridView.classList.remove("list-view");
+        }
+      });
+    });
+  }
+
+  // ============================================
+  // Lead Status Update
+  // ============================================
+  function initLeadActions() {
+    window.updateLeadStatus = async (leadId, status) => {
+      try {
+        const response = await fetch(`/leads/${leadId}/status`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status }),
+        });
+
+        if (response.ok) {
+          showNotification("Lead updated successfully!", "success");
+          setTimeout(() => window.location.reload(), 1000);
+        } else {
+          showNotification("Failed to update lead", "error");
+        }
+      } catch (err) {
+        showNotification("Error updating lead", "error");
+      }
+    };
+  }
+
+  // ============================================
+  // Product Actions
+  // ============================================
+  function initProductActions() {
+    window.deleteProduct = async (productId) => {
+      if (!confirm("Are you sure you want to delete this product?")) return;
+
+      try {
+        const response = await fetch(`/products/${productId}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          showNotification("Product deleted successfully!", "success");
+          setTimeout(() => window.location.reload(), 1000);
+        } else {
+          const data = await response.json();
+          showNotification(data.error || "Failed to delete product", "error");
+        }
+      } catch (err) {
+        showNotification("Error deleting product", "error");
+      }
+    };
+
+    window.broadcastProduct = async (productId) => {
+      try {
+        const response = await fetch(`/products/${productId}/broadcast`, {
+          method: "POST",
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          showNotification(data.message || "Broadcast sent!", "success");
+        } else {
+          showNotification(data.error || "Failed to broadcast", "error");
+        }
+      } catch (err) {
+        showNotification("Error broadcasting product", "error");
+      }
+    };
+
+    window.postToStatus = async (productId) => {
+      try {
+        const response = await fetch(`/products/${productId}/status`, {
+          method: "POST",
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          showNotification(data.message || "Posted to status!", "success");
+        } else {
+          showNotification(data.error || "Failed to post to status", "error");
+        }
+      } catch (err) {
+        showNotification("Error posting to status", "error");
+      }
+    };
+  }
+
+  // ============================================
+  // Settings Forms
+  // ============================================
+  function initSettingsForms() {
+    const settingsForm = document.querySelector("#tab-profile form");
+    const securityForm = document.querySelector("#tab-security form");
+
+    if (settingsForm) {
+      settingsForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(settingsForm);
+        const data = Object.fromEntries(formData);
+
+        try {
+          const response = await fetch("/settings/profile", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+
+          if (response.ok) {
+            showNotification("Profile updated successfully!", "success");
+          } else {
+            showNotification("Failed to update profile", "error");
+          }
+        } catch (err) {
+          showNotification("Error updating profile", "error");
+        }
+      });
+    }
+
+    if (securityForm) {
+      securityForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(securityForm);
+        const data = Object.fromEntries(formData);
+
+        if (data.newPassword !== data.confirmPassword) {
+          showNotification("Passwords do not match!", "error");
+          return;
+        }
+
+        try {
+          const response = await fetch("/settings/password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+
+          if (response.ok) {
+            showNotification("Password updated successfully!", "success");
+            securityForm.reset();
+          } else {
+            showNotification("Failed to update password", "error");
+          }
+        } catch (err) {
+          showNotification("Error updating password", "error");
+        }
+      });
+    }
+  }
+
+  // ============================================
+  // Lead Search & Filter
+  // ============================================
+  function initLeadSearch() {
+    const searchInput = document.getElementById("leadSearch");
+    if (!searchInput) return;
+
+    searchInput.addEventListener(
+      "input",
+      debounce((e) => {
+        const query = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll(".data-table tbody tr");
+
+        rows.forEach((row) => {
+          const text = row.textContent.toLowerCase();
+          row.style.display = text.includes(query) ? "" : "none";
+        });
+      }, 300),
+    );
+  }
+
+  // ============================================
+  // Lead Filter
+  // ============================================
+  function initLeadFilter() {
+    const statusFilter = document.getElementById("leadStatusFilter");
+    if (!statusFilter) return;
+
+    statusFilter.addEventListener("change", (e) => {
+      const filter = e.target.value;
+      const rows = document.querySelectorAll(".data-table tbody tr");
+
+      rows.forEach((row) => {
+        const statusBadge = row.querySelector(".status-badge");
+        const status = statusBadge?.textContent?.trim().toLowerCase();
+
+        if (filter === "" || status === filter) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
+    });
+  }
+
+  // ============================================
+  // Notification System
+  // ============================================
+  function showNotification(message, type = "info") {
+    const existing = document.querySelector(".notification-toast");
+    if (existing) existing.remove();
+
+    const toast = document.createElement("div");
+    toast.className = `notification-toast ${type}`;
+    toast.innerHTML = `
+      <span>${message}</span>
+      <button onclick="this.parentElement.remove()">&times;</button>
+    `;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      setTimeout(() => toast.remove(), 300);
+    }, 4000);
+  }
+
+  // ============================================
+  // Utility: Debounce
+  // ============================================
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
+  // ============================================
   // Initialize All Functions
   // ============================================
   function init() {
@@ -321,6 +624,14 @@
     initPasswordToggle();
     initPageTransitions();
     initSettingsTabs();
+    initProductSearch();
+    initCategoryFilter();
+    initViewToggle();
+    initLeadActions();
+    initProductActions();
+    initSettingsForms();
+    initLeadSearch();
+    initLeadFilter();
   }
 
   // Run on DOM ready

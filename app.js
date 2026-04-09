@@ -12,6 +12,8 @@ const dashboardRoute = require("./src/routers/dashboardRouter");
 const productRoute = require("./src/routers/productRouter");
 const whatsappRoute = require("./src/routers/whatsappRouter");
 const webhookRoute = require("./src/routers/webhook");
+const billingRoute = require("./src/routers/billing");
+const subscriptionRoute = require("./src/routers/subscriptionRouter");
 const { runFollowUpScheduler } = require("./src/crons/followUpScheduler");
 const sessionMiddleware = require("./src/config/session");
 const { recoverSessions } = require("./src/whatsapp/session");
@@ -61,7 +63,9 @@ app.use("/auth", authRoute);
 app.use("/dashboard", dashboardRoute);
 app.use("/products", productRoute);
 app.use("/whatsapp", whatsappRoute);
-app.use("/webhook", webhookRoute);
+app.use("/billing", billingRoute);
+app.use("/subscription", subscriptionRoute);
+app.use("/webhook/paystack", express.raw({ type: "application/json" }));
 
 // Start server
 const PORT = process.env.PORT || 5100;

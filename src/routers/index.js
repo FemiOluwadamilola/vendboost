@@ -25,4 +25,10 @@ router.get("/signin", (req, res) => {
   });
 });
 
+router.get("/terms", (req, res) => {
+  res.render("terms", {
+    title: "Terms & Conditions – VendBoost",
+  });
+});
+
 module.exports = router;

@@ -1,0 +1,222 @@
+<div class="login-page">
+    <!-- Theme Toggle -->
+    <button class="theme-toggle-float" id="theme-toggle" title="Toggle Light/Dark Mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/>
+            <path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/>
+            <path d="M2 12h2"/><path d="M20 12h2"/>
+            <path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+    </button>
+    
+    <div class="login-container">
+        <div class="terms-page-card">
+            <div class="terms-page-header">
+                <a href="/" class="back-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"/>
+                        <polyline points="12 19 5 12 12 5"/>
+                    </svg>
+                    Back to Home
+                </a>
+            </div>
+            
+            <div class="terms-content">
+                <h1>Terms & Conditions</h1>
+                <p class="terms-intro">Welcome to VendBoost. Please read these terms carefully before using our service.</p>
+
+                <section>
+                    <h3>1. Acceptance of Terms</h3>
+                    <p>By accessing and using VendBoost, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by these Terms, please do not use our service.</p>
+                </section>
+
+                <section>
+                    <h3>2. Description of Service</h3>
+                    <p>VendBoost provides WhatsApp automation services including but not limited to:</p>
+                    <ul>
+                        <li>Auto-replies to customer messages</li>
+                        <li>Automated follow-up messaging</li>
+                        <li>Sales tracking and analytics</li>
+                        <li>Product catalog management</li>
+                        <li>AI-powered response suggestions</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>3. User Eligibility</h3>
+                    <p>You must be at least 18 years old and have the legal capacity to enter into binding contracts to use VendBoost. By using our service, you represent and warrant that you meet these requirements.</p>
+                </section>
+
+                <section>
+                    <h3>4. Account Registration</h3>
+                    <p>You agree to provide accurate, current, and complete information during the registration process and to update such information to keep it accurate, current, and complete. You are responsible for maintaining the confidentiality of your account credentials.</p>
+                </section>
+
+                <section>
+                    <h3>5. Acceptable Use</h3>
+                    <p>You agree not to use VendBoost to:</p>
+                    <ul>
+                        <li>Send spam or unsolicited messages</li>
+                        <li>Violate any applicable laws or regulations</li>
+                        <li>Infringe upon the rights of others</li>
+                        <li>Upload or transmit viruses or malicious code</li>
+                        <li>Attempt to gain unauthorized access to our systems</li>
+                        <li>Use the service for any illegal or unethical purpose</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>6. Payment and Subscription</h3>
+                    <p>Some features of VendBoost require payment. By subscribing to a paid plan, you agree to pay all fees associated with your chosen plan. All payments are non-refundable unless otherwise specified.</p>
+                </section>
+
+                <section>
+                    <h3>7. Privacy and Data Protection</h3>
+                    <p>We collect and process your data in accordance with our Privacy Policy. By using VendBoost, you consent to such processing. We are committed to protecting your personal information and will never sell your data to third parties.</p>
+                </section>
+
+                <section>
+                    <h3>8. Intellectual Property</h3>
+                    <p>All content, features, and functionality of VendBoost are owned by us and are protected by copyright, trademark, and other intellectual property laws. You may not copy, modify, distribute, sell, or lease any part of our service without our prior written consent.</p>
+                </section>
+
+                <section>
+                    <h3>9. Limitation of Liability</h3>
+                    <p>We shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your use of or inability to use the service.</p>
+                </section>
+
+                <section>
+                    <h3>10. Disclaimer of Warranties</h3>
+                    <p>VendBoost is provided "as is" and "as available" without warranties of any kind, whether express or implied, including but not limited to, implied warranties of merchantability, fitness for a particular purpose, or non-infringement.</p>
+                </section>
+
+                <section>
+                    <h3>11. Termination</h3>
+                    <p>We may terminate or suspend your account immediately, without prior notice or liability, for any reason, including breach of these Terms. Upon termination, your right to use VendBoost will immediately cease.</p>
+                </section>
+
+                <section>
+                    <h3>12. Changes to Terms</h3>
+                    <p>We reserve the right to modify these Terms at any time. We will provide notice of material changes by posting the updated Terms on our website. Your continued use of VendBoost after such changes constitutes acceptance of the new Terms.</p>
+                </section>
+
+                <section>
+                    <h3>13. Governing Law</h3>
+                    <p>These Terms shall be governed by and construed in accordance with the laws of Nigeria, without regard to its conflict of law provisions.</p>
+                </section>
+
+                <section>
+                    <h3>14. Contact Information</h3>
+                    <p>If you have any questions about these Terms, please contact us at support@vendboost.com</p>
+                </section>
+
+                <p class="terms-updated">Last updated: <%= new Date().getFullYear() %></p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>Copyright &copy; <%= new Date().getFullYear() %> VendBoost. Built for serious vendors.</p>
+    </footer>
+</div>
+
+<style>
+.terms-page-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius);
+    padding: 48px 40px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.terms-page-header {
+    margin-bottom: 32px;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    transition: color var(--transition-fast);
+}
+
+.back-link:hover {
+    color: var(--emerald-light);
+}
+
+.back-link svg {
+    width: 18px;
+    height: 18px;
+}
+
+.terms-content h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.terms-intro {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.terms-content section {
+    margin-bottom: 28px;
+}
+
+.terms-content h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.terms-content p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+
+.terms-content ul {
+    margin: 12px 0;
+    padding-left: 24px;
+}
+
+.terms-content li {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.terms-updated {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--glass-border);
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+@media (max-width: 768px) {
+    .terms-page-card {
+        padding: 32px 24px;
+    }
+    
+    .terms-content h1 {
+        font-size: 26px;
+    }
+}
+</style>

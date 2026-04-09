@@ -16,7 +16,7 @@
             <div class="login-card">
                 <div class="login-header">
                     <h1 class="login-title">Create Account</h1>
-                    <p class="login-subtitle">Start your journey with GlassDash</p>
+                    <p class="login-subtitle">Start your journey with VendBoost</p>
                 </div>
 
                 <form  method="post" action="/auth/signup">
@@ -28,6 +28,16 @@
                      <div class="form-group">
                         <label class="form-label" for="businessName">Business Name</label>
                         <input type="text" id="businessName" name="businessName" class="form-input" placeholder="Enter your business name." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="plan">Choose a Plan</label>
+                        <select id="plan" name="plan" class="form-input" required>
+                            <option value="" disabled selected>Select a plan</option>
+                            <option value="free">Free - 20 leads, 0 broadcasts/day</option>
+                            <option value="starter">Starter - ₦5,000/month (200 leads, 50 broadcasts/day)</option>
+                            <option value="pro">Pro - ₦15,000/month (1,000 leads, 500 broadcasts/day)</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -43,7 +53,7 @@
                     <div class="form-row" style="margin-bottom: 24px;">
                         <label class="checkbox-label">
                             <input type="checkbox" required>
-                            I agree to the <a href="#" style="color: var(--emerald-light);">Terms & Conditions</a>
+                            I agree to the <a href="/terms" target="_blank" style="color: var(--emerald-light);">Terms & Conditions</a>
                         </label>
                     </div>
 

@@ -1,42 +1,74 @@
+// routes/webhook.js
 const express = require("express");
 const router = express.Router();
 const crypto = require("crypto");
-// const Vendor = require("../models/Vendor");
+
+const Payment = require("../models/Payment");
 const Subscription = require("../models/Subscription");
+const Vendor = require("../models/Vendor");
 
 router.post("/paystack", async (req, res) => {
-  const secret = process.env.PAYSTACK_SECRET;
+  try {
+    const secret = process.env.PAYSTACK_SECRET;
 
-  const hash = crypto
-    .createHmac("sha512", secret)
-    .update(req.body)
-    .digest("hex");
+    const hash = crypto
+      .createHmac("sha512", secret)
+      .update(req.body)
+      .digest("hex");
 
-  if (hash !== req.headers["x-paystack-signature"]) {
-    return res.sendStatus(401);
+    if (hash !== req.headers["x-paystack-signature"]) {
+      return res.sendStatus(401);
+    }
+
+    const event = JSON.parse(req.body.toString());
+
+    if (event.event === "charge.success") {
+      const data = event.data;
+
+      const reference = data.reference;
+      const metadata = data.metadata;
+
+      const payment = await Payment.findOne({ reference });
+      if (!payment || payment.status === "success") {
+        return res.sendStatus(200);
+      }
+
+      payment.status = "success";
+      await payment.save();
+
+      const vendorId = metadata.vendorId;
+      const plan = metadata.plan;
+
+      const endDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+      await Subscription.findOneAndUpdate(
+        { vendor: vendorId },
+        {
+          plan,
+          status: "active",
+          startDate: new Date(),
+          endDate: endDate,
+        },
+        { upsert: true },
+      );
+
+      await Vendor.findByIdAndUpdate(vendorId, {
+        subscription: {
+          plan,
+          status: "active",
+          startDate: new Date(),
+          endDate: endDate,
+        },
+      });
+
+      console.log("✅ Subscription activated:", vendorId, plan);
+    }
+
+    res.sendStatus(200);
+  } catch (err) {
+    console.error("Webhook error:", err);
+    res.sendStatus(500);
   }
-
-  const event = JSON.parse(req.body.toString());
-
-  if (event.event === "charge.success") {
-    const data = event.data;
-
-    const vendorId = data.metadata.vendorId;
-    const plan = data.metadata.plan;
-
-    await Subscription.findOneAndUpdate(
-      { vendor: vendorId },
-      {
-        plan,
-        status: "active",
-        startDate: new Date(),
-        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      },
-      { upsert: true },
-    );
-  }
-
-  res.sendStatus(200);
 });
 
 module.exports = router;
