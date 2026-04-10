@@ -3,19 +3,46 @@ const router = express.Router();
 const axios = require("axios");
 const verifyAuth = require("../middlewares/verifyAuth");
 const Vendor = require("../models/Vendor");
+const Subscription = require("../models/Subscription");
 const Payment = require("../models/Payment");
 const plans = require("../config/plans");
 const log = require("../utils/logger");
+const { getTrialStatus, convertTrialToFree } = require("../utils/upgradeTrigger");
+
+router.get("/subscriptions", verifyAuth.requireAuth, async (req, res) => {
+  const vendorId = req.user.id;
+  
+  try {
+    const subscription = await Subscription.findOne({ vendor: vendorId }).sort({ createdAt: -1 });
+    const trialStatus = await getTrialStatus(vendorId);
+    
+    // Get current plan details
+    const currentPlan = subscription ? plans[subscription.plan] : plans.free;
+    
+    res.render("./dashboard/subscriptions", {
+      layout: "layouts/dashboard",
+      title: "Subscription Plans",
+      subscription,
+      trialStatus,
+      currentPlan,
+      plans: plans,
+    });
+  } catch (err) {
+    log.error(`Subscription page error for ${vendorId}:`, err.message);
+    req.flash("error", "Failed to load subscription page");
+    return res.redirect("/dashboard");
+  }
+});
 
 router.post("/upgrade", verifyAuth.requireAuth, async (req, res) => {
   const vendorId = req.user.id;
   const { plan } = req.body;
 
   try {
-    const selectedPlan = await getSelectedPlan(plan, vendorId);
-    if (!selectedPlan) {
+    // Validate plan
+    if (!plans[plan] || plan === "trial" || plan === "free") {
       req.flash("error", "Invalid subscription plan selected");
-      return res.redirect("/dashboard");
+      return res.redirect("/dashboard/subscriptions");
     }
 
     const vendor = await Vendor.findById(vendorId);
@@ -25,12 +52,19 @@ router.post("/upgrade", verifyAuth.requireAuth, async (req, res) => {
       return res.redirect("/dashboard");
     }
 
+    // If user has trial, convert it first
+    const trialStatus = await getTrialStatus(vendorId);
+    if (trialStatus && trialStatus.isActive) {
+      await convertTrialToFree(vendorId);
+    }
+
+    const selectedPlan = plans[plan];
     const paymentLink = await createPaymentLink(vendor, selectedPlan, plan);
     return res.redirect(paymentLink);
   } catch (err) {
     log.error(`Upgrade error for ${vendorId}:`, err.response?.data || err.message);
     req.flash("error", "Failed to initialize payment");
-    return res.redirect("/dashboard");
+    return res.redirect("/dashboard/subscriptions");
   }
 });
 
@@ -134,6 +168,7 @@ router.get("/payment-callback", async (req, res) => {
       const plan = payment.plan;
       const endDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
+      // Update both Vendor and Subscription collections
       await Vendor.findByIdAndUpdate(vendorId, {
         subscription: {
           plan,
@@ -143,8 +178,23 @@ router.get("/payment-callback", async (req, res) => {
         },
       });
 
-      req.flash("success", "Payment successful! Please sign in.");
-      return res.redirect("/signin");
+      // Update or create subscription record
+      await Subscription.findOneAndUpdate(
+        { vendor: vendorId },
+        {
+          plan,
+          status: "active",
+          startDate: new Date(),
+          endDate,
+        },
+        { upsert: true }
+      );
+
+      // Clear any trial info
+      delete req.session.trialInfo;
+
+      req.flash("success", "Payment successful! Welcome to " + plans[plan]?.name + "!");
+      return res.redirect("/dashboard");
     }
 
     req.flash("error", "Payment failed. Please try again.");

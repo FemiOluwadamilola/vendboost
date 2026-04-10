@@ -17,8 +17,8 @@ const subscriptionSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["active", "expired", "cancelled"],
-      default: "active",
+      enum: ["active", "expired", "cancelled", "trial"],
+      default: "trial",
     },
 
     startDate: {
@@ -28,6 +28,20 @@ const subscriptionSchema = new mongoose.Schema(
 
     endDate: {
       type: Date,
+    },
+
+    trialStartDate: {
+      type: Date,
+      default: Date.now,
+    },
+
+    trialEndDate: {
+      type: Date,
+    },
+
+    isTrialUsed: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true },

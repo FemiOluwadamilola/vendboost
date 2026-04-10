@@ -5,7 +5,8 @@ const log = require("../utils/logger");
 const router = express.Router();
 router.post("/signup", async (req, res) => {
   try {
-    const { name, business_type, businessName, email, password, plan } = req.body;
+    const { name, business_type, businessName, email, password, plan } =
+      req.body;
 
     // Basic validation
     if (!email || !password) {
@@ -14,7 +15,7 @@ router.post("/signup", async (req, res) => {
     }
 
     // Validate plan selection
-    const validPlans = ["free", "starter", "pro"];
+    const validPlans = ["trial", "starter", "pro"];
     if (!plan || !validPlans.includes(plan)) {
       req.flash("error", "Please select a subscription plan.");
       return res.redirect("/signup");
@@ -33,12 +34,31 @@ router.post("/signup", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // Set subscription based on plan
-    let subscription = {
-      plan: plan,
-      status: plan === "free" ? "active" : "inactive",
-      startDate: plan === "free" ? new Date() : null,
-      endDate: plan === "free" ? null : null
-    };
+    let subscription;
+    if (plan === "trial") {
+      const trialEndDate = new Date();
+      trialEndDate.setDate(trialEndDate.getDate() + 14);
+      subscription = {
+        plan: "trial",
+        status: "trial",
+        startDate: new Date(),
+        endDate: trialEndDate,
+      };
+    } else if (plan === "free") {
+      subscription = {
+        plan: "free",
+        status: "active",
+        startDate: new Date(),
+        endDate: null,
+      };
+    } else {
+      subscription = {
+        plan: plan,
+        status: "inactive",
+        startDate: null,
+        endDate: null,
+      };
+    }
 
     // Create new vendor
     const newVendor = new Vendor({
@@ -47,32 +67,78 @@ router.post("/signup", async (req, res) => {
       email,
       businessName,
       password: hashedPassword,
-      subscription
+      subscription,
     });
 
     await newVendor.save();
 
+    // Create subscription record in database
+    const Subscription = require("../models/Subscription");
+    if (plan === "trial") {
+      const trialEndDate = new Date();
+      trialEndDate.setDate(trialEndDate.getDate() + 14);
+      await Subscription.create({
+        vendor: newVendor._id,
+        plan: "trial",
+        status: "active",
+        startDate: new Date(),
+        endDate: trialEndDate,
+        trialStartDate: new Date(),
+        trialEndDate: trialEndDate,
+        isTrialUsed: true,
+      });
+    } else if (plan !== "free") {
+      // For paid plans, create pending subscription
+      await Subscription.create({
+        vendor: newVendor._id,
+        plan: plan,
+        status: "active",
+        startDate: new Date(),
+        endDate: null,
+      });
+    } else {
+      await Subscription.create({
+        vendor: newVendor._id,
+        plan: "free",
+        status: "active",
+        startDate: new Date(),
+        endDate: null,
+      });
+    }
+
     // If paid plan, redirect to payment
-    if (plan !== "free") {
+    if (plan === "starter" || plan === "pro") {
       req.session.paymentVendorId = newVendor._id.toString();
       req.session.pendingPlan = plan;
       return res.redirect("/subscription/signup-payment");
     }
 
-    // Auto-login for free plan
+    // Auto-login for trial/free plan
     req.session.regenerate((err) => {
       if (err) {
-        log.error("Session error:", err.message);
-        req.flash("error", "An error occurred. Please try again.");
-        return res.redirect("/signup");
+        log.error("Session regeneration error:", err.message);
+        req.flash(
+          "error",
+          "Account created but couldn't log in. Please try signing in manually.",
+        );
+        return res.redirect("/signin");
       }
 
       req.session.user = {
-        id: newVendor._id,
-        role: newVendor.role,
+        id: newVendor._id.toString(),
       };
 
       req.session.loginTime = Date.now();
+
+      // Store trial info for onboarding
+      if (plan === "trial") {
+        req.session.trialInfo = {
+          daysRemaining: 14,
+          endDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+        };
+      }
+
+      log.info(`User ${email} signed up successfully with ${plan} plan`);
       return res.redirect("/dashboard");
     });
   } catch (err) {

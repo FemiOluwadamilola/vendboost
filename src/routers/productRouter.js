@@ -268,6 +268,13 @@ router.post(
   checkSubscription,
   async (req, res) => {
     const vendorId = req.user.id;
+
+    // Check if status posting is allowed
+    if (!req.subscription.features.statusPosting) {
+      req.flash("error", "WhatsApp Status posting is not available on your plan. Upgrade to Pro to unlock!");
+      return res.redirect("/dashboard/products");
+    }
+
     const { productId } = req.query;
 
     try {
@@ -440,6 +447,11 @@ Reply *buy* to order now 🚀
 router.post("/:id/status", verifyAuth.requireAuth, checkSubscription, async (req, res) => {
   const vendorId = req.user.id;
   const productId = req.params.id;
+
+  // Check if status posting is allowed
+  if (!req.subscription.features.statusPosting) {
+    return res.status(403).json({ error: "WhatsApp Status posting is not available on your plan. Upgrade to Pro!" });
+  }
 
   try {
     const product = await Product.findOne({

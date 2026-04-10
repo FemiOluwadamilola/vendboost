@@ -663,6 +663,129 @@ a {
 }
 
 /* ============================================
+   TRIAL BANNER STYLES
+   ============================================ */
+.trial-banner {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.1) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 16px;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    animation: slideDown 0.5s ease;
+}
+
+.trial-banner-warning {
+    background: linear-gradient(135deg, rgba(234, 179, 8, 0.15) 0%, rgba(234, 179, 8, 0.1) 100%);
+    border-color: rgba(234, 179, 8, 0.4);
+}
+
+.trial-banner-critical {
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.15) 0%, rgba(220, 38, 38, 0.1) 100%);
+    border-color: rgba(220, 38, 38, 0.4);
+    animation: pulse 2s infinite;
+}
+
+.trial-banner-info {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(14, 165, 233, 0.1) 100%);
+    border-color: rgba(14, 165, 233, 0.3);
+}
+
+.trial-banner-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.trial-banner-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(16, 185, 129, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.trial-banner-icon svg {
+    width: 24px;
+    height: 24px;
+    stroke: #10b981;
+}
+
+.trial-banner-warning .trial-banner-icon {
+    background: rgba(234, 179, 8, 0.2);
+}
+
+.trial-banner-warning .trial-banner-icon svg {
+    stroke: #eab308;
+}
+
+.trial-banner-critical .trial-banner-icon {
+    background: rgba(220, 38, 38, 0.2);
+}
+
+.trial-banner-critical .trial-banner-icon svg {
+    stroke: #dc2626;
+}
+
+.trial-banner-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.trial-banner-text strong {
+    color: #f5f5f4;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.trial-banner-text span {
+    color: rgba(245, 245, 244, 0.7);
+    font-size: 14px;
+}
+
+.trial-banner-btn {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.trial-banner-btn:hover {
+    background: linear-gradient(135deg, #34d399, #10b981);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
+    }
+}
+
+/* ============================================
    STATS CARDS - MODERN DESIGN
    ============================================ */
 .stats-grid {

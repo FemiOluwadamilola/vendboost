@@ -1,0 +1,267 @@
+<!-- Main Content -->
+<main class="main-content">
+    <%- include('../partials/message') %>
+    
+    <!-- Trial Banner -->
+    <% if (trialStatus && trialStatus.isActive) { %>
+        <div class="trial-banner <%= trialStatus.isExpiringSoon ? 'trial-banner-warning' : '' %>">
+            <div class="trial-banner-content">
+                <div class="trial-banner-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                </div>
+                <div class="trial-banner-text">
+                    <strong>14-Day Trial Active</strong>
+                    <span><%= trialStatus.daysRemaining %> days remaining - Full Pro access!</span>
+                </div>
+            </div>
+            <a href="#" onclick="document.getElementById('upgrade-form').submit(); return false;" class="trial-banner-btn">Upgrade Now</a>
+        </div>
+    <% } %>
+
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <div class="page-header">
+            <h1 class="page-title">Subscription Plans</h1>
+            <p class="page-subtitle">Choose the plan that fits your business needs</p>
+        </div>
+    </nav>
+
+    <!-- Current Plan Info -->
+    <% if (subscription) { %>
+    <div class="glass-card" style="margin-bottom: 32px; padding: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+            <div>
+                <h3 style="margin-bottom: 8px;">Current Plan: <%= subscription.plan ? subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1) : 'Free' %></h3>
+                <p style="color: var(--text-muted);">
+                    <% if (trialStatus && trialStatus.isActive) { %>
+                        Trial ends on <%= new Date(trialStatus.endDate).toLocaleDateString() %>
+                    <% } else if (subscription.endDate) { %>
+                        Renews on <%= new Date(subscription.endDate).toLocaleDateString() %>
+                    <% } else { %>
+                        Active
+                    <% } %>
+                </p>
+            </div>
+            <% if (currentPlan && currentPlan.limits) { %>
+            <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+                <div style="text-align: center;">
+                    <span style="font-size: 24px; font-weight: 700; color: var(--emerald);"><%= currentPlan.limits.leads %></span>
+                    <p style="font-size: 12px; color: var(--text-muted);">Leads</p>
+                </div>
+                <div style="text-align: center;">
+                    <span style="font-size: 24px; font-weight: 700; color: var(--emerald);"><%= currentPlan.limits.broadcastsPerDay %></span>
+                    <p style="font-size: 12px; color: var(--text-muted);">Broadcasts/Day</p>
+                </div>
+                <div style="text-align: center;">
+                    <span style="font-size: 24px; font-weight: 700; color: var(--emerald);"><%= currentPlan.limits.whatsappSessions %></span>
+                    <p style="font-size: 12px; color: var(--text-muted);">WhatsApp Sessions</p>
+                </div>
+            </div>
+            <% } %>
+        </div>
+    </div>
+    <% } %>
+
+    <!-- Plans Grid -->
+    <div class="plans-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+        
+        <!-- Free Plan - WhatsApp Automation Lite -->
+        <div class="glass-card plan-card <%= (subscription && subscription.plan === 'free') ? 'plan-current' : '' %>" style="padding: 32px; border-radius: 20px; position: relative;">
+            <% if (subscription && subscription.plan === 'free') { %>
+                <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--slate); color: white; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 600;">CURRENT PLAN</div>
+            <% } %>
+            <div style="text-align: center; margin-bottom: 24px;">
+                <h3 style="font-size: 24px; margin-bottom: 8px;">Free</h3>
+                <p style="font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 700;">₦0</p>
+                <p style="color: var(--text-muted);">WhatsApp Automation Lite</p>
+            </div>
+            <ul style="list-style: none; padding: 0; margin-bottom: 24px;">
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    WhatsApp Connection
+                </li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Auto-reply to customers
+                </li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    20 Leads capture
+                </li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Basic intent detection
+                </li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px; color: var(--text-muted);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    No Broadcasts
+                </li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px; color: var(--text-muted);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    No Status Posting
+                </li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px; color: var(--text-muted);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    No Auto Follow-ups
+                </li>
+            </ul>
+            <% if (!subscription || subscription.plan !== 'free') { %>
+            <form action="/subscription/upgrade" method="POST">
+                <input type="hidden" name="plan" value="free">
+                <button type="submit" class="btn btn-secondary" style="width: 100%;">Switch to Free</button>
+            </form>
+            <% } else { %>
+            <button class="btn btn-secondary" style="width: 100%;" disabled>Current Plan</button>
+            <% } %>
+        </div>
+
+        <!-- Trial Plan (Show only for non-trial users) -->
+        <% if (!trialStatus || !trialStatus.isActive) { %>
+        <div class="glass-card plan-card" style="padding: 32px; border-radius: 20px; position: relative; border: 2px solid var(--emerald); background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05));">
+            <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--emerald); color: white; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 600;">RECOMMENDED</div>
+            <div style="text-align: center; margin-bottom: 24px;">
+                <h3 style="font-size: 24px; margin-bottom: 8px; color: var(--emerald);">14-Day Trial</h3>
+                <p style="font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 700;">₦0</p>
+                <p style="color: var(--text-muted);">Full Pro features</p>
+            </div>
+            <ul style="list-style: none; padding: 0; margin-bottom: 24px;">
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    50 Leads
+                </li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    20 Broadcasts/Day
+                </li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    1 WhatsApp Session
+                </li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    WhatsApp Status Posting
+                </li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Automated Follow-ups
+                </li>
+            </ul>
+            <a href="/auth/signup" class="btn btn-primary" style="width: 100%; display: block; text-align: center;">Start Free Trial</a>
+        </div>
+        <% } %>
+
+        <!-- Starter Plan -->
+        <div class="glass-card plan-card <%= (subscription && subscription.plan === 'starter') ? 'plan-current' : '' %>" style="padding: 32px; border-radius: 20px; position: relative;">
+            <% if (subscription && subscription.plan === 'starter') { %>
+                <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--slate); color: white; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 600;">CURRENT PLAN</div>
+            <% } %>
+            <div style="text-align: center; margin-bottom: 24px;">
+                <h3 style="font-size: 24px; margin-bottom: 8px;">Starter</h3>
+                <p style="font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 700;">₦5,000</p>
+                <p style="color: var(--text-muted);">per month</p>
+            </div>
+            <ul style="list-style: none; padding: 0; margin-bottom: 24px;">
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    200 Leads
+                </li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    50 Broadcasts/Day
+                </li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    1 WhatsApp Session
+                </li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Automated Follow-ups
+                </li>
+            </ul>
+            <% if (subscription && subscription.plan !== 'starter') { %>
+            <form action="/subscription/upgrade" method="POST">
+                <input type="hidden" name="plan" value="starter">
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Upgrade to Starter</button>
+            </form>
+            <% } else { %>
+            <button class="btn btn-secondary" style="width: 100%;" disabled>Current Plan</button>
+            <% } %>
+        </div>
+
+        <!-- Pro Plan -->
+        <div class="glass-card plan-card <%= (subscription && subscription.plan === 'pro') ? 'plan-current' : '' %>" style="padding: 32px; border-radius: 20px; position: relative; border: 2px solid var(--gold);">
+            <% if (subscription && subscription.plan === 'pro') { %>
+                <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--gold); color: #0a0f0d; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 600;">CURRENT PLAN</div>
+            <% } else { %>
+            <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--gold); color: #0a0f0d; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 600;">BEST VALUE</div>
+            <% } %>
+            <div style="text-align: center; margin-bottom: 24px;">
+                <h3 style="font-size: 24px; margin-bottom: 8px; color: var(--gold);">Pro</h3>
+                <p style="font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 700;">₦15,000</p>
+                <p style="color: var(--text-muted);">per month</p>
+            </div>
+            <ul style="list-style: none; padding: 0; margin-bottom: 24px;">
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    1,000 Leads
+                </li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    500 Broadcasts/Day
+                </li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    3 WhatsApp Sessions
+                </li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    WhatsApp Status Posting
+                </li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Automated Follow-ups
+                </li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Priority Support
+                </li>
+            </ul>
+            <% if (subscription && subscription.plan !== 'pro') { %>
+            <form action="/subscription/upgrade" method="POST">
+                <input type="hidden" name="plan" value="pro">
+                <button type="submit" class="btn btn-primary" style="width: 100%; background: linear-gradient(135deg, var(--gold), var(--amber));">Upgrade to Pro</button>
+            </form>
+            <% } else { %>
+            <button class="btn btn-secondary" style="width: 100%;" disabled>Current Plan</button>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="glass-card" style="margin-top: 48px; padding: 32px;">
+        <h3 style="margin-bottom: 24px;">Frequently Asked Questions</h3>
+        <div style="display: grid; gap: 16px;">
+            <div>
+                <h4 style="font-size: 16px; margin-bottom: 8px;">Can I switch plans anytime?</h4>
+                <p style="color: var(--text-muted); font-size: 14px;">Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately.</p>
+            </div>
+            <div>
+                <h4 style="font-size: 16px; margin-bottom: 8px;">What happens when my trial ends?</h4>
+                <p style="color: var(--text-muted); font-size: 14px;">You'll be moved to the free plan with 20 leads. You can upgrade anytime to unlock more features.</p>
+            </div>
+            <div>
+                <h4 style="font-size: 16px; margin-bottom: 8px;">Is there a refund policy?</h4>
+                <p style="color: var(--text-muted); font-size: 14px;">Yes, we offer a 7-day money-back guarantee on all paid plans.</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+.plan-current {
+    border-color: var(--emerald) !important;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05)) !important;
+}
+</style>

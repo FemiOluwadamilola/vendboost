@@ -2,6 +2,49 @@
 <main class="main-content">
     <%- include('../partials/message') %>
     
+    <!-- Trial Banner -->
+    <% if (trialStatus && trialStatus.isActive) { %>
+        <div class="trial-banner <%= trialStatus.isExpiringSoon ? 'trial-banner-warning' : '' %>">
+            <div class="trial-banner-content">
+                <div class="trial-banner-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                </div>
+                <div class="trial-banner-text">
+                    <strong>14-Day Trial Active</strong>
+                    <span><%= trialStatus.daysRemaining %> days remaining</span>
+                </div>
+            </div>
+            <a href="/dashboard/subscriptions" class="trial-banner-btn">Upgrade Now</a>
+        </div>
+    <% } %>
+
+    <!-- Upgrade Trigger Banner -->
+    <% if (upgradeTriggers && upgradeTriggers.shouldShowUpgrade) { %>
+        <div class="trial-banner <%= upgradeTriggers.urgency === 'critical' ? 'trial-banner-critical' : upgradeTriggers.urgency === 'high' ? 'trial-banner-warning' : 'trial-banner-info' %>">
+            <div class="trial-banner-content">
+                <div class="trial-banner-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                </div>
+                <div class="trial-banner-text">
+                    <% if (trialStatus && trialStatus.isExpired) { %>
+                        <strong>Trial Expired</strong>
+                        <span>Upgrade to continue using all features!</span>
+                    <% } else { %>
+                        <strong>Upgrade Recommended</strong>
+                        <span><%= upgradeTriggers.reasons.join(' • ') %></span>
+                    <% } %>
+                </div>
+            </div>
+            <a href="/dashboard/subscriptions" class="trial-banner-btn">View Plans</a>
+        </div>
+    <% } %>
+    
     <!-- Top Navbar -->
     <nav class="navbar">
         <div class="navbar-left">

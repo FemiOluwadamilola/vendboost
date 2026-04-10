@@ -55,11 +55,19 @@ const checkBroadcastLimit = async (vendorId) => {
     createdAt: -1,
   });
 
-  if (!sub || sub.status !== "active") {
+  // Allow trial and active subscriptions
+  if (!sub || (sub.status !== "active" && sub.status !== "trial")) {
     return { allowed: false, reason: "No active subscription" };
   }
 
-  const limits = plans[sub.plan]?.limits;
+  // Check if follow-up automation is enabled for this plan
+  const planKey = sub.plan === "trial" ? "trial" : sub.plan;
+  const limits = plans[planKey]?.limits || plans.free.limits;
+  
+  if (!limits.followUpAutomation) {
+    return { allowed: false, reason: "Automated follow-ups not included in your plan" };
+  }
+
   const maxBroadcasts = limits?.broadcastsPerDay || 0;
 
   if (maxBroadcasts === 0) {

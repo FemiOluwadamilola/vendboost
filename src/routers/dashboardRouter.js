@@ -8,6 +8,7 @@ const Subscription = require("../models/Subscription");
 const Usage = require("../models/Usage");
 const plans = require("../config/plans");
 const log = require("../utils/logger");
+const { checkUpgradeTriggers, getTrialStatus } = require("../utils/upgradeTrigger");
 
 router.get("/", verifyAuth.requireAuth, async (req, res) => {
   const vendorId = req.user.id;
@@ -57,6 +58,17 @@ router.get("/", verifyAuth.requireAuth, async (req, res) => {
 
     const vendor = await Vendor.findById(vendorId);
 
+    // Get upgrade triggers and trial status
+    const upgradeTriggers = await checkUpgradeTriggers(vendorId);
+    const trialStatus = await getTrialStatus(vendorId);
+
+    // Check if trial just expired and needs conversion
+    if (trialStatus && trialStatus.isExpired) {
+      const { convertTrialToFree } = require("../utils/upgradeTrigger");
+      await convertTrialToFree(vendorId);
+      req.flash("info", "Your 14-day trial has ended. You've been moved to the Free plan. Upgrade to unlock all features!");
+    }
+
     return res.render("./dashboard/index", {
       layout: "layouts/dashboard",
       title: "VendBoost Dashboard",
@@ -66,6 +78,8 @@ router.get("/", verifyAuth.requireAuth, async (req, res) => {
       products,
       subscription,
       vendor,
+      upgradeTriggers,
+      trialStatus,
     });
   } catch (err) {
     log.error(`Dashboard error for ${vendorId}:`, err.message);
