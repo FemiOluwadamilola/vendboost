@@ -1963,6 +1963,109 @@ a {
 }
 
 /* ============================================
+   MOBILE WHATSAPP FAB
+============================================ */
+.mobile-wa-fab {
+    display: none;
+    position: fixed;
+    bottom: 90px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 200;
+    box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-wa-fab svg {
+    width: 28px;
+    height: 28px;
+    color: white;
+}
+
+.mobile-wa-fab:active {
+    transform: scale(0.95);
+}
+
+/* ============================================
+   MOBILE BOTTOM NAVIGATION
+============================================ */
+.mobile-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: var(--bg-gradient-2);
+    border-top: 1px solid var(--glass-border);
+    padding: 8px 12px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    z-index: 9997;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 11px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    min-width: 56px;
+}
+
+.mobile-nav-item svg {
+    width: 22px;
+    height: 22px;
+}
+
+.mobile-nav-item:active {
+    transform: scale(0.95);
+    background: var(--glass-hover);
+}
+
+.mobile-nav-item.active,
+.mobile-nav-item:hover {
+    color: var(--emerald-light);
+}
+
+.mobile-nav-wa {
+    color: #25D366;
+}
+
+.mobile-nav-wa svg {
+    width: 26px;
+    height: 26px;
+}
+
+@media (max-width: 992px) {
+    .mobile-wa-fab {
+        display: none;
+    }
+    
+    .mobile-nav {
+        display: flex;
+    }
+    
+    .site-footer {
+        padding-bottom: 80px;
+    }
+}
+
+/* ============================================
    LOGIN PAGE STYLES
 ============================================ */
 .login-page {
@@ -2756,6 +2859,349 @@ a {
 }
 
 /* ============================================
+   ENHANCED MOBILE RESPONSIVE
+============================================ */
+@media (max-width: 768px) {
+    /* Overlay for mobile sidebar */
+    .sidebar-overlay {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 9998;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    /* Mobile menu toggle fix */
+    .mobile-menu-toggle {
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        z-index: 9999;
+        width: 44px;
+        height: 44px;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+    }
+    
+    .mobile-menu-toggle svg {
+        width: 22px;
+        height: 22px;
+        color: var(--text-primary);
+    }
+    
+    /* Stats grid mobile */
+    .stats-grid {
+        gap: 12px;
+    }
+    
+    /* Actions Grid */
+    .actions-grid {
+        gap: 12px;
+    }
+    
+    /* Modal responsive */
+    .modal-content {
+        padding: 24px 20px;
+        max-width: 95%;
+    }
+    
+    .modal-icon {
+        width: 56px;
+        height: 56px;
+    }
+    
+    .modal-content h2 {
+        font-size: 20px;
+    }
+    
+    .instruction-steps {
+        gap: 10px;
+    }
+    
+    .step {
+        padding: 12px;
+        gap: 12px;
+    }
+    
+    .step-number {
+        width: 24px;
+        height: 24px;
+        min-width: 24px;
+        font-size: 12px;
+    }
+    
+    .step-content strong {
+        font-size: 13px;
+    }
+    
+    .step-content span {
+        font-size: 12px;
+    }
+    
+    /* Table wrapper for horizontal scroll */
+    .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .data-table {
+        min-width: 600px;
+    }
+    
+    /* Form adjustments */
+    .form-grid {
+        gap: 16px;
+    }
+    
+    .form-group-settings label {
+        font-size: 13px;
+    }
+    
+    .form-group-settings input,
+    .form-group-settings select {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+    
+    /* Settings section */
+    .settings-section {
+        padding: 20px 0;
+    }
+    
+    .settings-section-title {
+        font-size: 16px;
+        margin-bottom: 16px;
+    }
+    
+    .settings-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px 0;
+    }
+    
+    .settings-label {
+        width: 100%;
+    }
+    
+    .settings-label-title {
+        font-size: 14px;
+    }
+    
+    .settings-label-desc {
+        font-size: 12px;
+    }
+    
+    .settings-select {
+        width: 100%;
+    }
+    
+    /* Toggle switch mobile */
+    .toggle-switch {
+        width: 48px;
+        height: 26px;
+    }
+    
+    .toggle-slider:before {
+        height: 20px;
+        width: 20px;
+    }
+    
+    /* Buttons */
+    .btn-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 14px 20px;
+        font-size: 14px;
+    }
+    
+    /* Card buttons */
+    .card-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .card-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* Profile */
+    .profile-header {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    /* Login */
+    .login-container {
+        padding: 20px;
+    }
+    
+    .login-card {
+        padding: 28px 20px;
+    }
+    
+    .login-header h1 {
+        font-size: 24px;
+    }
+    
+    .social-login {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    /* Product Grid */
+    .products-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
+
+@media (max-width: 400px) {
+    .main-content {
+        padding: 16px 12px;
+    }
+    
+    .glass-card {
+        padding: 16px;
+        border-radius: 16px;
+    }
+    
+    .stat-card {
+        padding: 16px;
+    }
+    
+    .stat-label {
+        font-size: 12px;
+    }
+    
+    .stat-value {
+        font-size: 22px;
+    }
+    
+    .page-title {
+        font-size: 20px;
+    }
+    
+    .page-breadcrumb {
+        font-size: 12px;
+    }
+    
+    .navbar {
+        padding: 12px 0;
+    }
+    
+    .navbar-right {
+        gap: 8px;
+    }
+    
+    .nav-btn {
+        width: 38px;
+        height: 38px;
+    }
+    
+    .page-header {
+        gap: 8px;
+    }
+    
+    /* Action buttons */
+    .action-btn {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+    
+    /* Modal adjustments */
+    .modal-content {
+        padding: 20px 16px;
+        border-radius: 16px;
+    }
+    
+    .modal-actions {
+        gap: 8px;
+    }
+    
+    .modal-actions .btn-primary,
+    .modal-actions .btn-secondary {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+    
+    /* Data table */
+    .data-table {
+        font-size: 12px;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 10px 6px;
+    }
+    
+    /* Filters */
+    .filters-bar {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .filter-group {
+        width: 100%;
+    }
+    
+    .filter-select {
+        width: 100%;
+    }
+    
+    /* Search */
+    .search-box {
+        padding: 12px;
+    }
+    
+    .search-input {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+    
+    /* Lead/Product cards */
+    .lead-card,
+    .product-card {
+        padding: 14px;
+    }
+    
+    .product-image {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .product-info h3 {
+        font-size: 14px;
+    }
+    
+    .product-price {
+        font-size: 16px;
+    }
+}
+
+/* ============================================
    ANIMATIONS
 ============================================ */
 @keyframes fadeInUp {
@@ -2847,5 +3293,321 @@ a {
 }
 
 .notification-toast button:hover {
+    color: var(--text-primary);
+}
+
+/* ============================================
+   WHATSAPP INSTRUCTION MODAL
+ ============================================ */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    display: flex;
+}
+
+.modal-content {
+    background: var(--bg-gradient-2);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 32px;
+    max-width: 420px;
+    width: 90%;
+    width: calc(100% - 32px);
+    max-height: 85vh;
+    max-height: calc(100% - 100px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    transform: scale(0.9) translateY(20px);
+    transition: all 0.3s ease;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* Mobile modal specific styles */
+@media (max-width: 768px) {
+    .modal-overlay {
+        z-index: 9999999;
+        padding: 16px;
+        padding-bottom: 100px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-overlay.active .modal-content {
+        transform: scale(1) translateY(0);
+        border-radius: 24px;
+        margin: auto;
+    }
+
+    .modal-content {
+        width: 100%;
+        max-width: 100%;
+        margin: auto;
+        padding: 24px 20px 32px;
+    }
+
+    #wa-instructions-modal {
+        padding: 16px;
+    }
+
+    #wa-instructions-modal .modal-content {
+        width: 100%;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .modal-icon {
+        width: 56px;
+        height: 56px;
+    }
+
+    .modal-icon svg {
+        width: 32px;
+        height: 32px;
+    }
+
+    .modal-content h2 {
+        font-size: 20px;
+    }
+
+    .modal-subtitle {
+        font-size: 13px;
+    }
+
+    .instruction-steps {
+        gap: 10px;
+    }
+
+    .step {
+        padding: 12px;
+    }
+
+    .step-number {
+        width: 26px;
+        height: 26px;
+        min-width: 26px;
+    }
+
+    .step-content strong {
+        font-size: 13px;
+    }
+
+    .step-content span {
+        font-size: 12px;
+    }
+
+    .info-banner {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+
+    .modal-actions {
+        gap: 8px;
+    }
+
+    .modal-actions .btn-primary,
+    .modal-actions .btn-secondary {
+        padding: 14px 20px;
+        font-size: 14px;
+        border-radius: 12px;
+    }
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1) translateY(0);
+}
+
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+    transition: color 0.2s ease;
+}
+
+.modal-close:hover {
+    color: var(--text-primary);
+}
+
+.modal-icon {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 8px 24px rgba(37, 211, 102, 0.3);
+}
+
+.modal-icon svg {
+    color: white;
+}
+
+.modal-content h2 {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.modal-subtitle {
+    text-align: center;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.instruction-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.step {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.step:hover {
+    border-color: var(--emerald-light);
+    background: var(--glass-hover);
+}
+
+.step-number {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    color: white;
+}
+
+.step-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.step-content strong {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.step-content span {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.info-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: rgba(37, 211, 102, 0.1);
+    border: 1px solid rgba(37, 211, 102, 0.3);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #34d399;
+    line-height: 1.4;
+}
+
+.info-banner svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+@media (max-width: 480px) {
+    .info-banner {
+        padding: 10px 12px;
+        font-size: 12px;
+        gap: 8px;
+    }
+}
+
+.modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-actions .btn-primary {
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-actions .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
+}
+
+.modal-actions .btn-secondary {
+    padding: 12px 24px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-actions .btn-secondary:hover {
+    background: var(--glass-hover);
     color: var(--text-primary);
 }

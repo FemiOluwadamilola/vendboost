@@ -116,22 +116,35 @@
   // Mobile Menu Toggle
   // ============================================
   function initMobileMenu() {
-    const menuToggle = document.querySelector(".mobile-menu-toggle");
-    const sidebar = document.getElementById("sidebar");
+    var menuToggle = document.querySelector(".mobile-menu-toggle");
+    var sidebar = document.getElementById("sidebar");
+    var overlay = document.querySelector(".sidebar-overlay");
 
     if (menuToggle && sidebar) {
-      menuToggle.addEventListener("click", () => {
+      menuToggle.addEventListener("click", function() {
         sidebar.classList.toggle("open");
+        if (overlay) {
+          overlay.classList.toggle("active");
+        }
       });
 
-      // Close sidebar when clicking outside
-      document.addEventListener("click", (e) => {
+      if (overlay) {
+        overlay.addEventListener("click", function() {
+          sidebar.classList.remove("open");
+          overlay.classList.remove("active");
+        });
+      }
+
+      document.addEventListener("click", function(e) {
         if (
           sidebar.classList.contains("open") &&
           !sidebar.contains(e.target) &&
           !menuToggle.contains(e.target)
         ) {
           sidebar.classList.remove("open");
+          if (overlay) {
+            overlay.classList.remove("active");
+          }
         }
       });
     }
@@ -613,6 +626,57 @@
   }
 
   // ============================================
+  // WhatsApp Instruction Modal
+  // ============================================
+  window.showWhatsAppInstructions = function(e) {
+    if (e) {
+      e.preventDefault();
+    }
+    var modal = document.getElementById("wa-instructions-modal");
+    if (modal) {
+      modal.classList.remove("hidden");
+      setTimeout(function() { modal.classList.add("active"); }, 10);
+    }
+  };
+
+  window.closeWhatsAppModal = function() {
+    var modal = document.getElementById("wa-instructions-modal");
+    if (modal) {
+      modal.classList.remove("active");
+      setTimeout(function() { modal.classList.add("hidden"); }, 300);
+    }
+  };
+
+  window.proceedToWhatsApp = function() {
+    window.location.href = "/whatsapp/connect-whatsapp";
+  };
+
+  function initWhatsAppModal() {
+    var modal = document.getElementById("wa-instructions-modal");
+    if (modal) {
+      modal.addEventListener("click", function(e) {
+        if (e.target === modal) {
+          window.closeWhatsAppModal();
+        }
+      });
+    }
+  }
+
+  // ============================================
+  // Mobile Navigation Active State
+  // ============================================
+  function initMobileNav() {
+    var path = window.location.pathname;
+    var navItems = document.querySelectorAll(".mobile-nav-item");
+    navItems.forEach(function(item) {
+      var href = item.getAttribute("href");
+      if (href && path === href) {
+        item.classList.add("active");
+      }
+    });
+  }
+
+  // ============================================
   // Initialize All Functions
   // ============================================
   function init() {
@@ -632,6 +696,8 @@
     initSettingsForms();
     initLeadSearch();
     initLeadFilter();
+    initWhatsAppModal();
+    initMobileNav();
   }
 
   // Run on DOM ready

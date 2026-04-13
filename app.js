@@ -6,6 +6,7 @@ const DBConnection = require("./src/config/DBconfig");
 const cron = require("node-cron");
 // const mongoose = require("mongoose");
 const flash = require("connect-flash");
+const logViewerRoute = require("./src/routers/logViewer");
 const indexRoute = require("./src/routers/index");
 const authRoute = require("./src/routers/authRouter");
 const dashboardRoute = require("./src/routers/dashboardRouter");
@@ -58,6 +59,7 @@ cron.schedule("*/5 * * * *", () => {
 });
 
 // Routes placeholder
+app.use("/logs", logViewerRoute);
 app.use("/", indexRoute);
 app.use("/auth", authRoute);
 app.use("/dashboard", dashboardRoute);

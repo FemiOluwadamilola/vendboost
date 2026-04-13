@@ -34,11 +34,61 @@
             </button>
             <a href="/signin" rel="nofollow" class="btn btn-primary btn-sm">Get Started</a>
         </nav>
-        <button class="mobile-nav-toggle" aria-label="Toggle navigation">
+        <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M3 12h18M3 6h18M3 18h18"/>
             </svg>
         </button>
+
+        <!-- Mobile Navigation Menu -->
+        <div class="mobile-nav-menu" id="mobileNavMenu">
+            <div class="mobile-nav-content">
+                <div class="mobile-nav-header">
+                    <span class="logo-text">VendBoost</span>
+                    <button class="mobile-nav-close" id="mobileNavClose">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <path d="M18 6L6 18M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="mobile-nav-intro">
+                    <p>Turn WhatsApp into your 24/7 sales machine. Automate replies, follow-ups & close more deals.</p>
+                </div>
+                
+                <nav class="mobile-nav-links">
+                    <a href="#features" class="mobile-nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                        Features
+                    </a>
+                    <a href="#pricing" class="mobile-nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                        </svg>
+                        Pricing
+                    </a>
+                    <a href="#testimonials" class="mobile-nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        Testimonials
+                    </a>
+                    <a href="#how-it-works" class="mobile-nav-link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>
+                        </svg>
+                        How It Works
+                    </a>
+                </nav>
+                
+                <div class="mobile-nav-footer">
+                    <a href="/signin" class="btn btn-primary btn-block">Get Started Free</a>
+                    <p class="mobile-nav-note">No credit card required</p>
+                </div>
+            </div>
+        </div>
     </header>
 
     <!-- Main Content -->
@@ -566,6 +616,160 @@
     width: 24px;
     height: 24px;
     color: var(--text-primary);
+}
+
+/* Mobile Navigation Menu - Professional Drawer */
+.mobile-nav-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 320px;
+    max-width: 92%;
+    min-height: 100vh;
+    height: 100%;
+    background: #ffffff !important;
+    z-index: 100001;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.18);
+    transform: translateX(105%);
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0.24, 1);
+    overflow: hidden;
+}
+
+.mobile-nav-menu.active {
+    transform: translateX(0);
+}
+
+@media (max-width: 480px) {
+    .mobile-nav-menu {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+.mobile-nav-menu.active {
+    transform: translateX(0);
+    visibility: visible;
+    display: flex;
+}
+
+.mobile-nav-menu {
+    display: flex;
+}
+
+.mobile-nav-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: #ffffff;
+}
+
+.mobile-nav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 24px 20px;
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+}
+
+.mobile-nav-header .logo-text {
+    font-size: 22px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+}
+
+.mobile-nav-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-nav-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.mobile-nav-intro {
+    padding: 20px 24px;
+    background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
+    border-bottom: 1px solid #ecfdf5;
+}
+
+.mobile-nav-intro p {
+    font-size: 14px;
+    color: #065f46;
+    line-height: 1.6;
+    margin: 0;
+    font-weight: 500;
+}
+
+.mobile-nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 12px 12px;
+    flex: 1;
+}
+
+.mobile-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #374151;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.15s ease;
+}
+
+.mobile-nav-link:hover {
+    background: #f3f4f6;
+    color: #059669;
+}
+
+.mobile-nav-link svg {
+    color: #9ca3af;
+    flex-shrink: 0;
+}
+
+.mobile-nav-link:hover svg {
+    color: #059669;
+}
+
+.mobile-nav-footer {
+    padding: 16px 20px 24px;
+    background: #f9fafb;
+    border-top: 1px solid #f3f4f6;
+    margin-top: auto;
+}
+
+.mobile-nav-footer .btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    padding: 14px 20px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.mobile-nav-note {
+    text-align: center;
+    font-size: 12px;
+    color: #9ca3af;
+    margin: 10px 0 0;
 }
 
 .btn-sm {
@@ -1371,12 +1575,26 @@
         padding: 16px 24px;
     }
 
-    .nav-links {
+    .nav-links, .index-nav .btn {
         display: none;
     }
 
     .mobile-nav-toggle {
-        display: block;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 10px;
+        padding: 10px;
+        z-index: 100001;
+        position: relative;
+    }
+
+    .mobile-nav-toggle svg {
+        width: 22px;
+        height: 22px;
+        color: var(--text-primary);
     }
 
     .hero-title {
@@ -1448,3 +1666,31 @@
     }
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var mobileNavToggle = document.getElementById('mobileNavToggle');
+    var mobileNavMenu = document.getElementById('mobileNavMenu');
+    var mobileNavClose = document.getElementById('mobileNavClose');
+    
+    if (mobileNavToggle && mobileNavMenu) {
+        mobileNavToggle.addEventListener('click', function() {
+            mobileNavMenu.classList.add('active');
+        });
+        
+        if (mobileNavClose) {
+            mobileNavClose.addEventListener('click', function() {
+                mobileNavMenu.classList.remove('active');
+            });
+        }
+        
+        document.addEventListener('click', function(e) {
+            if (mobileNavMenu.classList.contains('active') && 
+                !mobileNavMenu.contains(e.target) && 
+                !mobileNavToggle.contains(e.target)) {
+                mobileNavMenu.classList.remove('active');
+            }
+        });
+    }
+});
+</script>
