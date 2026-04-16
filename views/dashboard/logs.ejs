@@ -1,0 +1,423 @@
+<div class="dashboard-container">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">System Logs</h1>
+        <p class="dashboard-subtitle">Monitor application logs in real-time</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+        <div class="stat-card">
+            <div class="stat-label">Total Logs</div>
+            <div class="stat-value" id="stat-total">0</div>
+        </div>
+        <div class="stat-card error">
+            <div class="stat-label">Errors</div>
+            <div class="stat-value" id="stat-error">0</div>
+        </div>
+        <div class="stat-card warn">
+            <div class="stat-label">Warnings</div>
+            <div class="stat-value" id="stat-warn">0</div>
+        </div>
+        <div class="stat-card info">
+            <div class="stat-label">Info</div>
+            <div class="stat-value" id="stat-info">0</div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="glass-card" style="padding: 20px; margin-bottom: 24px;">
+        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px;">
+                <label class="form-label" style="margin-bottom: 8px; display: block;">Log Type</label>
+                <select id="logType" class="form-input" style="width: 100%;">
+                    <option value="combined">All Logs</option>
+                    <option value="error">Errors</option>
+                    <option value="warn">Warnings</option>
+                    <option value="info">Info</option>
+                    <option value="debug">Debug</option>
+                </select>
+            </div>
+            <div style="width: 120px;">
+                <label class="form-label" style="margin-bottom: 8px; display: block;">Limit</label>
+                <select id="logLimit" class="form-input" style="width: 100%;">
+                    <option value="50">50</option>
+                    <option value="100" selected>100</option>
+                    <option value="500">500</option>
+                    <option value="1000">1,000</option>
+                    <option value="5000">5,000</option>
+                </select>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+                <label class="form-label" style="margin-bottom: 8px; display: block;">Filter</label>
+                <input type="text" id="logFilter" class="form-input" style="width: 100%;" placeholder="Filter logs...">
+            </div>
+        </div>
+        <div style="display: flex; gap: 12px; margin-top: 16px; align-items: center;">
+            <button id="refreshBtn" class="btn btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 4 23 10 17 10"/>
+                    <polyline points="1 20 1 14 7 14"/>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3h3.64a9 9 0 0 1 6.45 5.55"/>
+                </svg>
+                Refresh
+            </button>
+            <button id="autoRefreshBtn" class="btn btn-secondary">Auto Refresh: OFF</button>
+            <a href="/logs/download?type=combined" class="btn btn-outline" target="_blank">
+                Download All
+            </a>
+        </div>
+    </div>
+
+    <!-- Logs Container -->
+    <div class="glass-card" style="padding: 0; overflow: hidden;">
+        <div style="background: #1a1a1a; padding: 12px 16px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: #888; font-size: 14px;">
+                <span id="displayCount">0</span> logs displayed
+            </span>
+            <span id="lastUpdate" style="color: #666; font-size: 12px;"></span>
+        </div>
+        <div id="logsContainer" class="logs-container">
+            <!-- Logs will be loaded here -->
+            <div style="padding: 40px; text-align: center; color: #888;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin: 0 auto 16px; opacity: 0.5;">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+                <p>Loading logs...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Detail Modal -->
+    <div id="logModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: #1a1a1a; border-radius: 12px; padding: 24px; max-width: 800px; width: 90%; max-height: 90vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="color: #10b981;">Log Details</h3>
+                <button onclick="closeModal()" style="background: none; border: none; color: #888; cursor: pointer; font-size: 24px;">&times;</button>
+            </div>
+            <pre id="logDetailContent" style="background: #0a0f0d; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 12px; line-height: 1.5;"></pre>
+        </div>
+    </div>
+</div>
+
+<script>
+let autoRefresh = false;
+let refreshInterval;
+
+function formatTimestamp(ts) {
+  if (!ts) return '';
+  const date = new Date(ts);
+  return date.toLocaleString();
+}
+
+function getLevelClass(level) {
+  const classes = {
+    error: 'log-error',
+    warn: 'log-warn',
+    info: 'log-info',
+    http: 'log-http',
+    debug: 'log-debug'
+  };
+  return classes[level] || 'log-info';
+}
+
+function renderLogs(data) {
+  const container = document.getElementById('logsContainer');
+  const logs = data.logs;
+
+  if (logs.length === 0) {
+    container.innerHTML = '<div style="padding: 40px; text-align: center; color: #888;">No logs found</div>';
+    return;
+  }
+
+  const html = logs.map((log, index) => `
+    <div class="log-entry ${getLevelClass(log.level)}" data-index="${index}">
+      <div class="log-header">
+        <span class="log-level">[${(log.level || 'INFO').toUpperCase()}]</span>
+        <span class="log-time">${formatTimestamp(log.timestamp)}</span>
+        ${log.vendorId ? `<span class="log-vendor" title="Vendor ID">📦 ${log.vendorId.substring(0, 8)}...</span>` : ''}
+        ${log.service ? `<span class="log-service">⚡ ${log.service}</span>` : ''}
+      </div>
+      <div class="log-message" onclick="showDetails(${index})">${escapeHtml(log.message)}</div>
+      ${log.stack ? `<div class="log-stack">${escapeHtml(log.stack.substring(0, 200))}...</div>` : ''}
+    </div>
+  `).join('');
+
+  container.innerHTML = html;
+  document.getElementById('displayCount').textContent = data.logs.length;
+
+  // Update stats
+  const stats = data.stats;
+  document.getElementById('stat-total').textContent = stats.total.toLocaleString();
+  document.getElementById('stat-error').textContent = stats.error.toLocaleString();
+  document.getElementById('stat-warn').textContent = stats.warn.toLocaleString();
+  document.getElementById('stat-info').textContent = stats.info.toLocaleString();
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function showDetails(index) {
+  fetch(`/logs?type=${document.getElementById('logType').value}&limit=5000`)
+    .then(res => res.json())
+    .then(data => {
+      const log = data.logs[data.logs.length - 1 - index];
+      if (log) {
+        document.getElementById('logDetailContent').textContent = JSON.stringify(log, null, 2);
+        document.getElementById('logModal').style.display = 'flex';
+      }
+    });
+}
+
+function closeModal() {
+  document.getElementById('logModal').style.display = 'none';
+}
+
+async function loadLogs() {
+  const type = document.getElementById('logType').value;
+  const limit = document.getElementById('logLimit').value;
+  const filter = document.getElementById('logFilter').value.toLowerCase();
+
+  try {
+    let url = `/logs?type=${type}&limit=${limit}`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.success) {
+      let logs = data.logs;
+
+      // Apply filter
+      if (filter) {
+        logs = logs.filter(log => 
+          log.message?.toLowerCase().includes(filter) ||
+          log.vendorId?.toLowerCase().includes(filter) ||
+          log.service?.toLowerCase().includes(filter)
+        );
+      }
+
+      renderLogs({ ...data, logs });
+      document.getElementById('lastUpdate').textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+    }
+  } catch (err) {
+    console.error('Failed to load logs:', err);
+  }
+}
+
+function toggleAutoRefresh() {
+  autoRefresh = !autoRefresh;
+  const btn = document.getElementById('autoRefreshBtn');
+
+  if (autoRefresh) {
+    btn.textContent = 'Auto Refresh: ON';
+    btn.classList.add('btn-primary');
+    btn.classList.remove('btn-secondary');
+    refreshInterval = setInterval(loadLogs, 3000);
+  } else {
+    btn.textContent = 'Auto Refresh: OFF';
+    btn.classList.add('btn-secondary');
+    btn.classList.remove('btn-primary');
+    clearInterval(refreshInterval);
+  }
+}
+
+// Event listeners
+document.getElementById('refreshBtn').addEventListener('click', loadLogs);
+document.getElementById('autoRefreshBtn').addEventListener('click', toggleAutoRefresh);
+document.getElementById('logType').addEventListener('change', loadLogs);
+document.getElementById('logLimit').addEventListener('change', loadLogs);
+document.getElementById('logFilter').addEventListener('input', debounce(loadLogs, 500));
+
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+// Close modal on outside click
+document.getElementById('logModal').addEventListener('click', (e) => {
+  if (e.target.id === 'logModal') closeModal();
+});
+
+// Initial load
+loadLogs();
+</script>
+
+<style>
+.logs-container {
+  max-height: 600px;
+  overflow-y: auto;
+  background: #0a0f0d;
+}
+
+.log-entry {
+  padding: 12px 16px;
+  border-bottom: 1px solid #1a1a1a;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  transition: background 0.2s;
+}
+
+.log-entry:hover {
+  background: #1a1a1a;
+}
+
+.log-header {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 6px;
+  align-items: center;
+}
+
+.log-level {
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.log-error .log-level { background: #dc2626; color: white; }
+.log-warn .log-level { background: #d97706; color: black; }
+.log-info .log-level { background: #10b981; color: black; }
+.log-http .log-level { background: #3b82f6; color: white; }
+.log-debug .log-level { background: #8b5cf6; color: white; }
+
+.log-time {
+  color: #666;
+  font-size: 11px;
+}
+
+.log-vendor {
+  color: #f59e0b;
+  font-size: 11px;
+}
+
+.log-service {
+  color: #06b6d4;
+  font-size: 11px;
+}
+
+.log-message {
+  color: #e5e5e5;
+  cursor: pointer;
+  word-break: break-word;
+}
+
+.log-message:hover {
+  color: #10b981;
+}
+
+.log-stack {
+  color: #f87171;
+  font-size: 11px;
+  margin-top: 6px;
+  padding-left: 12px;
+  border-left: 2px solid #333;
+}
+
+.stat-card {
+  background: #111;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #222;
+}
+
+.stat-card .stat-label {
+  color: #888;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.stat-card .stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #10b981;
+}
+
+.stat-card.error .stat-value { color: #ef4444; }
+.stat-card.warn .stat-value { color: #f59e0b; }
+.stat-card.info .stat-value { color: #3b82f6; }
+
+.form-label {
+  display: block;
+  color: #ccc;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: #0a0f0d;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #e5e5e5;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+}
+
+.btn-primary {
+  background: #10b981;
+  color: black;
+}
+
+.btn-primary:hover {
+  background: #34d399;
+}
+
+.btn-secondary {
+  background: #333;
+  color: #e5e5e5;
+}
+
+.btn-secondary:hover {
+  background: #444;
+}
+
+.btn-outline {
+  background: transparent;
+  color: #10b981;
+  border: 1px solid #10b981;
+}
+
+.btn-outline:hover {
+  background: rgba(16, 185, 129, 0.1);
+}
+</style>

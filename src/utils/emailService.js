@@ -1,5 +1,6 @@
 const { Resend } = require("resend");
 const crypto = require("crypto");
+const log = require("./logger");
 require("dotenv").config();
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -29,8 +30,8 @@ async function sendVerificationEmail(email, token) {
 
   try {
     if (!process.env.RESEND_API_KEY) {
-      console.log("=== RESEND API KEY NOT SET ===");
-      console.log("Verification link:", verificationUrl);
+      log.warn("RESEND API KEY NOT SET - using dev mode");
+      log.info(`Verification link: ${verificationUrl}`);
       return false;
     }
 
@@ -41,11 +42,10 @@ async function sendVerificationEmail(email, token) {
       html: htmlContent,
     });
 
-    console.log("Verification email sent to", email, "- ID:", result.data?.id);
+    log.info(`Verification email sent to ${email} - ID: ${result.data?.id}`);
     return true;
   } catch (error) {
-    console.error("=== RESEND ERROR ===");
-    console.error("Error:", error.message);
+    log.error("Resend error sending verification email:", error.message);
     return false;
   }
 }
@@ -73,8 +73,8 @@ async function sendPasswordResetEmail(email, token) {
 
   try {
     if (!process.env.RESEND_API_KEY) {
-      console.log("=== RESEND API KEY NOT SET ===");
-      console.log("Reset link:", resetUrl);
+      log.warn("RESEND API KEY NOT SET - using dev mode");
+      log.info(`Reset link: ${resetUrl}`);
       return false;
     }
 
@@ -85,16 +85,10 @@ async function sendPasswordResetEmail(email, token) {
       html: htmlContent,
     });
 
-    console.log(
-      "Password reset email sent to",
-      email,
-      "- ID:",
-      result.data?.id,
-    );
+    log.info(`Password reset email sent to ${email} - ID: ${result.data?.id}`);
     return true;
   } catch (error) {
-    console.error("=== RESEND ERROR ===");
-    console.error("Error:", error.message);
+    log.error("Resend error sending password reset email:", error.message);
     return false;
   }
 }

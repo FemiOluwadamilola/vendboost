@@ -50,31 +50,30 @@ router.post("/signup", async (req, res) => {
 
     const emailSent = await sendVerificationEmail(email, verificationToken);
     if (!emailSent) {
-      console.log("Failed to send verification email for:", email);
+      log.warn(`Failed to send verification email for: ${email}`);
     }
 
     req.flash("success", "Please check your email to verify your account.");
     return res.redirect("/verify-email-sent");
   } catch (err) {
-    console.error("Signup error:", err.message);
-    req.flash("error", "An error occurred. Please try again.");
     log.error("Signup error:", err.message);
+    req.flash("error", "An error occurred. Please try again.");
     return res.redirect("/signup");
   }
 });
 
 router.get("/verify/:token", async (req, res) => {
   try {
-    console.log("Verify called with token:", req.params.token);
+    log.info(`Verify called with token: ${req.params.token}`);
     const pendingVendor = await PendingVendor.findOne({ verificationToken: req.params.token });
 
     if (!pendingVendor) {
-      console.log("No pending vendor found with token");
+      log.warn(`No pending vendor found with token: ${req.params.token}`);
       req.flash("error", "Invalid or expired verification link.");
       return res.redirect("/signin");
     }
 
-    console.log("Found pending vendor:", pendingVendor.email);
+    log.info(`Found pending vendor: ${pendingVendor.email}`);
 
     let subscription;
     if (pendingVendor.plan === "trial") {
@@ -115,7 +114,7 @@ router.get("/verify/:token", async (req, res) => {
     await newVendor.save();
     await PendingVendor.deleteOne({ _id: pendingVendor._id });
 
-    console.log("Vendor created:", newVendor.email);
+    log.info(`Vendor created: ${newVendor.email}`);
 
     req.flash("success", "Email verified! You can now sign in to your account.");
     return res.redirect("/signin");
@@ -176,7 +175,7 @@ router.get("/forgot-password", (req, res) => {
 router.post("/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
-    console.log("Forgot password request for:", email);
+    log.info(`Forgot password request for: ${email}`);
 
     const vendor = await Vendor.findOne({ email });
 
@@ -190,9 +189,9 @@ router.post("/forgot-password", async (req, res) => {
     vendor.resetPasswordExpires = new Date(Date.now() + 3600000);
     await vendor.save();
 
-    console.log("Sending password reset email...");
+    log.info("Sending password reset email...");
     const emailResult = await sendPasswordResetEmail(email, resetToken);
-    console.log("Email send result:", emailResult);
+    log.info(`Email send result: ${emailResult}`);
 
     req.flash("success", "If an account exists with that email, a password reset link has been sent.");
     return res.redirect("/signin");
@@ -289,7 +288,7 @@ router.post("/signin", async (req, res) => {
 
     // Skip verification for OAuth users (they're auto-verified)
     const isLocalAuth = vendor.authProvider === "local" || !vendor.authProvider;
-    console.log("Signin debug - authProvider:", vendor.authProvider, "isVerified:", vendor.isVerified, "isLocalAuth:", isLocalAuth);
+    log.debug(`Signin - authProvider: ${vendor.authProvider}, isVerified: ${vendor.isVerified}, isLocalAuth: ${isLocalAuth}`);
     
     if (isLocalAuth && !vendor.isVerified) {
       req.flash("error", "Please verify your email before signing in.");

@@ -1,5 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const logViewer = require("./logViewer");
+
+// Mount logs API routes
+router.use("/logs", logViewer);
 
 router.get("/", async (req, res) => {
   try {
@@ -34,6 +38,15 @@ router.get("/verify-email-sent", (req, res) => {
 router.get("/terms", (req, res) => {
   res.render("terms", {
     title: "Terms & Conditions – VendBoost",
+  });
+});
+
+router.get("/logs", (req, res) => {
+  if (process.env.NODE_ENV === "production" && process.env.ALLOW_LOGS_VIEW !== "true") {
+    return res.status(403).send("Logs viewer not available in production");
+  }
+  res.render("./dashboard/logs", {
+    title: "System Logs – VendBoost",
   });
 });
 
