@@ -4,24 +4,24 @@ const MessageMedia = require("whatsapp-web.js").MessageMedia;
 const WhatsAppSession = require("../models/WhatsappSession");
 const Template = require("../models/Template");
 const getDefaultTemplate = require("../utils/defaultTemplate");
+const log = require("../utils/logger");
 const path = require("path");
 const fs = require("fs");
 
 process.on('uncaughtException', (err) => {
-  console.error(`[WORKER ${process.argv[2]}] Uncaught Exception:`, err.message);
-  console.error(err.stack);
+  log.error(`Uncaught Exception: ${err.message}`);
   process.exit(1);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  console.error(`[WORKER ${process.argv[2]}] Unhandled Rejection at:`, promise, 'reason:', reason);
+  log.error(`Unhandled Rejection at: ${promise}, reason: ${reason}`);
   process.exit(1);
 });
 
 const vendorId = process.argv[2];
 const vendorIdStr = vendorId.toString();
 
-console.log(`[WORKER ${vendorIdStr}] Starting vendor worker process...`);
+log.info(`Starting vendor worker process`);
 
 let client = null;
 let mongodbConnected = false;
@@ -29,7 +29,6 @@ let mongodbConnected = false;
 async function connectToMongoDB() {
   const mongoose = require("mongoose");
   try {
-    // Get MongoDB URL from environment or use default
     const mongoURI = process.env.MONGODB_URL || "mongodb://localhost:27017/vendboost";
     await mongoose.connect(mongoURI, {
       serverSelectionTimeoutMS: 15000,
@@ -37,9 +36,9 @@ async function connectToMongoDB() {
       bufferCommands: false,
     });
     mongodbConnected = true;
-    console.log(`[WORKER ${vendorIdStr}] MongoDB connected`);
+    log.info(`MongoDB connected`);
   } catch (err) {
-    console.error(`[WORKER ${vendorIdStr}] MongoDB connection error:`, err.message);
+    log.error(`MongoDB connection error: ${err.message}`);
     mongodbConnected = false;
     throw err;
   }
@@ -52,16 +51,15 @@ async function closeExistingBrowser() {
   try {
     if (fs.existsSync(lockFile)) {
       fs.unlinkSync(lockFile);
-      console.log(`[WORKER ${vendorIdStr}] Removed stale lock file`);
+      log.info(`Removed stale lock file`);
     }
   } catch (err) {
-    console.warn(`[WORKER ${vendorIdStr}] Could not remove lock file:`, err.message);
+    log.warn(`Could not remove lock file: ${err.message}`);
   }
 }
 
 async function initialize() {
   try {
-    // Connect to MongoDB first
     await connectToMongoDB();
     
     if (!mongodbConnected) {
@@ -102,12 +100,12 @@ async function initialize() {
         );
         process.send({ type: 'qr', vendorId: vendorIdStr, qr: qrImage });
       } catch (err) {
-        console.error(`[WORKER ${vendorIdStr}] QR generation error:`, err.message);
+        log.error(`QR generation error: ${err.message}`);
       }
     });
 
     client.on("ready", async () => {
-      console.log(`[WORKER ${vendorIdStr}] Client ready`);
+      log.info(`Client ready`);
       try {
         await WhatsAppSession.findOneAndUpdate(
           { vendor: vendorId },
@@ -123,7 +121,7 @@ async function initialize() {
         }
         process.send({ type: 'ready', vendorId: vendorIdStr });
       } catch (err) {
-        console.error(`[WORKER ${vendorIdStr}] Ready handler error:`, err.message);
+        log.error(`Ready handler error: ${err.message}`);
       }
     });
 
@@ -134,12 +132,12 @@ async function initialize() {
         const messageHandler = require("./messageHandler");
         await messageHandler.handleIncomingMessage(vendorId, client, msg);
       } catch (err) {
-        console.error(`[WORKER ${vendorIdStr}] Message handler error:`, err.message);
+        log.error(`Message handler error: ${err.message}`);
       }
     });
 
     client.on("disconnected", async (reason) => {
-      console.log(`[WORKER ${vendorIdStr}] Client disconnected: ${reason}`);
+      log.info(`Client disconnected: ${reason}`);
       try {
         await WhatsAppSession.findOneAndUpdate(
           { vendor: vendorId },
@@ -147,12 +145,12 @@ async function initialize() {
         );
         process.send({ type: 'disconnected', vendorId: vendorIdStr, reason });
       } catch (err) {
-        console.error(`[WORKER ${vendorIdStr}] Disconnect handler error:`, err.message);
+        log.error(`Disconnect handler error: ${err.message}`);
       }
     });
 
     client.on("error", async (err) => {
-      console.error(`[WORKER ${vendorIdStr}] Client error:`, err.message);
+      log.error(`Client error: ${err.message}`);
       try {
         await WhatsAppSession.findOneAndUpdate(
           { vendor: vendorId },
@@ -160,12 +158,12 @@ async function initialize() {
         );
         process.send({ type: 'error', vendorId: vendorIdStr, error: err.message });
       } catch (dbErr) {
-        console.error(`[WORKER ${vendorIdStr}] DB error:`, dbErr.message);
+        log.error(`DB error: ${dbErr.message}`);
       }
     });
 
     client.on("auth_failure", async (msg) => {
-      console.error(`[WORKER ${vendorIdStr}] Auth failure:`, msg);
+      log.error(`Auth failure: ${msg}`);
       try {
         await WhatsAppSession.findOneAndUpdate(
           { vendor: vendorId },
@@ -173,16 +171,15 @@ async function initialize() {
         );
         process.send({ type: 'auth_failure', vendorId: vendorIdStr, message: msg });
       } catch (err) {
-        console.error(`[WORKER ${vendorIdStr}] Auth failure handler error:`, err.message);
+        log.error(`Auth failure handler error: ${err.message}`);
       }
     });
 
     await client.initialize();
-    console.log(`[WORKER ${vendorIdStr}] Client initialized successfully`);
+    log.info(`Client initialized successfully`);
     
   } catch (err) {
-    console.error(`[WORKER ${vendorIdStr}] Initialization failed:`, err.message);
-    console.error(err.stack);
+    log.error(`Initialization failed: ${err.message}`);
     
     if (err.message && err.message.includes("browser is already running")) {
       await closeExistingBrowser();
@@ -194,7 +191,7 @@ async function initialize() {
 }
 
 process.on('message', async (msg) => {
-  console.log(`[WORKER ${vendorIdStr}] Received message:`, msg.type);
+  log.debug(`Received message: ${msg.type}`);
   
   if (msg.type === 'ping') {
     process.send({ type: 'pong', vendorId: vendorIdStr });
@@ -214,7 +211,7 @@ process.on('message', async (msg) => {
         process.send({ type: 'message_sent', requestId: msg.requestId, vendorId: vendorIdStr, chatId: msg.chatId, messageId: Date.now().toString() });
       }
     } catch (err) {
-      console.error(`[WORKER ${vendorIdStr}] Send message error:`, err.message);
+      log.error(`Send message error: ${err.message}`);
       process.send({ type: 'message_error', requestId: msg.requestId, vendorId: vendorIdStr, error: err.message });
     }
   }
@@ -226,7 +223,7 @@ process.on('message', async (msg) => {
         process.send({ type: 'media_sent', requestId: msg.requestId, vendorId: vendorIdStr, chatId: msg.chatId, messageId: Date.now().toString() });
       }
     } catch (err) {
-      console.error(`[WORKER ${vendorIdStr}] Send media error:`, err.message);
+      log.error(`Send media error: ${err.message}`);
       process.send({ type: 'message_error', requestId: msg.requestId, vendorId: vendorIdStr, error: err.message });
     }
   }
@@ -242,14 +239,14 @@ process.on('message', async (msg) => {
         process.send({ type: 'status_sent', requestId: msg.requestId, vendorId: vendorIdStr });
       }
     } catch (err) {
-      console.error(`[WORKER ${vendorIdStr}] Send status error:`, err.message);
+      log.error(`Send status error: ${err.message}`);
       process.send({ type: 'message_error', requestId: msg.requestId, vendorId: vendorIdStr, error: err.message });
     }
   }
 });
 
 process.on('exit', (code) => {
-  console.log(`[WORKER ${vendorIdStr}] Process exiting with code:`, code);
+  log.info(`Process exiting with code: ${code}`);
 });
 
 initialize();

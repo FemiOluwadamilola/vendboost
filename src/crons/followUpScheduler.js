@@ -62,7 +62,7 @@ const checkBroadcastLimit = async (vendorId) => {
 
   // Check if follow-up automation is enabled for this plan
   const planKey = sub.plan === "trial" ? "trial" : sub.plan;
-  const limits = plans[planKey]?.limits || plans.free.limits;
+  const limits = plans[planKey]?.limits || plans.starter.limits;
   
   if (!limits.followUpAutomation) {
     return { allowed: false, reason: "Automated follow-ups not included in your plan" };

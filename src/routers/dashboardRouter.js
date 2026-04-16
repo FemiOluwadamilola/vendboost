@@ -42,7 +42,7 @@ router.get("/", verifyAuth.requireAuth, async (req, res) => {
       status: "converted",
     });
 
-    const planLimits = subscription ? plans[subscription.plan]?.limits : plans.free.limits;
+    const planLimits = subscription ? plans[subscription.plan]?.limits : plans.starter.limits;
 
     const stats = {
       totalProducts,
@@ -212,7 +212,7 @@ router.get("/settings", verifyAuth.requireAuth, async (req, res) => {
       require("../models/Payment").find({ vendor: vendorId }).sort({ createdAt: -1 }).limit(10),
     ]);
 
-    const currentPlan = subscription ? plans[subscription.plan] : plans.free;
+    const currentPlan = subscription ? plans[subscription.plan] : plans.starter;
     const isActive = subscription?.status === "active";
 
     res.render("./dashboard/settings", {
@@ -220,7 +220,7 @@ router.get("/settings", verifyAuth.requireAuth, async (req, res) => {
       title: "Settings",
       vendor,
       subscription: {
-        plan: subscription?.plan || "free",
+        plan: subscription?.plan || null,
         status: subscription?.status || "inactive",
         startDate: subscription?.startDate,
         endDate: subscription?.endDate,

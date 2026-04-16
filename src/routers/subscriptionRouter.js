@@ -11,13 +11,14 @@ const { getTrialStatus, convertTrialToFree } = require("../utils/upgradeTrigger"
 
 router.get("/subscriptions", verifyAuth.requireAuth, async (req, res) => {
   const vendorId = req.user.id;
+  const fromWhatsApp = req.query.from === 'whatsapp';
   
   try {
     const subscription = await Subscription.findOne({ vendor: vendorId }).sort({ createdAt: -1 });
     const trialStatus = await getTrialStatus(vendorId);
     
     // Get current plan details
-    const currentPlan = subscription ? plans[subscription.plan] : plans.free;
+    const currentPlan = subscription ? plans[subscription.plan] : plans.starter;
     
     res.render("./dashboard/subscriptions", {
       layout: "layouts/dashboard",
@@ -26,6 +27,7 @@ router.get("/subscriptions", verifyAuth.requireAuth, async (req, res) => {
       trialStatus,
       currentPlan,
       plans: plans,
+      fromWhatsApp,
     });
   } catch (err) {
     log.error(`Subscription page error for ${vendorId}:`, err.message);
@@ -40,7 +42,7 @@ router.post("/upgrade", verifyAuth.requireAuth, async (req, res) => {
 
   try {
     // Validate plan
-    if (!plans[plan] || plan === "trial" || plan === "free") {
+    if (!plans[plan] || plan === "trial") {
       req.flash("error", "Invalid subscription plan selected");
       return res.redirect("/dashboard/subscriptions");
     }

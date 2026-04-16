@@ -15,7 +15,7 @@ async function getVendorSubscription(vendorId) {
   if (sub && sub.plan === "trial" && sub.status === "trial") {
     const trialStatus = await getTrialStatus(vendorId);
     if (trialStatus && trialStatus.isExpired) {
-      return { plan: "free", status: "active" };
+      return { plan: null, status: "pending" };
     }
     return { plan: "trial", status: "trial", trialEndDate: sub.trialEndDate };
   }
@@ -28,7 +28,7 @@ async function getVendorSubscription(vendorId) {
         status: vendor.subscription.status,
       };
     }
-    return { plan: "free", status: "active" };
+    return { plan: null, status: "pending" };
   }
   
   return { plan: sub.plan, status: sub.status };

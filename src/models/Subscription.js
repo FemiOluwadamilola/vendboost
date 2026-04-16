@@ -11,14 +11,14 @@ const subscriptionSchema = new mongoose.Schema(
 
     plan: {
       type: String,
-      enum: ["free", "starter", "pro"],
-      default: "free",
+      enum: ["starter", "pro"],
+      default: null,
     },
 
     status: {
       type: String,
-      enum: ["active", "expired", "cancelled", "trial"],
-      default: "trial",
+      enum: ["active", "expired", "cancelled", "trial", "pending"],
+      default: "pending",
     },
 
     startDate: {

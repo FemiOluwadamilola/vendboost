@@ -33,7 +33,7 @@
     <div class="glass-card" style="margin-bottom: 32px; padding: 24px;">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
             <div>
-                <h3 style="margin-bottom: 8px;">Current Plan: <%= subscription.plan ? subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1) : 'Free' %></h3>
+                <h3 style="margin-bottom: 8px;">Current Plan: <%= subscription.plan ? subscription.plan.charAt(0).toUpperCase() + subscription.plan.slice(1) : 'No Plan' %></h3>
                 <p style="color: var(--text-muted);">
                     <% if (trialStatus && trialStatus.isActive) { %>
                         Trial ends on <%= new Date(trialStatus.endDate).toLocaleDateString() %>
@@ -67,56 +67,6 @@
     <!-- Plans Grid -->
     <div class="plans-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
         
-        <!-- Free Plan - WhatsApp Automation Lite -->
-        <div class="glass-card plan-card <%= (subscription && subscription.plan === 'free') ? 'plan-current' : '' %>" style="padding: 32px; border-radius: 20px; position: relative;">
-            <% if (subscription && subscription.plan === 'free') { %>
-                <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--slate); color: white; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 600;">CURRENT PLAN</div>
-            <% } %>
-            <div style="text-align: center; margin-bottom: 24px;">
-                <h3 style="font-size: 24px; margin-bottom: 8px;">Free</h3>
-                <p style="font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 700;">₦0</p>
-                <p style="color: var(--text-muted);">WhatsApp Automation Lite</p>
-            </div>
-            <ul style="list-style: none; padding: 0; margin-bottom: 24px;">
-                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                    WhatsApp Connection
-                </li>
-                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                    Auto-reply to customers
-                </li>
-                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                    20 Leads capture
-                </li>
-                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                    Basic intent detection
-                </li>
-                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px; color: var(--text-muted);">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    No Broadcasts
-                </li>
-                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px; color: var(--text-muted);">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    No Status Posting
-                </li>
-                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px; color: var(--text-muted);">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    No Auto Follow-ups
-                </li>
-            </ul>
-            <% if (!subscription || subscription.plan !== 'free') { %>
-            <form action="/subscription/upgrade" method="POST">
-                <input type="hidden" name="plan" value="free">
-                <button type="submit" class="btn btn-secondary" style="width: 100%;">Switch to Free</button>
-            </form>
-            <% } else { %>
-            <button class="btn btn-secondary" style="width: 100%;" disabled>Current Plan</button>
-            <% } %>
-        </div>
-
         <!-- Trial Plan (Show only for non-trial users) -->
         <% if (!trialStatus || !trialStatus.isActive) { %>
         <div class="glass-card plan-card" style="padding: 32px; border-radius: 20px; position: relative; border: 2px solid var(--emerald); background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05));">
@@ -159,17 +109,17 @@
             <% } %>
             <div style="text-align: center; margin-bottom: 24px;">
                 <h3 style="font-size: 24px; margin-bottom: 8px;">Starter</h3>
-                <p style="font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 700;">₦5,000</p>
+                <p style="font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 700;">₦2,000</p>
                 <p style="color: var(--text-muted);">per month</p>
             </div>
             <ul style="list-style: none; padding: 0; margin-bottom: 24px;">
                 <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                    200 Leads
+                    100 Leads
                 </li>
                 <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                    50 Broadcasts/Day
+                    30 Broadcasts/Day
                 </li>
                 <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
@@ -178,6 +128,10 @@
                 <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
                     Automated Follow-ups
+                </li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Status Posting
                 </li>
             </ul>
             <% if (subscription && subscription.plan !== 'starter') { %>
@@ -199,7 +153,7 @@
             <% } %>
             <div style="text-align: center; margin-bottom: 24px;">
                 <h3 style="font-size: 24px; margin-bottom: 8px; color: var(--gold);">Pro</h3>
-                <p style="font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 700;">₦15,000</p>
+                <p style="font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 700;">₦5,000</p>
                 <p style="color: var(--text-muted);">per month</p>
             </div>
             <ul style="list-style: none; padding: 0; margin-bottom: 24px;">
@@ -213,7 +167,7 @@
                 </li>
                 <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                    3 WhatsApp Sessions
+                    1 WhatsApp Session
                 </li>
                 <li style="padding: 8px 0; display: flex; align-items: center; gap: 12px;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
@@ -249,7 +203,7 @@
             </div>
             <div>
                 <h4 style="font-size: 16px; margin-bottom: 8px;">What happens when my trial ends?</h4>
-                <p style="color: var(--text-muted); font-size: 14px;">You'll be moved to the free plan with 20 leads. You can upgrade anytime to unlock more features.</p>
+                <p style="color: var(--text-muted); font-size: 14px;">You'll need to choose a paid plan to continue using VendBoost features.</p>
             </div>
             <div>
                 <h4 style="font-size: 16px; margin-bottom: 8px;">Is there a refund policy?</h4>

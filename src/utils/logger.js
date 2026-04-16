@@ -1,66 +1,83 @@
-const { createLogger, format, transports} = require("winston");
+const { createLogger, format, transports } = require("winston");
 const { combine, timestamp, json, errors } = format;
-const uuid = require("uuid").v4();
+const path = require("path");
+const fs = require("fs");
 
+// Ensure logs directory exists
+const logsDir = path.join(__dirname, "../../logs");
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir, { recursive: true });
+}
+
+// Environment
+const NODE_ENV = process.env.NODE_ENV || "development";
+
+// Log levels
 const logLevels = {
-  fatal: 0,
-  error: 1,
-  warn: 2,
-  info: 3,
+  error: 0,
+  warn: 1,
+  info: 2,
+  http: 3,
   debug: 4,
-  trace: 5,
 };
 
-const errorFilter = format((info, opts) => {
-  return info.level === "error" ? info : false;
-});
+// Detect worker process
+const isWorker = process.argv[1]?.includes("vendorWorker");
+const workerVendorId = isWorker ? process.argv[2] : null;
 
-const infoFilter = format((info, opts) => {
-  return info.level === "info" ? info : false;
-});
+// Custom format for file (JSON)
+const fileFormat = combine(
+  errors({ stack: true }),
+  timestamp(),
+  json()
+);
 
-const warnFilter = format((info, opts) => {
-  return info.level === "warn" ? info : false;
-});
+// File transport helper
+const createFileTransport = (filename, level = "info") => {
+  return new transports.File({
+    filename: path.join(logsDir, filename),
+    level,
+    format: fileFormat,
+    maxsize: 20 * 1024 * 1024,
+    maxFiles: 14,
+    tailable: true,
+  });
+};
 
-const fatalFilter = format((info, opts) => {
-  return info.level === "fatal" ? info : false;
-})
-
+// Create logger
 const logger = createLogger({
-    levels: logLevels,
-    level: "debug",
-    format: combine(errors({ stack: true }), timestamp(), json()),
-    transports: [
-      new transports.Console(),
-      new transports.File({
-        filename: "./logs/combined.log",
-      }),
-      new transports.File({
-        filename: "./logs/error.log",
-        level: "error",
-        format: combine(errorFilter(), timestamp(), json()),
-      }),
-      new transports.File({
-        filename: "./logs/info.log",
-        level: "info",
-        format: combine(infoFilter(), timestamp(), json()),
-      }),
-      new transports.File({
-        filename: "./logs/warn.log",
-        level: "warn",
-        format: combine(warnFilter(), timestamp(), json()),
-      }),
-      new transports.File({
-        filename: "./logs/Fatal.log",
-        level: "fatal",
-        format: combine(fatalFilter(), timestamp(), json()),
-      }),
-    ],
+  levels: logLevels,
+  level: process.env.LOG_LEVEL || (NODE_ENV === "production" ? "info" : "debug"),
+  format: fileFormat,
+  defaultMeta: {
+    service: "vendboost",
+    environment: NODE_ENV,
+    ...(workerVendorId && { vendorId: workerVendorId }),
+  },
+  transports: [
+    createFileTransport("combined.log"),
+    createFileTransport("error.log", "error"),
+    createFileTransport("http.log", "http"),
+  ],
+  exitOnError: false,
 });
 
-const log = logger.child({
-    id:uuid
-})
+logger.on("error", (err) => {
+  console.error("Logger error:", err);
+});
 
-module.exports = log;
+const createChild = (context) => logger.child(context);
+
+// HTTP access logger
+const accessLogger = createLogger({
+  levels: { info: 3 },
+  format: combine(timestamp(), json()),
+  transports: [createFileTransport("access.log")],
+});
+
+module.exports = logger;
+module.exports.createChild = createChild;
+module.exports.accessLogger = accessLogger;
+module.exports.stream = {
+  write: (message) => accessLogger.info(message.trim()),
+};

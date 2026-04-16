@@ -6,6 +6,7 @@ const crypto = require("crypto");
 const Payment = require("../models/Payment");
 const Subscription = require("../models/Subscription");
 const Vendor = require("../models/Vendor");
+const log = require("../utils/logger");
 
 router.post("/paystack", async (req, res) => {
   try {
@@ -61,12 +62,12 @@ router.post("/paystack", async (req, res) => {
         },
       });
 
-      console.log("✅ Subscription activated:", vendorId, plan);
+      log.info(`Subscription activated: vendorId=${vendorId}, plan=${plan}`);
     }
 
     res.sendStatus(200);
   } catch (err) {
-    console.error("Webhook error:", err);
+    log.error("Webhook error:", err.message);
     res.sendStatus(500);
   }
 });

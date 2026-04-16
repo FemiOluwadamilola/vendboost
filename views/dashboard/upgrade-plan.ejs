@@ -1,0 +1,124 @@
+<main class="main-content">
+    <%- include('../partials/message') %>
+    
+    <!-- Header -->
+    <nav class="navbar">
+        <div class="page-header">
+            <h1 class="page-title">Upgrade Your Plan</h1>
+            <p class="page-subtitle">Choose a plan to unlock more features</p>
+        </div>
+    </nav>
+
+    <!-- Current Plan Info -->
+    <% if (subscription) { %>
+    <div class="glass-card" style="margin-bottom: 32px; padding: 24px; border-left: 4px solid var(--emerald);">
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="width: 48px; height: 48px; background: var(--emerald); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+            </div>
+            <div>
+                <h3 style="margin-bottom: 4px;">Current Plan: <%= currentPlan === 'trial' ? '14-Day Trial' : (currentPlan ? currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1) : 'None') %></h3>
+                <p style="color: var(--text-muted); font-size: 14px;">
+                    <% if (currentPlan === 'trial' && subscription.trialEndDate) { %>
+                        Trial ends on <%= new Date(subscription.trialEndDate).toLocaleDateString() %>
+                    <% } else if (subscription.endDate) { %>
+                        Renews on <%= new Date(subscription.endDate).toLocaleDateString() %>
+                    <% } else { %>
+                        Active
+                    <% } %>
+                </p>
+            </div>
+        </div>
+    </div>
+    <% } %>
+
+    <!-- Plans Grid (Excludes Trial) -->
+    <div class="plans-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+        
+        <!-- Starter Plan -->
+        <% if (currentPlan !== 'starter') { %>
+        <div class="glass-card plan-card" style="padding: 24px; border-radius: 16px; position: relative;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h3 style="font-size: 20px; margin-bottom: 8px;">Starter</h3>
+                <p style="font-family: 'Space Mono', monospace; font-size: 28px; font-weight: 700;">₦2,000</p>
+                <p style="color: var(--text-muted); font-size: 12px;">per month</p>
+            </div>
+            <ul style="list-style: none; padding: 0; margin-bottom: 20px; font-size: 13px;">
+                <li style="padding: 6px 0; display: flex; align-items: center; gap: 8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    100 Leads
+                </li>
+                <li style="padding: 6px 0; display: flex; align-items: center; gap: 8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    30 Broadcasts/Day
+                </li>
+                <li style="padding: 6px 0; display: flex; align-items: center; gap: 8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    1 WhatsApp Number
+                </li>
+                <li style="padding: 6px 0; display: flex; align-items: center; gap: 8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Auto Follow-ups
+                </li>
+                <li style="padding: 6px 0; display: flex; align-items: center; gap: 8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Status Posting
+                </li>
+            </ul>
+            <form action="/whatsapp/upgrade" method="POST">
+                <input type="hidden" name="plan" value="starter">
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Upgrade to Starter</button>
+            </form>
+        </div>
+        <% } %>
+
+        <!-- Pro Plan -->
+        <% if (currentPlan !== 'pro') { %>
+        <div class="glass-card plan-card" style="padding: 24px; border-radius: 16px; position: relative; border: 2px solid var(--gold);">
+            <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--gold); color: #0a0f0d; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;">BEST VALUE</div>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h3 style="font-size: 20px; margin-bottom: 8px; color: var(--gold);">Pro</h3>
+                <p style="font-family: 'Space Mono', monospace; font-size: 28px; font-weight: 700;">₦5,000</p>
+                <p style="color: var(--text-muted); font-size: 12px;">per month</p>
+            </div>
+            <ul style="list-style: none; padding: 0; margin-bottom: 20px; font-size: 13px;">
+                <li style="padding: 6px 0; display: flex; align-items: center; gap: 8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    1,000 Leads
+                </li>
+                <li style="padding: 6px 0; display: flex; align-items: center; gap: 8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    500 Broadcasts/Day
+                </li>
+                <li style="padding: 6px 0; display: flex; align-items: center; gap: 8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    1 WhatsApp Number
+                </li>
+                <li style="padding: 6px 0; display: flex; align-items: center; gap: 8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Auto Follow-ups
+                </li>
+                <li style="padding: 6px 0; display: flex; align-items: center; gap: 8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Status Posting
+                </li>
+                <li style="padding: 6px 0; display: flex; align-items: center; gap: 8px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Priority Support
+                </li>
+            </ul>
+            <form action="/whatsapp/upgrade" method="POST">
+                <input type="hidden" name="plan" value="pro">
+                <button type="submit" class="btn btn-primary" style="width: 100%; background: linear-gradient(135deg, var(--gold), var(--amber));">Upgrade to Pro</button>
+            </form>
+        </div>
+        <% } %>
+    </div>
+
+    <!-- Back Link -->
+    <div style="text-align: center; margin-top: 32px;">
+        <a href="/dashboard" class="btn btn-secondary" style="display: inline-block;">Back to Dashboard</a>
+    </div>
+</main>

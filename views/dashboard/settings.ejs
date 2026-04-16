@@ -450,7 +450,7 @@
                             <% if (subscription && subscription.plan !== 'pro') { %>
                                 <button class="btn btn-primary" style="width: auto; padding: 10px 20px;" onclick="upgradePlan()">Upgrade Plan</button>
                             <% } %>
-                            <% if (subscription && subscription.plan !== 'free') { %>
+                            <% if (subscription && subscription.plan && subscription.plan !== 'pro') { %>
                                 <button class="btn btn-secondary" style="width: auto; padding: 10px 20px;" onclick="cancelSubscription()">Cancel Subscription</button>
                             <% } %>
                         </div>
@@ -464,7 +464,7 @@
                         <% if (subscription.plan !== 'starter') { %>
                         <div class="glass-card" style="padding: 20px; border-radius: 12px;">
                             <h4 style="margin-bottom: 8px;">Starter</h4>
-                            <p style="font-family: 'Space Mono', monospace; font-size: 24px; margin-bottom: 12px;">₦5,000<span style="font-size: 12px; color: var(--text-muted);">/mo</span></p>
+                            <p style="font-family: 'Space Mono', monospace; font-size: 24px; margin-bottom: 12px;">₦2,000<span style="font-size: 12px; color: var(--text-muted);">/mo</span></p>
                             <ul style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
                                 <li>200 Leads</li>
                                 <li>50 Broadcasts/Day</li>

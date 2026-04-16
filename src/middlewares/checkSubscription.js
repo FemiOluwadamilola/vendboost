@@ -51,30 +51,29 @@ const checkSubscription = async (req, res, next) => {
   const isTrialExpired = isTrial && sub.trialEndDate && new Date() > new Date(sub.trialEndDate);
 
   if (isTrialExpired) {
-    // Trial expired - convert to free or prompt upgrade
-    await Subscription.findByIdAndUpdate(sub._id, { 
-      plan: "free", 
-      status: "active",
-      trialEndDate: null
-    });
-    
-    // Update vendor subscription as well
-    await Vendor.findByIdAndUpdate(vendorId, {
-      "subscription.plan": "free",
-      "subscription.status": "active"
-    });
-    
+    // Trial expired - prompt upgrade
     req.flash(
       "info",
-      "Your 14-day trial has ended. You've been moved to the Free plan. Upgrade to continue using all features!"
+      "Your 14-day trial has ended. Please choose a plan to continue using VendBoost."
     );
+    return res.redirect("/dashboard/subscriptions");
   }
 
-  // Allow access for trial (active), active, and free plans
+  // Handle null/no plan - redirect to subscriptions
+  if (!sub.plan || sub.plan === null || sub.status === "pending") {
+    log.warn(`No plan selected for vendor ${vendorId}`);
+    req.flash(
+      "info",
+      "Please select a plan to continue."
+    );
+    return res.redirect("/dashboard/subscriptions");
+  }
+
+  // Allow access for trial (active), active plans
   const allowedStatuses = ["active", "trial"];
   const isActive = sub.status === "active" || (sub.plan === "trial" && sub.status === "trial");
   
-  if (!isActive && sub.plan !== "free") {
+  if (!isActive) {
     log.warn(`Subscription inactive for vendor ${vendorId}`);
     req.flash(
       "error",
@@ -83,7 +82,7 @@ const checkSubscription = async (req, res, next) => {
     return res.redirect("/dashboard/subscriptions");
   }
 
-  const planLimits = plans[sub.plan] || plans.free;
+  const planLimits = plans[sub.plan] || plans.starter;
   const usage = await Usage.findOne({ vendor: vendorId, date: new Date().toISOString().split("T")[0] });
 
   // Calculate trial days remaining

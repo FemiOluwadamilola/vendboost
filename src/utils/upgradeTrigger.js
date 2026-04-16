@@ -94,14 +94,14 @@ const convertTrialToFree = async (vendorId) => {
   const sub = await Subscription.findOne({ vendor: vendorId, plan: "trial" });
   if (sub) {
     await Subscription.findByIdAndUpdate(sub._id, {
-      plan: "free",
-      status: "active",
+      plan: null,
+      status: "pending",
       trialEndDate: null,
       isTrialUsed: true,
     });
     await Vendor.findByIdAndUpdate(vendorId, {
-      "subscription.plan": "free",
-      "subscription.status": "active",
+      "subscription.plan": null,
+      "subscription.status": "pending",
     });
   }
 };

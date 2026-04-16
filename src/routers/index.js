@@ -25,6 +25,12 @@ router.get("/signin", (req, res) => {
   });
 });
 
+router.get("/verify-email-sent", (req, res) => {
+  res.render("./dashboard/verify-email-sent", {
+    title: "Verify Email – VendBoost",
+  });
+});
+
 router.get("/terms", (req, res) => {
   res.render("terms", {
     title: "Terms & Conditions – VendBoost",

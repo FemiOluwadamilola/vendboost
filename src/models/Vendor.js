@@ -25,7 +25,17 @@ const VendorSchema = new mongoose.Schema({
     status: { type: String, default: "inactive" },
     startDate: Date,
     endDate: Date
-  }
+  },
+  isVerified: { type: Boolean, default: false },
+  verificationToken: String,
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
+  // OAuth providers
+  googleId: String,
+  facebookId: String,
+  appleId: String,
+  authProvider: { type: String, default: "local" },
+  avatar: String
 });
 
 module.exports = mongoose.model("Vendor", VendorSchema);
